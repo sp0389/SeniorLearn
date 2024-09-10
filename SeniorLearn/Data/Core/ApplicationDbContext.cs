@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SeniorLearn.Data.Core
 {
-    public class ApplicationDbContext : IdentityDbContext<OrganisationUser>
+    public class ApplicationDbContext : IdentityDbContext<OrganisationUser, OrganisationRole, string>
     {
         public DbSet<Organisation> Organisations { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)

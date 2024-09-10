@@ -15,6 +15,25 @@ namespace SeniorLearn.Data.Core
                 .HasForeignKey(ou => ou.OrganisationId)
                 .OnDelete(DeleteBehavior.Restrict);
             });
+
+            mb.Entity<OrganisationUser>(ou =>
+            {
+                ou.HasMany(ur => ur.UserRoles)
+                .WithOne(ur => ur.User)
+                .HasForeignKey(ur => ur.UserId)
+                .IsRequired();
+                ou.HasDiscriminator<string>("Discriminator")
+                .HasValue<OrganisationUser>("OrganisationUser")
+                .HasValue<Member>("Member");
+            });
+
+            mb.Entity<OrganisationRole>(or =>
+            {
+                or.HasMany(r => r.UserRoles)
+                   .WithOne(ur => ur.Role)
+                   .HasForeignKey(ur => ur.RoleId)
+                   .IsRequired();
+            });
         }
     }
 }

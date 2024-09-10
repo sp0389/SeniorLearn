@@ -9,6 +9,8 @@ namespace SeniorLearn.Data
         public DateTime Registered { get; set; }
         public int OrganisationId { get; set; }
         public Organisation Organisation { get; set; } = default!;
+        public ICollection<OrganisationUserRole> UserRoles { get; set; } = new List<OrganisationUserRole>();
+
         protected OrganisationUser() { }
 
         public OrganisationUser(int organisationId, string username, string firstName, string lastName, string email)
