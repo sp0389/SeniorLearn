@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using SeniorLearn.Data;
+using SeniorLearn.Data.Core;
 
 namespace SeniorLearn
 {
