@@ -1,0 +1,82 @@
+﻿@model SeniorLearn.Areas.Administration.Models.Member.EditViewModel
+
+@{
+    ViewData["Title"] = $"Manage Member";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Edit" method="post">
+    <div asp-validation-summary="All" role="alert" class="text-danger"></div>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="form-floating">
+                <input asp-for="FirstName" class="form-control" id="FirstName" placeholder="First Name" required />
+                <label asp-for="FirstName">First Name</label>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-floating">
+                <input asp-for="LastName" class="form-control" id="LastName" placeholder="Last Name" required />
+                <label asp-for="LastName">Last Name</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3 form-floating">
+        <input asp-for="Email" class="form-control" id="Email" placeholder="Email" required />
+        <label asp-for="Email">Email</label>
+    </div>
+
+    <div class="mb-3">
+        <label for="SelectedRole">Assign Role</label>
+        <select asp-for="SelectedRole" asp-items="Model.RoleTypes" id="SelectRole" class="form-select">
+            <option value="" selected>Please select a role</option>
+        </select>
+    </div>
+
+    <div id="duration">
+        <div class="form-check">
+            <input asp-for="Duration" type="radio" class="form-check-input" value="3" />
+            <label class="form-check-label" for="radio1">
+                3 Months (Trial)
+            </label>
+        </div>
+
+        <div class="form-check">
+            <input asp-for="Duration" type="radio" class="form-check-input" value="12">
+            <label class="form-check-label" for="radio2">
+                12 Months
+            </label>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <h6>Current Assigned Roles</h6>
+        <ul class="list-inline">
+            @foreach (var role in Model.AssignedRoles)
+            {
+                <li class="list-inline-item badge bg-secondary">@role</li>
+            }
+        </ul>
+    </div>
+
+    <div class="mb-3">
+        <input type="submit" value="Save" class="btn btn-primary w-100" />
+    </div>
+
+</form>
+
+<script>
+    const selectElement = document.getElementById("SelectRole");
+    const durationElement = document.getElementById("duration");
+
+    function toggle() {
+        selectElement.value === "Professional" ? durationElement.style.display = "block" :
+        durationElement.style.display = "none";
+    }
+
+    toggle();
+    selectElement.addEventListener("change", toggle);
+</script>

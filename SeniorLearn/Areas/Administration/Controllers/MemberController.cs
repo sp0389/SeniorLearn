@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using SeniorLearn.Areas.Administration.Models.Member;
+using SeniorLearn.Data;
 using SeniorLearn.Data.Core;
 using SeniorLearn.Services;
 
@@ -8,12 +11,17 @@ namespace SeniorLearn.Areas.Administration.Controllers
     public class MemberController : AdministrationController
     {
         private readonly OrganisationUserService _organisationUserService;
+        private readonly OrganisationUserRoleService _organisationUserRoleService;
+        private readonly UserManager<OrganisationUser> _userManager;
 
         public MemberController(ApplicationDbContext context, ILogger<MemberController> logger,
-            OrganisationUserService organisationUserService)
+            OrganisationUserService organisationUserService, UserManager<OrganisationUser> userManager,
+            OrganisationUserRoleService organisationUserRoleService)
             : base(context, logger)
         {
             _organisationUserService = organisationUserService;
+            _userManager = userManager;
+            _organisationUserRoleService = organisationUserRoleService;
         }
 
         [HttpGet]
@@ -45,6 +53,72 @@ namespace SeniorLearn.Areas.Administration.Controllers
                 }
             }
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var assignedRoles = await _userManager.GetRolesAsync(user);
+
+            // https://stackoverflow.com/questions/3489453/how-can-i-convert-an-enumeration-into-a-listselectlistitem
+            var roleType = Enum.GetValues(typeof(RoleTypes)).Cast<RoleTypes>().Select(role => new SelectListItem
+            {
+                Text = role.ToString(),
+                Value = role.ToString(),
+                Disabled = assignedRoles.Contains(role.ToString()),
+            }).ToList();
+
+            var vm = new EditViewModel
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email!,
+                AssignedRoles = assignedRoles,
+                RoleTypes = roleType
+
+            };
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(string id, EditViewModel u)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByIdAsync(id);
+
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                try
+                {
+                    user.FirstName = u.FirstName;
+                    user.LastName = u.LastName;
+                    user.Email = u.Email;
+
+                    await _organisationUserRoleService.AssignRoleAsync(user.Id, DateTime.UtcNow, u.SelectedRole, u.Duration);
+
+                    return RedirectToAction("Edit");
+                }
+
+                catch (DomainRuleException ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                    return View(u);
+                }
+            }
+
+            return View(u);
         }
     }
 }

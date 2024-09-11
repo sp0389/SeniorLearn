@@ -17,6 +17,30 @@ namespace SeniorLearn.Data
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public RoleTypes RoleType { get; set; }
+
+        public OrganisationUserRole GrantProfessionalMember(DateTime startDate, int duration)
+        {
+            StartDate = new DateTime(startDate.Year, startDate.Month, 1).AddMonths(1);
+            EndDate = duration == 3 ? StartDate.AddMonths(3) : StartDate.AddYears(1);
+            RoleType = RoleTypes.Professional;
+            return this;
+        }
+
+        public OrganisationUserRole GrantStandardMember(DateTime startDate)
+        {
+            StartDate = new DateTime(startDate.Year, startDate.Month, 1).AddMonths(1);
+            EndDate = StartDate.AddYears(1);
+            RoleType = RoleTypes.Standard;
+            return this;
+        }
+
+        public OrganisationUserRole GrantHonoraryMember()
+        {
+            StartDate = DateTime.UtcNow;
+            EndDate = DateTime.MaxValue;
+            RoleType = RoleTypes.Honorary;
+            return this;
+        }
     }
 
     public class OrganisationRole : IdentityRole

@@ -38,6 +38,7 @@ public class Program
         });
 
         builder.Services.AddScoped<OrganisationUserService>();
+        builder.Services.AddScoped<OrganisationUserRoleService>();
         builder.Services.AddControllersWithViews();
 
         var app = builder.Build();
