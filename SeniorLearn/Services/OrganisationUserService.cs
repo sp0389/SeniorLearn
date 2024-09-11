@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using SeniorLearn.Data.Core;
 using SeniorLearn.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace SeniorLearn.Services
 {
@@ -34,6 +35,24 @@ namespace SeniorLearn.Services
                 return member;
             }
             throw new ApplicationException(result.Errors.First().Description);
+        }
+
+        public async Task<IEnumerable<OrganisationUser>> GetUsersAsync()
+        {
+            var users = await _context.Users.ToListAsync();
+            return users;
+        }
+
+        public async Task<IEnumerable<OrganisationUser>> GetInactiveUsersAsync()
+        {
+            var users = await _context.Users.Where(u => u.UserRoles.Count == 0).ToListAsync();
+            return users;
+        }
+
+        public async Task<IEnumerable<OrganisationUser>> GetActiveUsersAsync()
+        {
+            var users = await _context.Users.Where(u => u.UserRoles.Any(ur => ur.StartDate <= ur.EndDate)).ToListAsync();
+            return users;
         }
     }
 }

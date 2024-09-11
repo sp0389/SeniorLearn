@@ -19,15 +19,26 @@ namespace SeniorLearn.Areas.Administration.Controllers
             OrganisationUserRoleService organisationUserRoleService)
             : base(context, logger)
         {
-            _organisationUserService = organisationUserService;
             _userManager = userManager;
+            _organisationUserService = organisationUserService;
             _organisationUserRoleService = organisationUserRoleService;
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index(bool? isActive)
         {
-            return View();
+            switch (isActive)
+            {
+                case false:
+                    var inactiveUsers = await _organisationUserService.GetInactiveUsersAsync();
+                    return View(inactiveUsers);
+                case true:
+                    var activeUsers = await _organisationUserService.GetActiveUsersAsync();
+                    return View(activeUsers);
+                default:
+                    var users = await _organisationUserService.GetUsersAsync();
+                    return View(users);
+            }
         }
 
         [HttpGet]
