@@ -91,6 +91,20 @@ namespace SeniorLearn.Areas.Administration.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(string id, EditViewModel u)
         {
+            if (u.RemoveRole == true && u.Role != null)
+            {
+                try
+                {
+                    await _organisationUserRoleService.RemoveRoleFromUserAsync(id, u.Role);
+                }
+                catch (DomainRuleException ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
+
+                return RedirectToAction("Edit");
+            }
+
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByIdAsync(id);

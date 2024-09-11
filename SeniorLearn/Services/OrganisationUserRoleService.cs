@@ -63,5 +63,21 @@ namespace SeniorLearn.Services
 
             return role ?? throw new InvalidOperationException("Role does not exist in the database!");
         }
+
+        public async Task RemoveRoleFromUserAsync(string userId, string role)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user != null)
+            {
+                var result = await _userManager.RemoveFromRoleAsync(user, role);
+
+                if (result.Succeeded)
+                {
+                    return;
+                }
+            }
+            throw new InvalidOperationException("Failed to remove role from user!");
+        }
     }
 }

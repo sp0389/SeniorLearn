@@ -65,8 +65,19 @@
     <div class="mb-3">
         <input type="submit" value="Save" class="btn btn-primary w-100" />
     </div>
-
 </form>
+
+@foreach (var role in Model.AssignedRoles)
+{
+    <form asp-action="Edit" method="post" class="mb-3">
+        <input type="hidden" asp-for="RemoveRole" value="true" />
+        <input type="hidden" asp-for="Role" value="@role" />
+
+        <div>
+            <button type="submit" class="btn btn-success w-100">Remove @role Role</button>
+        </div>
+    </form>
+}
 
 <script>
     const selectElement = document.getElementById("SelectRole");
