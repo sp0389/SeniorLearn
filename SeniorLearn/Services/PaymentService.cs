@@ -1,4 +1,5 @@
-﻿using SeniorLearn.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using SeniorLearn.Data;
 using SeniorLearn.Data.Core;
 
 namespace SeniorLearn.Services
@@ -11,19 +12,26 @@ namespace SeniorLearn.Services
         {
             _context = context;
         }
-        public async Task<Payment> CreateNewPaymentAsync(OrganisationUser user, DateTime paymentDate, PaymentType paymentType)
+        public async Task<Payment> CreateNewPaymentAsync(OrganisationUser user, DateTime paymentDate, PaymentType paymentType, decimal paymentAmount)
         {
-            var payment = new Payment(user, paymentDate, paymentType)
+            var payment = new Payment(user, paymentDate, paymentType, paymentAmount)
             {
                 UserId = user.Id,
                 User = user,
                 PaymentDate = paymentDate,
-                PaymentType = paymentType
+                PaymentType = paymentType,
+                PaymentAmount = paymentAmount
             };
 
             await _context.AddAsync(payment);
             await _context.SaveChangesAsync();
             return payment;
+        }
+
+        public async Task<IEnumerable<Payment>> GetPaymentsAsync(OrganisationUser user)
+        {
+            var payments = await _context.Payments.Where(p => p.User == user).ToListAsync();
+            return payments;
         }
     }
 }

@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Payment>
+@{
+    ViewData["Title"] = "Payment History";
+}
+<h1>@ViewData["Title"]</h1>
+
+@* https://stackoverflow.com/questions/979532/how-to-get-the-current-route-id-within-a-view-from-the-url-asp-net-mvc
+ *@
+
+@{
+    var userId = @Url.ActionContext.RouteData.Values["id"];
+}
+
+<div class="mb-3">
+    <a class="btn btn-primary" asp-action="Create" asp-route-id="@userId"> Add Payment Record </a>
+
+</div>
+
+<table class="table table-bordered table-striped table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Payment Id</th>
+            <th scope="col">Payment Type</th>
+            <th scope="col">Payment Amount</th>
+            <th scope="col">Payment Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <th scope="row">@Html.DisplayFor(modelItem => p.Id)</th>
+                <td>@Html.DisplayFor(modelItem => p.PaymentType)</td>
+                <td>@Html.DisplayFor(modelItem => p.PaymentAmount)</td>
+                <td>@Html.DisplayFor(modelItem => p.PaymentDate)</td>
+            </tr>
+        }
+    </tbody>
+</table>

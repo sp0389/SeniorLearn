@@ -20,6 +20,20 @@ namespace SeniorLearn.Areas.Administration.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Index(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var userPayments = await _paymentService.GetPaymentsAsync(user);
+            return View(userPayments);
+        }
+
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
@@ -39,7 +53,7 @@ namespace SeniorLearn.Areas.Administration.Controllers
 
                 try
                 {
-                    await _paymentService.CreateNewPaymentAsync(user, p.PaymentDate, p.PaymentType);
+                    await _paymentService.CreateNewPaymentAsync(user, p.PaymentDate, p.PaymentType, p.PaymentAmount);
                 }
 
                 catch (DomainRuleException ex)

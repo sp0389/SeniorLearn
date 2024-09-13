@@ -13,7 +13,7 @@
             <th scope="col">First Name</th>
             <th scope="col">Last Name</th>
             <th scope="col">Email</th>
-            <th></th>
+            <th scope="col">Administration</th>
         </tr>
     </thead>
     <tbody>
@@ -25,7 +25,8 @@
                 <td>@Html.DisplayFor(modelItem => m.LastName)</td>
                 <td>@Html.DisplayFor(modelItem => m.Email)</td>
                 <td>
-                    @Html.ActionLink("Manage", "Edit", new { id = m.Id })
+                    <a title="Manage Member" class="nav-link p-0 d-inline" style="text-decoration:underline" asp-area="Administration" asp-controller="Member" asp-action="Edit" asp-route-id="@m.Id">Manage Member</a> |
+                    <a title="Payment Records" class="nav-link p-0 d-inline" style="text-decoration:underline" asp-area="Administration" asp-controller="Payment" asp-action="Index" asp-route-id="@m.Id">Payment Records </a>
                 </td>
             </tr>
         }

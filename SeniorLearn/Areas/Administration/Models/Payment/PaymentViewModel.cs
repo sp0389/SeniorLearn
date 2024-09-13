@@ -9,5 +9,7 @@ namespace SeniorLearn.Areas.Administration.Models.Payment
         public DateTime PaymentDate { get; set; } = default!;
         [Required]
         public PaymentType PaymentType { get; set; }
+        [Required]
+        public decimal PaymentAmount { get; set; }
     }
 }

@@ -19,13 +19,15 @@ namespace SeniorLearn.Data
         public OrganisationUser User { get; set; } = default!;
         public DateTime PaymentDate { get; set; }
         public PaymentType PaymentType { get; set; }
+        public decimal PaymentAmount { get; set; }
         private Payment() { }
-        public Payment(OrganisationUser user, DateTime paymentDate, PaymentType paymentType)
+        public Payment(OrganisationUser user, DateTime paymentDate, PaymentType paymentType, decimal paymentAmount)
         {
             UserId = user.Id;
             User = user;
             PaymentDate = paymentDate;
             PaymentType = paymentType;
+            PaymentAmount = paymentAmount;
         }
     }
 }
