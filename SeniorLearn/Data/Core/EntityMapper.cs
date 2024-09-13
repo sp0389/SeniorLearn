@@ -27,6 +27,14 @@ namespace SeniorLearn.Data.Core
                 .HasValue<Member>("Member");
             });
 
+            mb.Entity<OrganisationUser>(ou =>
+            {
+                ou.HasMany(p => p.Payments)
+                .WithOne(p => p.User)
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+            });
+
             mb.Entity<OrganisationRole>(or =>
             {
                 or.HasMany(r => r.UserRoles)

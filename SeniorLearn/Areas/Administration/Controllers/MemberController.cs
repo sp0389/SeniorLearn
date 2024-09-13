@@ -63,7 +63,7 @@ namespace SeniorLearn.Areas.Administration.Controllers
                     ModelState.AddModelError("", ex.Message);
                 }
             }
-            return View();
+            return RedirectToAction("Index");
         }
 
         [HttpGet]
@@ -82,7 +82,7 @@ namespace SeniorLearn.Areas.Administration.Controllers
             var roleType = Enum.GetValues(typeof(RoleTypes)).Cast<RoleTypes>().Select(role => new SelectListItem
             {
                 Text = role.ToString(),
-                Value = role.ToString(),
+                Value = ((int)role).ToString(),
                 Disabled = assignedRoles.Contains(role.ToString()),
             }).ToList();
 
@@ -93,7 +93,6 @@ namespace SeniorLearn.Areas.Administration.Controllers
                 Email = user.Email!,
                 AssignedRoles = assignedRoles,
                 RoleTypes = roleType
-
             };
 
             return View(vm);

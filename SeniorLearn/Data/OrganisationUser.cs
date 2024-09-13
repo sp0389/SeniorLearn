@@ -10,6 +10,7 @@ namespace SeniorLearn.Data
         public int OrganisationId { get; set; }
         public Organisation Organisation { get; set; } = default!;
         public ICollection<OrganisationUserRole> UserRoles { get; set; } = new List<OrganisationUserRole>();
+        public ICollection<Payment> Payments { get; set; } = new List<Payment>();
 
         protected OrganisationUser() { }
 
