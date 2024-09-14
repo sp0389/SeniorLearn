@@ -6,17 +6,24 @@ namespace SeniorLearn.Data.Core
     {
         public SeedData(ModelBuilder mb)
         {
-            mb.Entity<Organisation>().HasData(new Organisation
-            {
-                Id = 1,
-                Name = "Senior Learn"
-            }
-            );
-
-            InitTestMembersAndRoles(mb);
-
+            InitSeedOrganistaion(mb);
+            InitSeedRoles(mb);
+            InitSeedMembers(mb);
+            InitSeedMemberRoles(mb);
         }
-        private static void InitTestMembersAndRoles(ModelBuilder mb)
+
+        private static void InitSeedOrganistaion(ModelBuilder mb)
+        {
+            mb.Entity<Organisation>().HasData(
+                new Organisation
+                {
+                    Id = 1,
+                    Name = "SeniorLearn"
+                }
+            );
+        }
+
+        private static void InitSeedRoles(ModelBuilder mb)
         {
             mb.Entity<OrganisationRole>().HasData(
                 new OrganisationRole
@@ -46,9 +53,13 @@ namespace SeniorLearn.Data.Core
                     Name = "Honorary",
                     NormalizedName = "HONORARY",
                     ConcurrencyStamp = Guid.NewGuid().ToString(),
-                
+
                 }
             );
+        }
+
+        private static void InitSeedMembers(ModelBuilder mb)
+        {
             mb.Entity<Member>().HasData(
                 
                 new Member
@@ -114,7 +125,10 @@ namespace SeniorLearn.Data.Core
                     AccessFailedCount = 0,
                 }
             );
+        }
 
+        private static void InitSeedMemberRoles(ModelBuilder mb)
+        {
             mb.Entity<OrganisationUserRole>().HasData(
                 new OrganisationUserRole
                 {
