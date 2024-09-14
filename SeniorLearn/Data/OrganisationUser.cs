@@ -26,7 +26,7 @@ namespace SeniorLearn.Data
 
     public class Member : OrganisationUser
     {
-        protected Member() { }
+        public Member(){}
         public Member(int organisationId, string username, string firstName, string lastName, string email) :
             base(organisationId, username, firstName, lastName, email)
         {

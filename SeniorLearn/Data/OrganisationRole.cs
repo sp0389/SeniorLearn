@@ -47,9 +47,6 @@ namespace SeniorLearn.Data
     {
         public ICollection<OrganisationUserRole> UserRoles { get; set; } = new List<OrganisationUserRole>();
 
-        public OrganisationRole(string name) : base()
-        {
-            Name = name;
-        }
+        public OrganisationRole() : base(){}
     }
 }

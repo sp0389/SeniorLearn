@@ -5,9 +5,6 @@
         public int Id { get; set; }
         public string Name { get; set; } = default!;
         public ICollection<OrganisationUser> Users { get; set; } = new List<OrganisationUser>();
-        public Organisation(string name)
-        {
-            Name = name;
-        }
+        public Organisation(){}
     }
 }

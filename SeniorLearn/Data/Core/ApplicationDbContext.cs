@@ -15,6 +15,7 @@ namespace SeniorLearn.Data.Core
         {
             base.OnModelCreating(modelBuilder);
             new EntityMapper(modelBuilder);
+            new SeedData(modelBuilder);
         }
     }
 }
