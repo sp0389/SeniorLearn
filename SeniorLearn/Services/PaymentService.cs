@@ -12,7 +12,8 @@ namespace SeniorLearn.Services
         {
             _context = context;
         }
-        public async Task<Payment> CreateNewPaymentAsync(OrganisationUser user, DateTime paymentDate, PaymentType paymentType, decimal paymentAmount)
+
+        public async Task<Payment> CreateNewPaymentAsync(OrganisationUser user, DateTime? paymentDate, PaymentType? paymentType, decimal? paymentAmount)
         {
             var payment = new Payment(user, paymentDate, paymentType, paymentAmount)
             {
@@ -30,7 +31,7 @@ namespace SeniorLearn.Services
 
         public async Task<IEnumerable<Payment>> GetPaymentsAsync(OrganisationUser user)
         {
-            var payments = await _context.Payments.Where(p => p.User == user).ToListAsync();
+            var payments = await _context.Payments.Where(p => p.UserId == user.Id).ToListAsync();
             return payments;
         }
     }

@@ -16,15 +16,8 @@ namespace SeniorLearn.Services
             _userManager = userManager;
         }
 
-        public async Task AssignRoleAsync(string userId, DateTime startDate, RoleTypes? roleType, int duration)
+        public async Task AssignRoleAsync(OrganisationUser user, DateTime startDate, RoleTypes? roleType, int duration)
         {
-            var user = await _userManager.FindByIdAsync(userId);
-
-            if (user == null)
-            {
-                throw new ArgumentException("User does not exist in the database!");
-            }
-
             var userRoles = await _userManager.GetRolesAsync(user);
             var role = await GetUserRoleAsync(roleType);
 
@@ -37,9 +30,7 @@ namespace SeniorLearn.Services
             var userRole = new OrganisationUserRole()
             {
                 RoleId = role.Id,
-                UserId = userId,
-                User = user,
-                Role = role,
+                UserId = user.Id,
             };
 
             switch (roleType)
@@ -64,20 +55,11 @@ namespace SeniorLearn.Services
             return role ?? throw new InvalidOperationException("Role does not exist in the database!");
         }
 
-        public async Task RemoveRoleFromUserAsync(string userId, string role)
+        public async Task<bool> RemoveRoleFromUserAsync(string userId, string role)
         {
             var user = await _userManager.FindByIdAsync(userId);
 
-            if (user != null)
-            {
-                var result = await _userManager.RemoveFromRoleAsync(user, role);
-
-                if (result.Succeeded)
-                {
-                    return;
-                }
-            }
-            throw new InvalidOperationException("Failed to remove role from user!");
+            return (await _userManager.RemoveFromRoleAsync(user!, role)).Succeeded;
         }
     }
 }

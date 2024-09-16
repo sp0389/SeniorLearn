@@ -46,9 +46,9 @@ namespace SeniorLearn.Areas.Administration.Controllers
         {
             return View();
         }
-
+        [ValidateAntiForgeryToken]
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterViewModel u)
+        public async Task<IActionResult> Register([Bind("FirstName, LastName, Email")] Register u)
         {
             if (ModelState.IsValid)
             {
@@ -57,13 +57,14 @@ namespace SeniorLearn.Areas.Administration.Controllers
                 try
                 {
                     await _organisationUserService.RegisterMemberAsync(organisationId, u.FirstName, u.LastName, u.Email);
+                    return RedirectToAction("Index");
                 }
                 catch (DomainRuleException ex)
                 {
                     ModelState.AddModelError("", ex.Message);
                 }
             }
-            return RedirectToAction("Index");
+            return View();
         }
 
         [HttpGet]
@@ -86,7 +87,7 @@ namespace SeniorLearn.Areas.Administration.Controllers
                 Disabled = assignedRoles.Contains(role.ToString()),
             }).ToList();
 
-            var vm = new EditViewModel
+            var vm = new Edit
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
@@ -98,8 +99,9 @@ namespace SeniorLearn.Areas.Administration.Controllers
             return View(vm);
         }
 
+        [ValidateAntiForgeryToken]
         [HttpPost]
-        public async Task<IActionResult> Edit(string id, EditViewModel u)
+        public async Task<IActionResult> Edit([Bind("RemoveRole", "Role")] string id, Edit u)
         {
             if (u.RemoveRole == true && u.Role != null)
             {
@@ -130,15 +132,13 @@ namespace SeniorLearn.Areas.Administration.Controllers
                     user.LastName = u.LastName;
                     user.Email = u.Email;
 
-                    await _organisationUserRoleService.AssignRoleAsync(user.Id, DateTime.UtcNow, u.SelectedRole, u.Duration);
-
+                    await _organisationUserRoleService.AssignRoleAsync(user, DateTime.UtcNow, u.SelectedRole, u.Duration);
                     return RedirectToAction("Edit");
                 }
 
                 catch (DomainRuleException ex)
                 {
                     ModelState.AddModelError("", ex.Message);
-                    return View(u);
                 }
             }
 

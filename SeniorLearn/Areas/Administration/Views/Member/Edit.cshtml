@@ -1,4 +1,4 @@
-﻿@model SeniorLearn.Areas.Administration.Models.Member.EditViewModel
+﻿@model SeniorLearn.Areas.Administration.Models.Member.Edit
 
 @{
     ViewData["Title"] = $"Manage Member";
@@ -7,6 +7,7 @@
 <h2>@ViewData["Title"]</h2>
 
 <form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
     <div asp-validation-summary="All" role="alert" class="text-danger"></div>
     <div class="row mb-3">
         <div class="col-md-6">
@@ -31,7 +32,7 @@
 
     <div class="mb-3">
         <label for="SelectedRole">Assign Role</label>
-        <select asp-for="SelectedRole" asp-items="Model.RoleTypes" id="SelectRole" class="form-select">
+        <select asp-for="SelectedRole" asp-items="Model.RoleTypes" id="SelectedRole" class="form-select">
             <option value="" selected>Please select a role</option>
         </select>
     </div>
@@ -70,6 +71,7 @@
 @foreach (var role in Model.AssignedRoles)
 {
     <form asp-action="Edit" method="post" class="mb-3">
+        @Html.AntiForgeryToken()
         <input type="hidden" asp-for="RemoveRole" value="true" />
         <input type="hidden" asp-for="Role" value="@role" />
 
@@ -80,11 +82,12 @@
 }
 
 <script>
-    const selectElement = document.getElementById("SelectRole");
+    const selectElement = document.getElementById("SelectedRole");
     const durationElement = document.getElementById("duration");
 
     function toggle() {
-        selectElement.value === "Professional" ? durationElement.style.display = "block" :
+
+        selectElement.value === "2" ? durationElement.style.display = "block" :
         durationElement.style.display = "none";
     }
 

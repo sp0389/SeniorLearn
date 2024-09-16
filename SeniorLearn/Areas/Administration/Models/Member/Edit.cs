@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SeniorLearn.Areas.Administration.Models.Member
 {
-    public class EditViewModel : RegisterViewModel
+    public class Edit : Register
     {
         [Required(ErrorMessage = "You must select a Role")]
         public RoleTypes? SelectedRole { get; set; }

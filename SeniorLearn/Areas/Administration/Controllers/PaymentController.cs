@@ -36,11 +36,16 @@ namespace SeniorLearn.Areas.Administration.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            var currentDateTime = new Create()
+            {
+                PaymentDate = DateTime.UtcNow,
+            };
+            return View(currentDateTime);
         }
 
+        [ValidateAntiForgeryToken]
         [HttpPost]
-        public async Task<IActionResult> Create(string id, PaymentViewModel p)
+        public async Task<IActionResult> Create([Bind("PaymentDate, PaymentType, PaymentAmount")]string id, Create p)
         {
             if (ModelState.IsValid)
             {
@@ -54,15 +59,15 @@ namespace SeniorLearn.Areas.Administration.Controllers
                 try
                 {
                     await _paymentService.CreateNewPaymentAsync(user, p.PaymentDate, p.PaymentType, p.PaymentAmount);
+                    return RedirectToAction("Index", new { id });
                 }
 
-                catch (DomainRuleException ex)
+                catch (Exception ex)
                 {
                     ModelState.AddModelError("", ex.Message);
                 }
             }
-
-            return RedirectToAction("Index", new { id });
+            return View(p);
         }
     }
 }

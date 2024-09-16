@@ -2,6 +2,7 @@
 using SeniorLearn.Data.Core;
 using SeniorLearn.Data;
 using Microsoft.EntityFrameworkCore;
+using SeniorLearn.Models;
 
 namespace SeniorLearn.Services
 {
@@ -37,22 +38,49 @@ namespace SeniorLearn.Services
             throw new ApplicationException(result.Errors.First().Description);
         }
 
-        public async Task<IEnumerable<OrganisationUser>> GetUsersAsync()
+        public async Task<IEnumerable<MemberDTO>> GetUsersAsync()
         {
-            var users = await _context.Users.ToListAsync();
+            var users = await _context.Users.Select(u => new MemberDTO
+            {
+                Id = u.Id,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Email = u.Email!,
+                RenewalDate = u.UserRoles.OrderByDescending(ur => ur.EndDate).FirstOrDefault()!.EndDate.ToShortDateString()
+                ?? "No Role Assigned",
+            }).ToListAsync();
+
             return users;
         }
 
-        public async Task<IEnumerable<OrganisationUser>> GetInactiveUsersAsync()
+        public async Task<IEnumerable<MemberDTO>> GetInactiveUsersAsync()
         {
-            var users = await _context.Users.Where(u => u.UserRoles.Count == 0).ToListAsync();
-            return users;
+            var inactiveUsers = await _context.Users.Where(u => u.UserRoles.Count == 0)
+                .Select(u => new MemberDTO
+                {
+                    Id = u.Id,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    Email = u.Email!,
+                    RenewalDate = "No Role Assigned",
+                }).ToListAsync();
+
+            return inactiveUsers;
         }
 
-        public async Task<IEnumerable<OrganisationUser>> GetActiveUsersAsync()
+        public async Task<IEnumerable<MemberDTO>> GetActiveUsersAsync()
         {
-            var users = await _context.Users.Where(u => u.UserRoles.Any(ur => ur.StartDate <= ur.EndDate)).ToListAsync();
-            return users;
+            var activeUsers = await _context.Users.Where(u => u.UserRoles.Any(ur => ur.StartDate <= ur.EndDate))
+                .Select(u => new MemberDTO
+                {
+                    Id = u.Id,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    Email = u.Email!,
+                    RenewalDate = u.UserRoles.OrderByDescending(ur => ur.EndDate).FirstOrDefault()!.EndDate.ToShortDateString(),
+                }).ToListAsync();
+            
+            return activeUsers;
         }
     }
 }

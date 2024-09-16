@@ -1,4 +1,4 @@
-﻿@model IEnumerable<OrganisationUser>
+﻿@model IEnumerable<SeniorLearn.Models.MemberDTO>
 @{
     ViewData["Title"] = "Members";
 }
@@ -6,13 +6,14 @@
 <div class="mb-3">
     <a class="btn btn-primary" asp-action="Register"> Register Member </a>
 </div>
-<table class="table table-bordered table-striped table-hover">
-    <thead>
+<table class="table table-bordered table-striped table-hover text-center">
+    <thead >
         <tr>
             <th scope="col">Member Id</th>
             <th scope="col">First Name</th>
             <th scope="col">Last Name</th>
             <th scope="col">Email</th>
+            <th scope="col">Renewal Date</th>
             <th scope="col">Administration</th>
         </tr>
     </thead>
@@ -24,9 +25,10 @@
                 <td>@Html.DisplayFor(modelItem => m.FirstName)</td>
                 <td>@Html.DisplayFor(modelItem => m.LastName)</td>
                 <td>@Html.DisplayFor(modelItem => m.Email)</td>
+                <td>@Html.DisplayFor(modelItem => m.RenewalDate)</td>
                 <td>
-                    <a title="Manage Member" class="nav-link p-0 d-inline" style="text-decoration:underline" asp-area="Administration" asp-controller="Member" asp-action="Edit" asp-route-id="@m.Id">Manage Member</a> |
-                    <a title="Payment Records" class="nav-link p-0 d-inline" style="text-decoration:underline" asp-area="Administration" asp-controller="Payment" asp-action="Index" asp-route-id="@m.Id">Payment Records </a>
+                    <a title="Manage" class="nav-link p-0 d-inline" style="text-decoration:underline" asp-area="Administration" asp-controller="Member" asp-action="Edit" asp-route-id="@m.Id">Manage</a> |
+                    <a title="Payment" class="nav-link p-0 d-inline" style="text-decoration:underline" asp-area="Administration" asp-controller="Payment" asp-action="Index" asp-route-id="@m.Id">Payment</a>
                 </td>
             </tr>
         }
