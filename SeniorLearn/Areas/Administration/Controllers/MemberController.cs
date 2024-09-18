@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using SeniorLearn.Areas.Administration.Models.Member;
-using SeniorLearn.Data;
 using SeniorLearn.Data.Core;
 using SeniorLearn.Services;
 
@@ -12,14 +9,11 @@ namespace SeniorLearn.Areas.Administration.Controllers
     {
         private readonly OrganisationUserService _organisationUserService;
         private readonly OrganisationUserRoleService _organisationUserRoleService;
-        private readonly UserManager<OrganisationUser> _userManager;
 
         public MemberController(ApplicationDbContext context, ILogger<MemberController> logger,
-            OrganisationUserService organisationUserService, UserManager<OrganisationUser> userManager,
-            OrganisationUserRoleService organisationUserRoleService)
+            OrganisationUserService organisationUserService, OrganisationUserRoleService organisationUserRoleService)
             : base(context, logger)
         {
-            _userManager = userManager;
             _organisationUserService = organisationUserService;
             _organisationUserRoleService = organisationUserRoleService;
         }
@@ -47,6 +41,7 @@ namespace SeniorLearn.Areas.Administration.Controllers
             return View();
         }
 
+        [ValidateAntiForgeryToken]
         [HttpPost]
         public async Task<IActionResult> Register(Register u)
         {
@@ -70,22 +65,15 @@ namespace SeniorLearn.Areas.Administration.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _organisationUserService.GetUserByIdAsync(id);
 
             if (user == null)
             {
                 return NotFound();
             }
 
-            var assignedRoles = await _userManager.GetRolesAsync(user);
-
-            // https://stackoverflow.com/questions/3489453/how-can-i-convert-an-enumeration-into-a-listselectlistitem
-            var roleType = Enum.GetValues(typeof(RoleTypes)).Cast<RoleTypes>().Select(role => new SelectListItem
-            {
-                Text = role.ToString(),
-                Value = ((int)role).ToString(),
-                Disabled = assignedRoles.Contains(role.ToString()),
-            }).ToList();
+            var assignedRoles = await _organisationUserRoleService.GetUserRolesAsync(user);
+            var roleType = _organisationUserRoleService.MapRolesToSelectList(assignedRoles);
 
             var vm = new Edit
             {
@@ -119,7 +107,9 @@ namespace SeniorLearn.Areas.Administration.Controllers
 
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByIdAsync(id);
+                var user = await _organisationUserService.GetUserByIdAsync(id);
+                var assignedRoles = await _organisationUserRoleService.GetUserRolesAsync(user);
+                var roleType = _organisationUserRoleService.MapRolesToSelectList(assignedRoles);
 
                 if (user == null)
                 {
@@ -131,6 +121,8 @@ namespace SeniorLearn.Areas.Administration.Controllers
                     user.FirstName = u.FirstName;
                     user.LastName = u.LastName;
                     user.Email = u.Email;
+                    u.AssignedRoles = assignedRoles;
+                    u.RoleTypes = roleType;
 
                     await _organisationUserRoleService.AssignRoleAsync(user, DateTime.UtcNow.Date, u.SelectedRole, u.Duration, u.RenewalDate);
                     return RedirectToAction("Edit");

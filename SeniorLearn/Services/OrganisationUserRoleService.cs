@@ -2,6 +2,9 @@
 using SeniorLearn.Data.Core;
 using SeniorLearn.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using SeniorLearn.Models;
+using Mapster;
 
 namespace SeniorLearn.Services
 {
@@ -14,6 +17,16 @@ namespace SeniorLearn.Services
         {
             _context = context;
             _userManager = userManager;
+        }
+
+        public IEnumerable<SelectListItem> MapRolesToSelectList(IList<string> assignedRoles)
+        {
+            return Enum.GetValues(typeof(RoleTypes)).Cast<RoleTypes>().Select(role => new SelectListItem
+            {
+                Text = role.ToString(),
+                Value = ((int)role).ToString(),
+                Disabled = assignedRoles.Contains(role.ToString()),
+            }).ToList();
         }
 
         public async Task AssignRoleAsync(OrganisationUser user, DateTime startDate, RoleTypes? roleType, int duration, DateTime? renewalDate)
@@ -63,6 +76,13 @@ namespace SeniorLearn.Services
             var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == roleType.ToString());
 
             return role!;
+        }
+
+        public async Task<IList<string>> GetUserRolesAsync(OrganisationUser user)
+        {
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            return userRoles;
         }
 
         public async Task<bool> RemoveRoleFromUserAsync(string userId, string role)

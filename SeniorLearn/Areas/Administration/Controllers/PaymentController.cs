@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SeniorLearn.Areas.Administration.Models.Payment;
-using SeniorLearn.Data;
 using SeniorLearn.Data.Core;
 using SeniorLearn.Services;
 
@@ -9,20 +7,21 @@ namespace SeniorLearn.Areas.Administration.Controllers
 {
     public class PaymentController : AdministrationController
     {
-        private readonly UserManager<OrganisationUser> _userManager;
+        private readonly OrganisationUserService _organisationUserServce;
         private readonly PaymentService _paymentService;
 
-        public PaymentController(ApplicationDbContext context, ILogger<MemberController> logger, UserManager<OrganisationUser> userManager, PaymentService paymentService)
+        public PaymentController(ApplicationDbContext context, ILogger<MemberController> logger, 
+            OrganisationUserService organisationUserService, PaymentService paymentService)
             : base(context, logger)
         {
-            _userManager = userManager;
+            _organisationUserServce = organisationUserService;
             _paymentService = paymentService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _organisationUserServce.GetUserByIdAsync(id);
 
             if (user == null)
             {
@@ -50,7 +49,7 @@ namespace SeniorLearn.Areas.Administration.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByIdAsync(id);
+                var user = await _organisationUserServce.GetUserByIdAsync(id);
 
                 if (user == null)
                 {

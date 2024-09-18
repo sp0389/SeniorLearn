@@ -40,6 +40,12 @@ namespace SeniorLearn.Services
             throw new ApplicationException(result.Errors.First().Description);
         }
 
+        public async Task<OrganisationUser> GetUserByIdAsync(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            return user!;
+        }
+
         public async Task<IEnumerable<MemberDTO>> GetUsersAsync()
         {
             var users = await _context.Users.Select(u => new MemberDTO
