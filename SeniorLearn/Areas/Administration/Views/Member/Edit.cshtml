@@ -37,7 +37,25 @@
         </select>
     </div>
 
-    <div id="duration">
+    <div id="textBoxStandard">
+        <p class="alert alert-info alert-dismissible fade show" role="alert">
+            Standard role renewal date will be set for one year from the first of next month unless a manual date is specified.
+        </p>
+    </div>
+
+    <div id="textBoxProfessional">
+        <p class="alert alert-info alert-dismissible fade show" role="alert">
+            Professional role renewal can be set for either 3 or 12 months or you can also specify a manual date.
+        </p>
+    </div>
+
+    <div id="textBoxHonorary">
+        <p class="alert alert-info alert-dismissible fade show" role="alert">
+            Honorary members have the role for life unless manually removed.
+        </p>
+    </div>
+
+    <div id="radioSelect">
         <div class="form-check">
             <input asp-for="Duration" type="radio" class="form-check-input" value="3" />
             <label class="form-check-label" for="radio1">
@@ -45,12 +63,23 @@
             </label>
         </div>
 
-        <div class="form-check">
+        <div class="form-check mb-3">
             <input asp-for="Duration" type="radio" class="form-check-input" value="12">
             <label class="form-check-label" for="radio2">
                 12 Months
             </label>
         </div>
+    </div>
+
+    <div id="checkDiv" class="mb-3 form-check">
+        <input class="form-check-input" type="checkbox" id="renewalCheckbox">
+        <label class="form-check-label" for="renewalCheckbox">
+            Manually Set Renewal Date
+        </label>
+    </div>
+
+    <div class="mb-3" id="renewalDate">
+        <input asp-for="RenewalDate" value= null type="date" class="form-control" placeholder="RenewalDate" />
     </div>
 
     <div class="mb-3">
@@ -74,7 +103,6 @@
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="RemoveRole" value="true" />
         <input type="hidden" asp-for="Role" value="@role" />
-
         <div>
             <button type="submit" class="btn btn-success w-100">Remove @role Role</button>
         </div>
@@ -82,15 +110,51 @@
 }
 
 <script>
-    const selectElement = document.getElementById("SelectedRole");
-    const durationElement = document.getElementById("duration");
+    const selectRoleElement = document.getElementById("SelectedRole");
+    const radioSelectElement = document.getElementById("radioSelect");
+    const renewalCheckboxDiv = document.getElementById("checkDiv");
+    const renewalCheckboxElement = document.getElementById("renewalCheckbox");
+    const renewalDateElement = document.getElementById("renewalDate");
+    const textBoxElementStandard = document.getElementById("textBoxStandard");
+    const textBoxElementProfessional = document.getElementById("textBoxProfessional");
+    const textBoxElementHonorary = document.getElementById("textBoxHonorary");
 
-    function toggle() {
+    selectRoleElement.addEventListener("change", toggleAll);
+    renewalCheckboxElement.addEventListener("change", toggleAll);
 
-        selectElement.value === "2" ? durationElement.style.display = "block" :
-        durationElement.style.display = "none";
+    function toggleAll() {
+        toggleText();
+        toggleCheck();
+        toggleRadio();
+        toggleDate();
     }
 
-    toggle();
-    selectElement.addEventListener("change", toggle);
+    function toggleRadio() {
+        if (!renewalCheckboxElement.checked && selectRoleElement.value === "2") {
+            radioSelectElement.style.display = "block";
+        } else {
+            radioSelectElement.style.display = "none";
+        }
+    }
+
+    function toggleDate() {
+        renewalDateElement.style.display = renewalCheckboxElement.checked ? "block" : "none";
+    }
+
+    function toggleCheck() {
+
+        if (selectRoleElement.value === "3" || selectRoleElement.value === "0" || selectRoleElement.value === "") {
+            renewalCheckboxDiv.style.display = "none";
+        } else {
+            renewalCheckboxDiv.style.display = "block";
+        }
+    }
+
+    function toggleText() {
+        textBoxElementStandard.style.display = selectRoleElement.value === "1" ? "block" : "none";
+        textBoxElementProfessional.style.display = selectRoleElement.value === "2" ? "block" : "none";
+        textBoxElementHonorary.style.display = selectRoleElement.value === "3" ? "block" : "none";
+    }
+
+    toggleAll();
 </script>

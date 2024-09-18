@@ -40,12 +40,13 @@ namespace SeniorLearn.Areas.Administration.Controllers
             {
                 PaymentDate = DateTime.UtcNow,
             };
+
             return View(currentDateTime);
         }
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("PaymentDate, PaymentType, PaymentAmount")]string id, Create p)
+        public async Task<IActionResult> Create(string id, Create p)
         {
             if (ModelState.IsValid)
             {

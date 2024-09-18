@@ -46,9 +46,9 @@ namespace SeniorLearn.Areas.Administration.Controllers
         {
             return View();
         }
-        [ValidateAntiForgeryToken]
+
         [HttpPost]
-        public async Task<IActionResult> Register([Bind("FirstName, LastName, Email")] Register u)
+        public async Task<IActionResult> Register(Register u)
         {
             if (ModelState.IsValid)
             {
@@ -101,7 +101,7 @@ namespace SeniorLearn.Areas.Administration.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public async Task<IActionResult> Edit([Bind("RemoveRole", "Role")] string id, Edit u)
+        public async Task<IActionResult> Edit(string id, Edit u)
         {
             if (u.RemoveRole == true && u.Role != null)
             {
@@ -109,7 +109,7 @@ namespace SeniorLearn.Areas.Administration.Controllers
                 {
                     await _organisationUserRoleService.RemoveRoleFromUserAsync(id, u.Role);
                 }
-                catch (DomainRuleException ex)
+                catch (Exception ex)
                 {
                     ModelState.AddModelError("", ex.Message);
                 }
@@ -132,11 +132,11 @@ namespace SeniorLearn.Areas.Administration.Controllers
                     user.LastName = u.LastName;
                     user.Email = u.Email;
 
-                    await _organisationUserRoleService.AssignRoleAsync(user, DateTime.UtcNow, u.SelectedRole, u.Duration);
+                    await _organisationUserRoleService.AssignRoleAsync(user, DateTime.UtcNow.Date, u.SelectedRole, u.Duration, u.RenewalDate);
                     return RedirectToAction("Edit");
                 }
 
-                catch (DomainRuleException ex)
+                catch (Exception ex)
                 {
                     ModelState.AddModelError("", ex.Message);
                 }

@@ -16,15 +16,25 @@ namespace SeniorLearn.Services
             _userManager = userManager;
         }
 
-        public async Task AssignRoleAsync(OrganisationUser user, DateTime startDate, RoleTypes? roleType, int duration)
+        public async Task AssignRoleAsync(OrganisationUser user, DateTime startDate, RoleTypes? roleType, int duration, DateTime? renewalDate)
         {
             var userRoles = await _userManager.GetRolesAsync(user);
             var role = await GetUserRoleAsync(roleType);
 
-            if (roleType!.Value == RoleTypes.Standard && userRoles.Contains("Professional")
-                || roleType!.Value == RoleTypes.Professional && userRoles.Contains("Standard"))
+            if (roleType == RoleTypes.Professional && renewalDate == null && duration == 0)
             {
-                throw new ArgumentException("User cannot be a professional member and a standard member!");
+                throw new ArgumentException("You must select a renewal date!");
+            }    
+
+            if (startDate >= renewalDate)
+            {
+                throw new ArgumentException("Renewal date must come after todays date!");
+            }
+
+            if (roleType == RoleTypes.Standard && userRoles.Contains("Professional")
+                || roleType == RoleTypes.Professional && userRoles.Contains("Standard"))
+            {
+                throw new ArgumentException("Member cannot hold a professional and a standard role at the same time!");
             }
 
             var userRole = new OrganisationUserRole()
@@ -36,10 +46,10 @@ namespace SeniorLearn.Services
             switch (roleType)
             {
                 case RoleTypes.Standard:
-                    userRole.GrantStandardMember(startDate);
+                    userRole.GrantStandardMember(startDate, renewalDate);
                     break;
                 case RoleTypes.Professional:
-                    userRole.GrantProfessionalMember(startDate, duration);
+                    userRole.GrantProfessionalMember(startDate, duration, renewalDate);
                     break;
                 case RoleTypes.Honorary:
                     userRole.GrantHonoraryMember();
@@ -52,7 +62,7 @@ namespace SeniorLearn.Services
         {
             var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == roleType.ToString());
 
-            return role ?? throw new InvalidOperationException("Role does not exist in the database!");
+            return role!;
         }
 
         public async Task<bool> RemoveRoleFromUserAsync(string userId, string role)
