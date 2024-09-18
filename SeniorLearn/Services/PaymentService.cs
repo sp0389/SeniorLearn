@@ -17,11 +17,6 @@ namespace SeniorLearn.Services
 
         public async Task<PaymentDTO> CreateNewPaymentAsync(OrganisationUser user, DateTime paymentDate, PaymentType paymentType, decimal paymentAmount)
         {
-            if (paymentAmount == 0)
-            {
-                throw new ArgumentException("Payment amount must be more than 0!");
-            }
-
             var payment = new Payment(user, paymentDate, paymentType, paymentAmount)
             {
                 UserId = user.Id,

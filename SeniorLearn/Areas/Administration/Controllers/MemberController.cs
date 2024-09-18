@@ -51,10 +51,11 @@ namespace SeniorLearn.Areas.Administration.Controllers
 
                 try
                 {
-                    await _organisationUserService.RegisterMemberAsync(organisationId, u.FirstName, u.LastName, u.Email);
+                    await _organisationUserService.RegisterMemberAsync(organisationId, u.FirstName!, u.LastName!, u.Email!);
                     return RedirectToAction("Index");
                 }
-                catch (DomainRuleException ex)
+
+                catch (Exception ex)
                 {
                     ModelState.AddModelError("", ex.Message);
                 }
@@ -81,7 +82,7 @@ namespace SeniorLearn.Areas.Administration.Controllers
                 LastName = user.LastName,
                 Email = user.Email!,
                 AssignedRoles = assignedRoles,
-                RoleTypes = roleType
+                RoleTypes = roleType,
             };
 
             return View(vm);
@@ -97,10 +98,13 @@ namespace SeniorLearn.Areas.Administration.Controllers
                 {
                     await _organisationUserRoleService.RemoveRoleFromUserAsync(id, u.Role);
                 }
+                
                 catch (Exception ex)
                 {
                     ModelState.AddModelError("", ex.Message);
                 }
+
+                
 
                 return RedirectToAction("Edit");
             }
@@ -118,8 +122,8 @@ namespace SeniorLearn.Areas.Administration.Controllers
 
                 try
                 {
-                    user.FirstName = u.FirstName;
-                    user.LastName = u.LastName;
+                    user.FirstName = u.FirstName!;
+                    user.LastName = u.LastName!;
                     user.Email = u.Email;
                     u.AssignedRoles = assignedRoles;
                     u.RoleTypes = roleType;

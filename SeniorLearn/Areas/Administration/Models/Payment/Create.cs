@@ -8,13 +8,13 @@ namespace SeniorLearn.Areas.Administration.Models.Payment
         [DataType(DataType.DateTime)]
         [Display(Name = "Payment Date")]
         [Required(ErrorMessage = "You must select a date.")]
-        public DateTime PaymentDate { get; set; }
+        public DateTime? PaymentDate { get; set; }
         [Display(Name = "Payment Type")]
         [Required(ErrorMessage = "You must select a payment type.")]
-        public PaymentType PaymentType { get; set; }
+        public PaymentType? PaymentType { get; set; }
         [DataType(DataType.Currency)]
         [Display(Name = "Payment Amount")]
         [Required(ErrorMessage = "You must provide a payment amount.")]
-        public decimal PaymentAmount { get; set; }
+        public decimal? PaymentAmount { get; set; }
     }
 }

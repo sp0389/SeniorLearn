@@ -6,12 +6,12 @@ namespace SeniorLearn.Areas.Administration.Models.Member
     {
         [Display(Name = "First Name")]
         [Required(ErrorMessage = "First Name is Required.")]
-        public string FirstName { get; set; } = default!;
+        public string? FirstName { get; set; } = default!;
         [Display(Name = "Last Name")]
         [Required(ErrorMessage = "Last Name is Required.")]
-        public string LastName { get; set; } = default!;
+        public string? LastName { get; set; } = default!;
         [Display(Name = "Email")]
         [Required(ErrorMessage = "Email is Required.")]
-        public string Email { get; set; } = default!;
+        public string? Email { get; set; } = default!;
     }
 }

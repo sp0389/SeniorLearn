@@ -3,11 +3,11 @@
     ViewData["Title"] = "Add Payment Record";
 }
 
-<h1>@ViewData["Title"]</h1>
+<h1 class="text-center mt-4">@ViewData["Title"]</h1>
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8 col-lg-6">
+        <form asp-action="Create" class="border p-4 shadow-sm rounded-bg-dark">
             @Html.AntiForgeryToken()
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 

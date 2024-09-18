@@ -58,10 +58,10 @@ namespace SeniorLearn.Areas.Administration.Controllers
 
                 try
                 {
-                    await _paymentService.CreateNewPaymentAsync(user, p.PaymentDate, p.PaymentType, p.PaymentAmount);
+                    await _paymentService.CreateNewPaymentAsync(user, p.PaymentDate!.Value, p.PaymentType!.Value, p.PaymentAmount!.Value);
                     return RedirectToAction("Index", new { id });
                 }
-
+                
                 catch (Exception ex)
                 {
                     ModelState.AddModelError("", ex.Message);
