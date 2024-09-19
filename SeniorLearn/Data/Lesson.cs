@@ -1,31 +1,32 @@
 ﻿using SeniorLearn.Models.Enum;
 
 namespace SeniorLearn.Data
-
-//Purpose: Represents a lesson entity, which can be standalone or part of a course.
-//Includes properties like Title, Description, StartDate, EndDate, and Duration.
-
 {
+    // Purpose: Represents a lesson entity, which can be standalone or part of a course.
+    // Includes properties like Title, Description, StartDate, EndDate, and Duration.
     public class Lesson
     {
-        public int Id { get; private set; }
-        public string Title { get; private set; } = default!;
-        public string Description { get; private set; } = default!;
-        public Member Member { get; private set; } = default!;
-        public string MemberId { get; private set; } = default!;
+        public int Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public Member Member { get; set; } = default!;
+        public string MemberId { get; set; } = string.Empty;
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public string Address { get; private set; } = default!;
+        public string Address { get; set; } = string.Empty;
         public int Duration { get; set; }
         public DeliveryType Type { get; set; }
         public Availability Availability { get; set; } = Availability.Draft;
 
         // Flag to indicate if the lesson is standalone or part of a course
         public bool IsStandalone { get; set; }
+
+        // Course relationship properties
         public int? CourseId { get; set; }  // Nullable if not part of a course
         public Course? Course { get; set; }
 
-        public ICollection<LessonEnrolment> LessonEnrolments { get; private set; } = new List<LessonEnrolment>();
+        // Collection of lesson enrollments
+        public ICollection<LessonEnrolment> LessonEnrolments { get; set; } = new List<LessonEnrolment>();
 
         // Default parameterless constructor for Entity Framework
         protected Lesson() { }

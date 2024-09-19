@@ -1,0 +1,36 @@
+﻿@model IEnumerable<SeniorLearn.Data.Lesson>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Lesson Calendar";
+}
+
+<h1>Lesson Calendar</h1>
+
+<div id="calendar"></div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: [
+                    @foreach (var lesson in Model)
+                    {
+                        <text>
+                            {
+                                title: '@lesson.Title',
+                                start: '@lesson.StartDate.ToString("yyyy-MM-ddTHH:mm:ss")',
+                                end: '@lesson.EndDate.ToString("yyyy-MM-ddTHH:mm:ss")'
+                            }@(Model.Last() != lesson ? "," : "")
+                        </text>
+                    }
+                ]
+            });
+
+            calendar.render();
+        });
+    </script>
+}

@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace SeniorLearn.Migrations
 {
     /// <inheritdoc />
@@ -187,15 +185,40 @@ namespace SeniorLearn.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Courses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MemberId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Availability = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Courses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Courses_AspNetUsers_MemberId",
+                        column: x => x.MemberId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Payments",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PaymentType = table.Column<int>(type: "int", nullable: false),
-                    PaymentAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PaymentType = table.Column<int>(type: "int", nullable: true),
+                    PaymentAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -208,40 +231,66 @@ namespace SeniorLearn.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.InsertData(
-                table: "AspNetRoles",
-                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[,]
+            migrationBuilder.CreateTable(
+                name: "Lessons",
+                columns: table => new
                 {
-                    { "09adf476-7af7-4bd7-89e5-d173778b3ec9", "db22b842-f9a6-48af-b7f7-96ea6ca2e83b", "Administrator", "ADMINISTRATOR" },
-                    { "1455a748-82ad-4e31-bb41-7c72cfc0fbfa", "a567dbf0-7078-46b2-b3eb-fadcbfad5758", "Standard", "STANDARD" },
-                    { "2199dac7-bac1-49f0-8820-07b34f79533b", "08781fff-5064-4080-89b8-4f4f78643e4a", "Honorary", "HONORARY" },
-                    { "de1e5fe5-585b-4867-aae8-57776d64f330", "e1472283-11e5-421d-abc1-655092558b81", "Professional", "PROFESSIONAL" }
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MemberId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Duration = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Availability = table.Column<int>(type: "int", nullable: false),
+                    IsStandalone = table.Column<bool>(type: "bit", nullable: false),
+                    CourseId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Lessons", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Lessons_AspNetUsers_MemberId",
+                        column: x => x.MemberId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Lessons_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.InsertData(
-                table: "Organisations",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 1, "SeniorLearn" });
-
-            migrationBuilder.InsertData(
-                table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Discriminator", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "OrganisationId", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "Registered", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[,]
+            migrationBuilder.CreateTable(
+                name: "LessonEnrolment",
+                columns: table => new
                 {
-                    { "7610170e-d0e7-43b9-a289-02d13056d54e", 0, "b2686cbb-099f-4c58-91a4-8fcb9c048d35", "Member", "j.bloggs@seniorlearn.com.au", true, "Joe", "Bloggs", false, null, null, "J.BLOGGS@SENIORLEARN.COM.AU", 1, "AQAAAAIAAYagAAAAENaAF8X3fgawsa7CT8EKV1Bm+PGcrq9PhRBL+ee6Rb8lCZVRf/6it+zEesnSHS6q1w==", null, false, new DateTime(2024, 9, 16, 0, 42, 36, 556, DateTimeKind.Utc).AddTicks(4744), "LZOWMFVS2SAJIT7PFI3CPG4WQDCHQS5R", false, "j.bloggs@seniorlearn.com.au" },
-                    { "c6e5a515-b561-458a-85e6-ab9e7eed58f4", 0, "36bea754-e167-42af-83ed-bd78392859f3", "Member", "m.member@seniorlearn.com.au", true, "Mary", "Member", false, null, null, "M.MEMBER@SENIORLEARN.COM.AU", 1, "AQAAAAIAAYagAAAAEGuoaNhuyNZDd/SdkB7dMyKO61l9hBzj4h26Bm6gmQpnrpwe+vNFNyBLSPj0JGM13Q==", null, false, new DateTime(2024, 9, 16, 0, 42, 36, 556, DateTimeKind.Utc).AddTicks(4739), "ISWZYSPA6TIRY35DE4KKKESEPQZKL6VG", false, "m.member@seniorlearn.com.au" },
-                    { "ca32e0e5-46b8-4f44-9a97-0d685a2c54b2", 0, "3e098325-ba04-4578-8bd8-231bbf8dde66", "Member", "a.admin@seniorlearn.com.au", true, "Adam", "Admin", false, null, null, "A.ADMIN@SENIORLEARN.COM.AU", 1, "AQAAAAIAAYagAAAAEHsSevUsbVfCvzTrAPeOAJGAdLJXoClxNuG4OJyPozgYXexeGOqLXgnIxAZgTQTbfA==", null, false, new DateTime(2024, 9, 16, 0, 42, 36, 556, DateTimeKind.Utc).AddTicks(4699), "M67EBX32EPBJDLSU75U3EA5SFKIR7MDP", false, "a.admin@seniorlearn.com.au" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "AspNetUserRoles",
-                columns: new[] { "RoleId", "UserId", "Discriminator", "EndDate", "RoleType", "StartDate" },
-                values: new object[,]
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LessonId = table.Column<int>(type: "int", nullable: false),
+                    MemberId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    EnrolmentDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
                 {
-                    { "de1e5fe5-585b-4867-aae8-57776d64f330", "7610170e-d0e7-43b9-a289-02d13056d54e", "OrganisationUserRole", new DateTime(2025, 9, 16, 0, 42, 36, 556, DateTimeKind.Utc).AddTicks(4778), 2, new DateTime(2024, 9, 16, 0, 42, 36, 556, DateTimeKind.Utc).AddTicks(4778) },
-                    { "1455a748-82ad-4e31-bb41-7c72cfc0fbfa", "c6e5a515-b561-458a-85e6-ab9e7eed58f4", "OrganisationUserRole", new DateTime(2025, 9, 16, 0, 42, 36, 556, DateTimeKind.Utc).AddTicks(4771), 1, new DateTime(2024, 9, 16, 0, 42, 36, 556, DateTimeKind.Utc).AddTicks(4770) },
-                    { "09adf476-7af7-4bd7-89e5-d173778b3ec9", "ca32e0e5-46b8-4f44-9a97-0d685a2c54b2", "OrganisationUserRole", new DateTime(9999, 12, 31, 23, 59, 59, 999, DateTimeKind.Unspecified).AddTicks(9999), 0, new DateTime(2024, 9, 16, 0, 42, 36, 556, DateTimeKind.Utc).AddTicks(4768) }
+                    table.PrimaryKey("PK_LessonEnrolment", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LessonEnrolment_AspNetUsers_MemberId",
+                        column: x => x.MemberId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LessonEnrolment_Lessons_LessonId",
+                        column: x => x.LessonId,
+                        principalTable: "Lessons",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -289,6 +338,31 @@ namespace SeniorLearn.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Courses_MemberId",
+                table: "Courses",
+                column: "MemberId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LessonEnrolment_LessonId",
+                table: "LessonEnrolment",
+                column: "LessonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LessonEnrolment_MemberId",
+                table: "LessonEnrolment",
+                column: "MemberId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Lessons_CourseId",
+                table: "Lessons",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Lessons_MemberId",
+                table: "Lessons",
+                column: "MemberId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Payments_UserId",
                 table: "Payments",
                 column: "UserId");
@@ -313,10 +387,19 @@ namespace SeniorLearn.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "LessonEnrolment");
+
+            migrationBuilder.DropTable(
                 name: "Payments");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Lessons");
+
+            migrationBuilder.DropTable(
+                name: "Courses");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

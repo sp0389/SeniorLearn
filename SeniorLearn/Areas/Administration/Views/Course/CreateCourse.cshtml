@@ -1,0 +1,65 @@
+﻿@model SeniorLearn.Areas.Administration.Models.Course.CreateCourse
+
+<form asp-action="CreateCourse" method="post">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="CourseName" class="control-label">Course Name</label>
+        <input asp-for="CourseName" class="form-control" />
+        <span asp-validation-for="CourseName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description" class="control-label">Description</label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="StartDate" class="control-label">Start Date</label>
+        <input asp-for="StartDate" id="courseStartDatePicker" class="form-control" />
+        <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="EndDate" class="control-label">End Date</label>
+        <input asp-for="EndDate" id="courseEndDatePicker" class="form-control" />
+        <span asp-validation-for="EndDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="SelectedUserId" class="control-label">User</label> <!-- Updated label -->
+        <select asp-for="SelectedUserId" asp-items="Model.Users" class="form-control"></select> <!-- Updated property name -->
+        <span asp-validation-for="SelectedUserId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create Course</button>
+
+    @if (ViewBag.CourseCreatedMessage != null)
+    {
+        <p class="text-success">@ViewBag.CourseCreatedMessage</p>
+    }
+</form>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            flatpickr("#courseStartDatePicker", {
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+                altInput: true,
+                altFormat: "d/m/Y H:i",
+                time_24hr: true
+                    });
+
+            flatpickr("#courseEndDatePicker", {
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+                altInput: true,
+                altFormat: "d/m/Y H:i",
+                time_24hr: true
+            });
+        });
+    </script>
+}

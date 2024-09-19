@@ -7,6 +7,8 @@ namespace SeniorLearn.Data.Core
     {
         public DbSet<Organisation> Organisations { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<Lesson> Lessons { get; set; }
+        public DbSet<Course> Courses { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {

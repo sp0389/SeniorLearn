@@ -1,0 +1,172 @@
+﻿@model SeniorLearn.Areas.Administration.Models.Lesson.CreateLesson
+@using SeniorLearn.Data
+@using SeniorLearn.Areas.Administration.Models.Course;
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Create Lesson";
+}
+
+<h1>
+    Create Lesson
+    <button id="toggleButton" class="btn btn-secondary ml-3">Switch to Course</button>
+</h1>
+
+<div id="lessonForm">
+    <form asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+        <div class="form-group">
+            <label asp-for="LessonName" class="control-label">Lesson Name</label>
+            <input asp-for="LessonName" class="form-control" />
+            <span asp-validation-for="LessonName" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Description" class="control-label">Description</label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Duration" class="control-label">Duration</label>
+            <select asp-for="Duration" asp-items="Model.DurationOptions" class="form-control"></select>
+            <span asp-validation-for="Duration" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Capacity" class="control-label">Capacity</label>
+            <input asp-for="Capacity" class="form-control" />
+            <span asp-validation-for="Capacity" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="StartDate" class="control-label">Start Date</label>
+            <input asp-for="StartDate" id="startDatePicker" class="form-control" placeholder="Select date and time" />
+            <span asp-validation-for="StartDate" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="DeliveryMode" class="control-label">Delivery Mode</label>
+            <select asp-for="DeliveryMode" asp-items="Model.DeliveryModes" class="form-control"></select>
+            <span asp-validation-for="DeliveryMode" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Location" class="control-label">Location</label>
+            <input asp-for="Location" class="form-control" />
+            <span asp-validation-for="Location" class="text-danger"></span>
+        </div>
+
+        <!-- Recurring Checkbox -->
+        <div class="form-group">
+            <input asp-for="IsRecurring" type="checkbox" id="isRecurringCheckbox" class="form-check-input larger-checkbox" />
+            <label asp-for="IsRecurring" class="control-label">Lesson is Recurring</label>
+        </div>
+
+        <!-- Frequency Dropdown (Initially Hidden) -->
+        <div class="form-group" id="frequency-selection" style="display: none;">
+            <label asp-for="Frequency" class="control-label">Frequency</label>
+            <select asp-for="Frequency" asp-items="Model.FrequencyOptions" class="form-control"></select>
+            <span asp-validation-for="Frequency" class="text-danger"></span>
+        </div>
+
+        <!-- Occurrences Input (Initially Hidden) -->
+        <div class="form-group" id="occurrences-selection" style="display: none;">
+            <label asp-for="Occurrences" class="control-label">Number of Occurrences</label>
+            <input asp-for="Occurrences" class="form-control" />
+            <span asp-validation-for="Occurrences" class="text-danger"></span>
+        </div>
+
+        <!-- Course Checkbox -->
+        <div class="form-group">
+            <input asp-for="IsCourse" type="checkbox" id="isCourseCheckbox" class="form-check-input larger-checkbox" />
+            <label asp-for="IsCourse" class="control-label">Lesson is part of a Course</label>
+        </div>
+
+        <!-- Course Dropdown (Initially Hidden) -->
+        <div class="form-group" id="course-selection" style="display: none;">
+            <label asp-for="SelectedCourseId" class="control-label">Course</label>
+            <select asp-for="SelectedCourseId" asp-items="Model.Courses" class="form-control">
+                <option value="">None</option>
+            </select>
+            <span asp-validation-for="SelectedCourseId" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Status" class="control-label">Status</label>
+            <select asp-for="Status" asp-items="Model.StatusOptions" class="form-control"></select>
+            <span asp-validation-for="Status" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Create Lesson</button>
+    </form>
+</div>
+
+<div id="courseForm" style="display: none;">
+    @await Html.PartialAsync("~/Areas/Administration/Views/Course/CreateCourse.cshtml", (CreateCourse)ViewBag.CreateCourseModel)
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var toggleButton = document.getElementById('toggleButton');
+            var lessonForm = document.getElementById('lessonForm');
+            var courseForm = document.getElementById('courseForm');
+
+            toggleButton.addEventListener('click', function () {
+                if (lessonForm.style.display === 'none') {
+                    lessonForm.style.display = 'block';
+                    courseForm.style.display = 'none';
+                    toggleButton.innerText = 'Switch to Course';
+                } else {
+                    lessonForm.style.display = 'none';
+                    courseForm.style.display = 'block';
+                    toggleButton.innerText = 'Switch to Lesson';
+                }
+            });
+
+            // Initialize flatpickr for lesson start date
+            flatpickr("#startDatePicker", {
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+                altInput: true,
+                altFormat: "d/m/Y H:i",
+                time_24hr: true,
+                defaultDate: new Date()
+            });
+
+            var isRecurringCheckbox = document.getElementById('isRecurringCheckbox');
+            var frequencySelection = document.getElementById('frequency-selection');
+            var occurrencesSelection = document.getElementById('occurrences-selection');
+            var isCourseCheckbox = document.getElementById('isCourseCheckbox');
+            var courseSelection = document.getElementById('course-selection');
+
+            // Toggle visibility for frequency dropdown and occurrences input based on IsRecurring checkbox
+            isRecurringCheckbox.addEventListener('change', function () {
+                var display = this.checked ? 'block' : 'none';
+                frequencySelection.style.display = display;
+                occurrencesSelection.style.display = display;
+            });
+
+            // Toggle visibility for course dropdown based on IsCourse checkbox
+            isCourseCheckbox.addEventListener('change', function () {
+                courseSelection.style.display = this.checked ? 'block' : 'none';
+            });
+
+            // Initial check for page load
+            frequencySelection.style.display = isRecurringCheckbox.checked ? 'block' : 'none';
+            occurrencesSelection.style.display = isRecurringCheckbox.checked ? 'block' : 'none';
+            courseSelection.style.display = isCourseCheckbox.checked ? 'block' : 'none';
+        });
+    </script>
+    <style>
+        /* CSS to make checkboxes larger */
+        .larger-checkbox {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+}
