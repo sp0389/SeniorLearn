@@ -3,8 +3,6 @@ using SeniorLearn.Data.Core;
 using SeniorLearn.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using SeniorLearn.Models;
-using Mapster;
 
 namespace SeniorLearn.Services
 {
@@ -36,18 +34,23 @@ namespace SeniorLearn.Services
 
             if (roleType == RoleTypes.Professional && renewalDate == null && duration == 0)
             {
-                throw new ArgumentException("You must select a renewal date!");
+                throw new DomainRuleException("You must select a renewal date.");
             }    
 
             if (startDate >= renewalDate)
             {
-                throw new ArgumentException("Renewal date must come after todays date!");
+                throw new DomainRuleException("Renewal date must come after todays date.");
             }
 
             if (roleType == RoleTypes.Standard && userRoles.Contains("Professional")
                 || roleType == RoleTypes.Professional && userRoles.Contains("Standard"))
             {
-                throw new ArgumentException("Member cannot hold a professional and a standard role at the same time!");
+                throw new DomainRuleException("Member cannot hold a professional and a standard role at the same time.");
+            }
+
+            if (roleType == null)
+            {
+                throw new DomainRuleException("You must select a role.");
             }
 
             var userRole = new OrganisationUserRole()

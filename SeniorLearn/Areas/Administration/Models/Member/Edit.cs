@@ -6,7 +6,6 @@ namespace SeniorLearn.Areas.Administration.Models.Member
 {
     public class Edit : Register
     {
-        [Required(ErrorMessage = "You must select a Role")]
         public RoleTypes? SelectedRole { get; set; }
         public int Duration { get; set; }
         public DateTime? RenewalDate { get; set; } = DateTime.UtcNow;

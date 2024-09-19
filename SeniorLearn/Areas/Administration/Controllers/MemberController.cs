@@ -99,12 +99,15 @@ namespace SeniorLearn.Areas.Administration.Controllers
                     await _organisationUserRoleService.RemoveRoleFromUserAsync(id, u.Role);
                 }
                 
+                catch (DomainRuleException ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
+                
                 catch (Exception ex)
                 {
                     ModelState.AddModelError("", ex.Message);
                 }
-
-                
 
                 return RedirectToAction("Edit");
             }
@@ -130,6 +133,11 @@ namespace SeniorLearn.Areas.Administration.Controllers
 
                     await _organisationUserRoleService.AssignRoleAsync(user, DateTime.UtcNow.Date, u.SelectedRole, u.Duration, u.RenewalDate);
                     return RedirectToAction("Edit");
+                }
+
+                catch (DomainRuleException ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
                 }
 
                 catch (Exception ex)
