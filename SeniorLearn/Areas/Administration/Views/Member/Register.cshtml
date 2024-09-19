@@ -1,32 +1,32 @@
 ﻿@model SeniorLearn.Areas.Administration.Models.Member.Register
 @{
-    ViewData["Title"] = "Register Member";
+    ViewData["Title"] = "Register New Member";
 }
 
-<h1>@ViewData["Title"]</h1>
+<h1 class="text-center m-5">@ViewData["Title"]</h1>
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Register">
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8 col-lg-6">
+        <form asp-action="Register" class="border p-4 shadow-sm rounded-bg-dark">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="form-group">
-                <label asp-for="FirstName" class="control-label">First Name</label>
-                <input asp-for="FirstName" placeholder="e.g. John" class="form-control" />
-                <span asp-validation-for="FirstName" class="text-danger"></span>
+            <div class="form-floating mb-3">
+                <input asp-for="FirstName" class="form-control" aria-required="true" placeholder="e.g John" />
+                <label asp-for="FirstName" class="form-label">First Name</label>
+                <span asp-validation-for="FirstName" class="text-danger mb-3"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="LastName" class="control-label">Last Name</label>
-                <input asp-for="LastName" placeholder="e.g. Smith" class="form-control" />
-                <span asp-validation-for="LastName" class="text-danger"></span>
+             <div class="form-floating mb-3">
+                <input asp-for="LastName" class="form-control" aria-required="true" placeholder="e.g Smith" />
+                <label asp-for="LastName" class="form-label">Last Name</label>
+                <span asp-validation-for="LastName" class="text-danger mb-3"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label">Email</label>
-                <input asp-for="Email" placeholder="e.g. j.smith@seniorlearn.com.au" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+            <div class="form-floating mb-3">
+                <input asp-for="Email" class="form-control" aria-required="true" placeholder="e.g j.smith@seniorlearn.com.au" />
+                <label asp-for="Email" class="form-label">Email</label>
+                <span asp-validation-for="Email" class="text-danger mb-3"></span>
             </div>
             <div class="form-group mt-3">
-                <input type="submit" value="Register" class="btn btn-primary w-100" />
+                <input type="submit" value="Register" class="w-100 btn btn-lg btn-primary w-100" />
             </div>
         </form>
     </div>

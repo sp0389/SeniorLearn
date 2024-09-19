@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using SeniorLearn.Areas.Administration.Models.Member;
-using SeniorLearn.Data;
 using SeniorLearn.Data.Core;
 using SeniorLearn.Services;
 
@@ -12,14 +9,11 @@ namespace SeniorLearn.Areas.Administration.Controllers
     {
         private readonly OrganisationUserService _organisationUserService;
         private readonly OrganisationUserRoleService _organisationUserRoleService;
-        private readonly UserManager<OrganisationUser> _userManager;
 
         public MemberController(ApplicationDbContext context, ILogger<MemberController> logger,
-            OrganisationUserService organisationUserService, UserManager<OrganisationUser> userManager,
-            OrganisationUserRoleService organisationUserRoleService)
+            OrganisationUserService organisationUserService, OrganisationUserRoleService organisationUserRoleService)
             : base(context, logger)
         {
-            _userManager = userManager;
             _organisationUserService = organisationUserService;
             _organisationUserRoleService = organisationUserRoleService;
         }
@@ -46,9 +40,10 @@ namespace SeniorLearn.Areas.Administration.Controllers
         {
             return View();
         }
+
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public async Task<IActionResult> Register([Bind("FirstName, LastName, Email")] Register u)
+        public async Task<IActionResult> Register(Register u)
         {
             if (ModelState.IsValid)
             {
@@ -56,10 +51,11 @@ namespace SeniorLearn.Areas.Administration.Controllers
 
                 try
                 {
-                    await _organisationUserService.RegisterMemberAsync(organisationId, u.FirstName, u.LastName, u.Email);
+                    await _organisationUserService.RegisterMemberAsync(organisationId, u.FirstName!, u.LastName!, u.Email!);
                     return RedirectToAction("Index");
                 }
-                catch (DomainRuleException ex)
+
+                catch (Exception ex)
                 {
                     ModelState.AddModelError("", ex.Message);
                 }
@@ -70,22 +66,15 @@ namespace SeniorLearn.Areas.Administration.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _organisationUserService.GetUserByIdAsync(id);
 
             if (user == null)
             {
                 return NotFound();
             }
 
-            var assignedRoles = await _userManager.GetRolesAsync(user);
-
-            // https://stackoverflow.com/questions/3489453/how-can-i-convert-an-enumeration-into-a-listselectlistitem
-            var roleType = Enum.GetValues(typeof(RoleTypes)).Cast<RoleTypes>().Select(role => new SelectListItem
-            {
-                Text = role.ToString(),
-                Value = ((int)role).ToString(),
-                Disabled = assignedRoles.Contains(role.ToString()),
-            }).ToList();
+            var assignedRoles = await _organisationUserRoleService.GetUserRolesAsync(user);
+            var roleType = _organisationUserRoleService.MapRolesToSelectList(assignedRoles);
 
             var vm = new Edit
             {
@@ -93,7 +82,7 @@ namespace SeniorLearn.Areas.Administration.Controllers
                 LastName = user.LastName,
                 Email = user.Email!,
                 AssignedRoles = assignedRoles,
-                RoleTypes = roleType
+                RoleTypes = roleType,
             };
 
             return View(vm);
@@ -101,7 +90,7 @@ namespace SeniorLearn.Areas.Administration.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public async Task<IActionResult> Edit([Bind("RemoveRole", "Role")] string id, Edit u)
+        public async Task<IActionResult> Edit(string id, Edit u)
         {
             if (u.RemoveRole == true && u.Role != null)
             {
@@ -109,7 +98,13 @@ namespace SeniorLearn.Areas.Administration.Controllers
                 {
                     await _organisationUserRoleService.RemoveRoleFromUserAsync(id, u.Role);
                 }
+                
                 catch (DomainRuleException ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
+                
+                catch (Exception ex)
                 {
                     ModelState.AddModelError("", ex.Message);
                 }
@@ -119,7 +114,9 @@ namespace SeniorLearn.Areas.Administration.Controllers
 
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByIdAsync(id);
+                var user = await _organisationUserService.GetUserByIdAsync(id);
+                var assignedRoles = await _organisationUserRoleService.GetUserRolesAsync(user);
+                var roleType = _organisationUserRoleService.MapRolesToSelectList(assignedRoles);
 
                 if (user == null)
                 {
@@ -128,15 +125,22 @@ namespace SeniorLearn.Areas.Administration.Controllers
 
                 try
                 {
-                    user.FirstName = u.FirstName;
-                    user.LastName = u.LastName;
+                    user.FirstName = u.FirstName!;
+                    user.LastName = u.LastName!;
                     user.Email = u.Email;
+                    u.AssignedRoles = assignedRoles;
+                    u.RoleTypes = roleType;
 
-                    await _organisationUserRoleService.AssignRoleAsync(user, DateTime.UtcNow, u.SelectedRole, u.Duration);
+                    await _organisationUserRoleService.AssignRoleAsync(user, DateTime.UtcNow.Date, u.SelectedRole, u.Duration, u.RenewalDate);
                     return RedirectToAction("Edit");
                 }
 
                 catch (DomainRuleException ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
+
+                catch (Exception ex)
                 {
                     ModelState.AddModelError("", ex.Message);
                 }

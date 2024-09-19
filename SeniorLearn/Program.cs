@@ -37,11 +37,12 @@ public class Program
                 policy.RequireRole("ActiveRole"));
         });
 
-        builder.Services.AddScoped<OrganisationUserService>();
-        builder.Services.AddScoped<OrganisationUserRoleService>();
-        builder.Services.AddScoped<PaymentService>();
-        builder.Services.AddControllersWithViews();
 
+        builder.Services.AddMapster();
+        builder.Services.AddLibraryServices();
+        builder.Services.AddControllersWithViews()
+            .AddViewOptions(o => o.HtmlHelperOptions.ClientValidationEnabled = true);
+        
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.

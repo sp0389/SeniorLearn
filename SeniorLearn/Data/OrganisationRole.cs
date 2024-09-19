@@ -18,19 +18,37 @@ namespace SeniorLearn.Data
         public DateTime EndDate { get; set; }
         public RoleTypes RoleType { get; set; }
 
-        public OrganisationUserRole GrantProfessionalMember(DateTime startDate, int duration)
+        public OrganisationUserRole GrantProfessionalMember(DateTime startDate, int duration, DateTime? renewalDate)
         {
-            StartDate = new DateTime(startDate.Year, startDate.Month, 1).AddMonths(1);
-            EndDate = duration == 3 ? StartDate.AddMonths(3) : StartDate.AddYears(1);
-            RoleType = RoleTypes.Professional;
+            if (renewalDate != null)
+            {
+                StartDate = new DateTime(startDate.Year, startDate.Month, 1).AddMonths(1);
+                EndDate = (DateTime)renewalDate;
+                RoleType = RoleTypes.Professional;
+            }
+            else
+            {
+                StartDate = new DateTime(startDate.Year, startDate.Month, 1).AddMonths(1);
+                EndDate = duration == 3 ? StartDate.AddMonths(3) : StartDate.AddYears(1);
+                RoleType = RoleTypes.Professional;
+            }
             return this;
         }
 
-        public OrganisationUserRole GrantStandardMember(DateTime startDate)
+        public OrganisationUserRole GrantStandardMember(DateTime startDate, DateTime? renewalDate)
         {
-            StartDate = new DateTime(startDate.Year, startDate.Month, 1).AddMonths(1);
-            EndDate = StartDate.AddYears(1);
-            RoleType = RoleTypes.Standard;
+            if (renewalDate != null)
+            {
+                StartDate = new DateTime(startDate.Year, startDate.Month, 1).AddMonths(1);
+                EndDate = (DateTime)renewalDate;
+                RoleType = RoleTypes.Standard;
+            }
+            else
+            {
+                StartDate = new DateTime(startDate.Year, startDate.Month, 1).AddMonths(1);
+                EndDate = StartDate.AddYears(1);
+                RoleType = RoleTypes.Standard;
+            }
             return this;
         }
 
@@ -47,6 +65,6 @@ namespace SeniorLearn.Data
     {
         public ICollection<OrganisationUserRole> UserRoles { get; set; } = new List<OrganisationUserRole>();
 
-        public OrganisationRole() : base(){}
+        public OrganisationRole() : base() { }
     }
 }

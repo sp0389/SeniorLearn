@@ -3,6 +3,7 @@ using SeniorLearn.Data.Core;
 using SeniorLearn.Data;
 using Microsoft.EntityFrameworkCore;
 using SeniorLearn.Models;
+using Mapster;
 
 namespace SeniorLearn.Services
 {
@@ -17,7 +18,7 @@ namespace SeniorLearn.Services
             _userManager = userManager;
         }
 
-        public async Task<Member> RegisterMemberAsync(int organisationId, string firstName, string lastName, string email, string password = "1")
+        public async Task<MemberDTO> RegisterMemberAsync(int organisationId, string firstName, string lastName, string email, string password = "1")
         {
             var member = new Member(organisationId, firstName, lastName, email, password)
             {
@@ -26,16 +27,23 @@ namespace SeniorLearn.Services
                 LastName = lastName,
                 Email = email,
                 UserName = email,
-                Registered = DateTime.UtcNow
+                Registered = DateTime.UtcNow,
             };
 
             var result = await _userManager.CreateAsync(member, password);
 
             if (result.Succeeded)
             {
-                return member;
+                return member.Adapt<MemberDTO>();
             }
+
             throw new ApplicationException(result.Errors.First().Description);
+        }
+
+        public async Task<OrganisationUser> GetUserByIdAsync(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            return user!;
         }
 
         public async Task<IEnumerable<MemberDTO>> GetUsersAsync()
@@ -79,7 +87,7 @@ namespace SeniorLearn.Services
                     Email = u.Email!,
                     RenewalDate = u.UserRoles.OrderByDescending(ur => ur.EndDate).FirstOrDefault()!.EndDate.ToShortDateString(),
                 }).ToListAsync();
-            
+
             return activeUsers;
         }
     }
