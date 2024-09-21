@@ -43,15 +43,13 @@ namespace SeniorLearn.Areas.Administration.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public async Task<IActionResult> Register(Register u)
+        public async Task<IActionResult> Register(Register m)
         {
             if (ModelState.IsValid)
             {
-                var organisationId = 1;
-
                 try
                 {
-                    await _organisationUserService.RegisterMemberAsync(organisationId, u.FirstName!, u.LastName!, u.Email!);
+                    await _organisationUserService.RegisterMemberAsync(OrganisationId, m.FirstName!, m.LastName!, m.Email!);
                     return RedirectToAction("Index");
                 }
 
@@ -90,13 +88,13 @@ namespace SeniorLearn.Areas.Administration.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public async Task<IActionResult> Edit(string id, Edit u)
+        public async Task<IActionResult> Edit(string id, Edit m)
         {
-            if (u.RemoveRole == true && u.Role != null)
+            if (m.RemoveRole == true && m.Role != null)
             {
                 try
                 {
-                    await _organisationUserRoleService.RemoveRoleFromUserAsync(id, u.Role);
+                    await _organisationUserRoleService.RemoveRoleFromUserAsync(id, m.Role);
                 }
                 
                 catch (DomainRuleException ex)
@@ -125,13 +123,13 @@ namespace SeniorLearn.Areas.Administration.Controllers
 
                 try
                 {
-                    user.FirstName = u.FirstName!;
-                    user.LastName = u.LastName!;
-                    user.Email = u.Email;
-                    u.AssignedRoles = assignedRoles;
-                    u.RoleTypes = roleType;
+                    user.FirstName = m.FirstName!;
+                    user.LastName = m.LastName!;
+                    user.Email = m.Email;
+                    m.AssignedRoles = assignedRoles;
+                    m.RoleTypes = roleType;
 
-                    await _organisationUserRoleService.AssignRoleAsync(user, DateTime.UtcNow.Date, u.SelectedRole, u.Duration, u.RenewalDate);
+                    await _organisationUserRoleService.AssignRoleAsync(user, DateTime.UtcNow.Date, m.SelectedRole, m.Duration, m.RenewalDate);
                     return RedirectToAction("Edit");
                 }
 
@@ -146,7 +144,7 @@ namespace SeniorLearn.Areas.Administration.Controllers
                 }
             }
 
-            return View(u);
+            return View(m);
         }
     }
 }

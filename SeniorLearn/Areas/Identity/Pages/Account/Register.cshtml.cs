@@ -23,7 +23,7 @@ public class RegisterModel : PageModel
     public class InputModel
     {
         [Required, Display(Name = "Organisation")]
-        public int OrganisationId { get; set; }
+        public int OrganisationId { get; set; } = 1;
         [Required, Display(Name = "First Name")]
         public string FirstName { get; set; } = default!;
         [Required, Display(Name = "Last Name")]

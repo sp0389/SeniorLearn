@@ -7,21 +7,21 @@ namespace SeniorLearn.Areas.Administration.Controllers
 {
     public class PaymentController : AdministrationController
     {
-        private readonly OrganisationUserService _organisationUserServce;
+        private readonly OrganisationUserService _organisationUserService;
         private readonly PaymentService _paymentService;
 
         public PaymentController(ApplicationDbContext context, ILogger<MemberController> logger, 
             OrganisationUserService organisationUserService, PaymentService paymentService)
             : base(context, logger)
         {
-            _organisationUserServce = organisationUserService;
+            _organisationUserService = organisationUserService;
             _paymentService = paymentService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index(string id)
         {
-            var user = await _organisationUserServce.GetUserByIdAsync(id);
+            var user = await _organisationUserService.GetUserByIdAsync(id);
 
             if (user == null)
             {
@@ -49,7 +49,7 @@ namespace SeniorLearn.Areas.Administration.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _organisationUserServce.GetUserByIdAsync(id);
+                var user = await _organisationUserService.GetUserByIdAsync(id);
 
                 if (user == null)
                 {

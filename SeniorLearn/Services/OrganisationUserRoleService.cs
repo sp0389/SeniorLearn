@@ -32,48 +32,25 @@ namespace SeniorLearn.Services
             var userRoles = await _userManager.GetRolesAsync(user);
             var role = await GetUserRoleAsync(roleType);
 
-            if (roleType == RoleTypes.Professional && renewalDate == null && duration == 0)
-            {
-                throw new DomainRuleException("You must select a renewal date.");
-            }    
-
-            if (startDate >= renewalDate)
-            {
-                throw new DomainRuleException("Renewal date must come after todays date.");
-            }
-
-            if (roleType == RoleTypes.Standard && userRoles.Contains("Professional")
-                || roleType == RoleTypes.Professional && userRoles.Contains("Standard"))
-            {
-                throw new DomainRuleException("Member cannot hold a professional and a standard role at the same time.");
-            }
-
-            if (roleType == null)
-            {
-                throw new DomainRuleException("You must select a role.");
-            }
-
-            var userRole = new OrganisationUserRole()
-            {
-                RoleId = role.Id,
-                UserId = user.Id,
-            };
+            var assignUserRole = new OrganisationUserRole(user, role);
+            assignUserRole.RoleValidationCheck(startDate, roleType, duration, renewalDate, userRoles);
 
             switch (roleType)
             {
                 case RoleTypes.Standard:
-                    userRole.GrantStandardMember(startDate, renewalDate);
+                    assignUserRole.GrantStandardRole(startDate, renewalDate);
                     break;
                 case RoleTypes.Professional:
-                    userRole.GrantProfessionalMember(startDate, duration, renewalDate);
+                    assignUserRole.GrantProfessionalRole(startDate, duration, renewalDate);
                     break;
                 case RoleTypes.Honorary:
-                    userRole.GrantHonoraryMember();
+                    assignUserRole.GrantHonoraryRole();
                     break;
             }
-            _context.UserRoles.Add(userRole);
+            _context.UserRoles.Add(assignUserRole);
             await _context.SaveChangesAsync();
         }
+
         public async Task<OrganisationRole> GetUserRoleAsync(RoleTypes? roleType)
         {
             var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == roleType.ToString());
@@ -83,15 +60,12 @@ namespace SeniorLearn.Services
 
         public async Task<IList<string>> GetUserRolesAsync(OrganisationUser user)
         {
-            var userRoles = await _userManager.GetRolesAsync(user);
-
-            return userRoles;
+            return await _userManager.GetRolesAsync(user);
         }
 
         public async Task<bool> RemoveRoleFromUserAsync(string userId, string role)
         {
             var user = await _userManager.FindByIdAsync(userId);
-
             return (await _userManager.RemoveFromRoleAsync(user!, role)).Succeeded;
         }
     }

@@ -263,6 +263,13 @@ namespace SeniorLearn.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Organisations");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "SeniorLearn"
+                        });
                 });
 
             modelBuilder.Entity("SeniorLearn.Data.OrganisationRole", b =>
@@ -290,6 +297,36 @@ namespace SeniorLearn.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "09adf476-7af7-4bd7-89e5-d173778b3ec9",
+                            ConcurrencyStamp = "911a1c9c-a9c4-4eb5-bda2-78f4a6b216dd",
+                            Name = "Administrator",
+                            NormalizedName = "ADMINISTRATOR"
+                        },
+                        new
+                        {
+                            Id = "1455a748-82ad-4e31-bb41-7c72cfc0fbfa",
+                            ConcurrencyStamp = "5a175f2b-7887-4460-a76b-1f46ea9613c7",
+                            Name = "Standard",
+                            NormalizedName = "STANDARD"
+                        },
+                        new
+                        {
+                            Id = "de1e5fe5-585b-4867-aae8-57776d64f330",
+                            ConcurrencyStamp = "b3e503f2-bc9f-439d-8e99-c360fec59170",
+                            Name = "Professional",
+                            NormalizedName = "PROFESSIONAL"
+                        },
+                        new
+                        {
+                            Id = "2199dac7-bac1-49f0-8820-07b34f79533b",
+                            ConcurrencyStamp = "f23b19f2-7f7e-4c76-9acf-7af7a578e580",
+                            Name = "Honorary",
+                            NormalizedName = "HONORARY"
+                        });
                 });
 
             modelBuilder.Entity("SeniorLearn.Data.OrganisationUser", b =>
@@ -390,14 +427,14 @@ namespace SeniorLearn.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal?>("PaymentAmount")
+                    b.Property<decimal>("PaymentAmount")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime?>("PaymentDate")
+                    b.Property<DateTime>("PaymentDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("PaymentType")
+                    b.Property<int>("PaymentType")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
@@ -427,6 +464,32 @@ namespace SeniorLearn.Migrations
                     b.HasIndex("RoleId");
 
                     b.HasDiscriminator().HasValue("OrganisationUserRole");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "ca32e0e5-46b8-4f44-9a97-0d685a2c54b2",
+                            RoleId = "09adf476-7af7-4bd7-89e5-d173778b3ec9",
+                            EndDate = new DateTime(9999, 12, 31, 23, 59, 59, 999, DateTimeKind.Unspecified).AddTicks(9999),
+                            RoleType = 0,
+                            StartDate = new DateTime(2024, 9, 21, 6, 48, 27, 424, DateTimeKind.Utc).AddTicks(5047)
+                        },
+                        new
+                        {
+                            UserId = "c6e5a515-b561-458a-85e6-ab9e7eed58f4",
+                            RoleId = "1455a748-82ad-4e31-bb41-7c72cfc0fbfa",
+                            EndDate = new DateTime(2025, 9, 21, 6, 48, 27, 424, DateTimeKind.Utc).AddTicks(5049),
+                            RoleType = 1,
+                            StartDate = new DateTime(2024, 9, 21, 6, 48, 27, 424, DateTimeKind.Utc).AddTicks(5049)
+                        },
+                        new
+                        {
+                            UserId = "7610170e-d0e7-43b9-a289-02d13056d54e",
+                            RoleId = "de1e5fe5-585b-4867-aae8-57776d64f330",
+                            EndDate = new DateTime(2025, 9, 21, 6, 48, 27, 424, DateTimeKind.Utc).AddTicks(5054),
+                            RoleType = 2,
+                            StartDate = new DateTime(2024, 9, 21, 6, 48, 27, 424, DateTimeKind.Utc).AddTicks(5054)
+                        });
                 });
 
             modelBuilder.Entity("SeniorLearn.Data.Member", b =>
@@ -434,6 +497,65 @@ namespace SeniorLearn.Migrations
                     b.HasBaseType("SeniorLearn.Data.OrganisationUser");
 
                     b.HasDiscriminator().HasValue("Member");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "ca32e0e5-46b8-4f44-9a97-0d685a2c54b2",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "3e098325-ba04-4578-8bd8-231bbf8dde66",
+                            Email = "a.admin@seniorlearn.com.au",
+                            EmailConfirmed = true,
+                            FirstName = "Adam",
+                            LastName = "Admin",
+                            LockoutEnabled = false,
+                            NormalizedUserName = "A.ADMIN@SENIORLEARN.COM.AU",
+                            OrganisationId = 1,
+                            PasswordHash = "AQAAAAIAAYagAAAAEHsSevUsbVfCvzTrAPeOAJGAdLJXoClxNuG4OJyPozgYXexeGOqLXgnIxAZgTQTbfA==",
+                            PhoneNumberConfirmed = false,
+                            Registered = new DateTime(2024, 9, 21, 6, 48, 27, 424, DateTimeKind.Utc).AddTicks(4998),
+                            SecurityStamp = "M67EBX32EPBJDLSU75U3EA5SFKIR7MDP",
+                            TwoFactorEnabled = false,
+                            UserName = "a.admin@seniorlearn.com.au"
+                        },
+                        new
+                        {
+                            Id = "c6e5a515-b561-458a-85e6-ab9e7eed58f4",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "36bea754-e167-42af-83ed-bd78392859f3",
+                            Email = "m.member@seniorlearn.com.au",
+                            EmailConfirmed = true,
+                            FirstName = "Mary",
+                            LastName = "Member",
+                            LockoutEnabled = false,
+                            NormalizedUserName = "M.MEMBER@SENIORLEARN.COM.AU",
+                            OrganisationId = 1,
+                            PasswordHash = "AQAAAAIAAYagAAAAEGuoaNhuyNZDd/SdkB7dMyKO61l9hBzj4h26Bm6gmQpnrpwe+vNFNyBLSPj0JGM13Q==",
+                            PhoneNumberConfirmed = false,
+                            Registered = new DateTime(2024, 9, 21, 6, 48, 27, 424, DateTimeKind.Utc).AddTicks(5012),
+                            SecurityStamp = "ISWZYSPA6TIRY35DE4KKKESEPQZKL6VG",
+                            TwoFactorEnabled = false,
+                            UserName = "m.member@seniorlearn.com.au"
+                        },
+                        new
+                        {
+                            Id = "7610170e-d0e7-43b9-a289-02d13056d54e",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "b2686cbb-099f-4c58-91a4-8fcb9c048d35",
+                            Email = "j.bloggs@seniorlearn.com.au",
+                            EmailConfirmed = true,
+                            FirstName = "Joe",
+                            LastName = "Bloggs",
+                            LockoutEnabled = false,
+                            NormalizedUserName = "J.BLOGGS@SENIORLEARN.COM.AU",
+                            OrganisationId = 1,
+                            PasswordHash = "AQAAAAIAAYagAAAAENaAF8X3fgawsa7CT8EKV1Bm+PGcrq9PhRBL+ee6Rb8lCZVRf/6it+zEesnSHS6q1w==",
+                            PhoneNumberConfirmed = false,
+                            Registered = new DateTime(2024, 9, 21, 6, 48, 27, 424, DateTimeKind.Utc).AddTicks(5025),
+                            SecurityStamp = "LZOWMFVS2SAJIT7PFI3CPG4WQDCHQS5R",
+                            TwoFactorEnabled = false,
+                            UserName = "j.bloggs@seniorlearn.com.au"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

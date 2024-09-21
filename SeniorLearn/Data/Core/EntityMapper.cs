@@ -59,6 +59,13 @@ namespace SeniorLearn.Data.Core
                  .HasForeignKey(lesson => lesson.CourseId);
             });
 
+            mb.Entity<LessonEnrolment>(le =>{
+                le.HasOne(le => le.Lesson)
+                .WithMany(l => l.LessonEnrolments)
+                .HasForeignKey(le => le.LessonId)
+                .OnDelete(DeleteBehavior.Restrict);
+            });
+
             mb.Entity<Payment>()
                .Property(p => p.PaymentAmount)
                .HasPrecision(18, 2);

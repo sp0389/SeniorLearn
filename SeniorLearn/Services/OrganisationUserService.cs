@@ -20,16 +20,9 @@ namespace SeniorLearn.Services
 
         public async Task<MemberDTO> RegisterMemberAsync(int organisationId, string firstName, string lastName, string email, string password = "1")
         {
-            var member = new Member(organisationId, firstName, lastName, email, password)
-            {
-                OrganisationId = 1,
-                FirstName = firstName,
-                LastName = lastName,
-                Email = email,
-                UserName = email,
-                Registered = DateTime.UtcNow,
-            };
-
+            var organisation = await _context.Organisations.FindAsync(organisationId);
+            
+            var member = organisation!.RegisterMember(firstName, lastName, email);
             var result = await _userManager.CreateAsync(member, password);
 
             if (result.Succeeded)
