@@ -6,7 +6,7 @@ using SeniorLearn.Services;
 
 namespace SeniorLearn.Areas.Administration.Controllers
 {
-    public class PaymentController : BaseController
+    public class PaymentController : AdministrationController
     {
         private readonly OrganisationUserService _organisationUserService;
         private readonly PaymentService _paymentService;

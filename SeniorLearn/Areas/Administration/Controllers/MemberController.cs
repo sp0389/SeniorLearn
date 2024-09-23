@@ -142,9 +142,6 @@ namespace SeniorLearn.Areas.Administration.Controllers
 
                 try
                 {
-                    user.FirstName = m.FirstName!;
-                    user.LastName = m.LastName!;
-                    user.Email = m.Email;
                     m.AssignedRoles = assignedRoles;
                     m.RoleTypes = roleType;
 

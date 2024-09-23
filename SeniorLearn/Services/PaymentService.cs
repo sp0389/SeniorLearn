@@ -17,11 +17,10 @@ namespace SeniorLearn.Services
 
         public async Task<PaymentDTO> CreateNewPaymentAsync(OrganisationUser user, DateTime paymentDate, PaymentType paymentType, decimal paymentAmount)
         {
-            var payment = new Payment(user, paymentDate, paymentType, paymentAmount);
+            var payment = user.CreateNewPaymentRecord(user, paymentDate, paymentType, paymentAmount);
 
             await _context.AddAsync(payment);
             await _context.SaveChangesAsync();
-            
             return payment.Adapt<PaymentDTO>();
         }
 

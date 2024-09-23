@@ -22,14 +22,20 @@ namespace SeniorLearn.Data
             LastName = lastName;
             Email = email;
         }
+
+        public abstract Payment CreateNewPaymentRecord(OrganisationUser user, DateTime paymentDate, PaymentType paymentType, decimal paymentAmount);
     }
 
     public class Member : OrganisationUser
     {
         public Member() { }
         public Member(int organisationId, string username, string firstName, string lastName, string email) :
-            base(organisationId, username, firstName, lastName, email)
+            base(organisationId, username, firstName, lastName, email) { }
+
+        public override Payment CreateNewPaymentRecord(OrganisationUser user, DateTime paymentDate, PaymentType paymentType, decimal paymentAmount)
         {
+            var payment = new Payment(user, paymentDate, paymentType, paymentAmount);
+            return payment;
         }
     }
 }
