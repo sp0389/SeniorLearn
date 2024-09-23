@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SeniorLearn.Areas.Administration.Models.Payment;
+using SeniorLearn.Controllers;
 using SeniorLearn.Data.Core;
 using SeniorLearn.Services;
 
 namespace SeniorLearn.Areas.Administration.Controllers
 {
-    public class PaymentController : AdministrationController
+    public class PaymentController : BaseController
     {
         private readonly OrganisationUserService _organisationUserService;
         private readonly PaymentService _paymentService;
