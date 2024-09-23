@@ -12,13 +12,11 @@ namespace SeniorLearn.Areas.Administration.Controllers
     public class LessonController : AdministrationController
     {
         private readonly LessonService _lessonService;
-        private readonly ILogger<LessonController> _logger;
 
         public LessonController(ApplicationDbContext context, ILogger<LessonController> logger, LessonService lessonService)
             : base(context, logger)
         {
             _lessonService = lessonService;
-            _logger = logger;
         }
 
         [HttpGet]

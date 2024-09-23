@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SeniorLearn.Models.MemberDTO>
+﻿@model PagedResult<MemberDTO>
 @{
     ViewData["Title"] = "Members";
 }
@@ -6,7 +6,7 @@
 <div class="mb-3">
     <a class="btn btn-primary" asp-action="Register"> Register Member </a>
 </div>
-<table class="table table-bordered table-striped table-hover text-center">
+<table class="table table-responsive table-bordered table-striped table-hover text-center">
     <thead >
         <tr>
             <th scope="col">Member Id</th>
@@ -18,7 +18,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var m in Model)
+        @foreach (var m in Model.Data)
         {
             <tr>
                 <th scope="row">@Html.DisplayFor(modelItem => m.Id)</th>
@@ -41,4 +41,8 @@
     <a class="btn btn-primary" asp-controller="Member" asp-action="Index" asp-route-isActive=""> All </a>
     <a class="btn btn-primary" asp-controller="Member" asp-action="Index" asp-route-isActive="true"> Active Members </a>
     <a class="btn btn-primary" asp-controller="Member" asp-action="Index" asp-route-isActive="false"> Inactive Members </a>
+</div>
+
+<div class="d-flex mt-1">
+    <partial name="_Pager" model='Model.GetPagerModel<MemberDTO>("Member", "Index")' />
 </div>

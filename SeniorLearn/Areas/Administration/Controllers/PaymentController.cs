@@ -65,6 +65,7 @@ namespace SeniorLearn.Areas.Administration.Controllers
                 catch (Exception ex)
                 {
                     ModelState.AddModelError("", ex.Message);
+                    _logger.LogError(ex, ex.Message);
                 }
             }
             return View(p);

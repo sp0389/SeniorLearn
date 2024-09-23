@@ -73,10 +73,6 @@ namespace SeniorLearn.Data
                 throw new DomainRuleException("Member cannot hold a professional and a standard role at the same time.");
             }
 
-            if (roleType == null)
-            {
-                throw new DomainRuleException("You must select a role.");
-            }
         }
     }
     

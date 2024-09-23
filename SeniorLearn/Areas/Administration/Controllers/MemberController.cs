@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using cloudscribe.Pagination.Models;
+using Microsoft.AspNetCore.Mvc;
 using SeniorLearn.Areas.Administration.Models.Member;
 using SeniorLearn.Data.Core;
+using SeniorLearn.Models;
 using SeniorLearn.Services;
 
 namespace SeniorLearn.Areas.Administration.Controllers
@@ -19,20 +21,36 @@ namespace SeniorLearn.Areas.Administration.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(bool? isActive)
+        public async Task<IActionResult> Index(bool? isActive, int pageNumber = 1, int pageSize = 10)
         {
-            switch (isActive)
+            IEnumerable<MemberDTO> users;
+            int totalUserCount;
+            
+            switch(isActive)
             {
                 case false:
-                    var inactiveUsers = await _organisationUserService.GetInactiveUsersAsync();
-                    return View(inactiveUsers);
+                    users = await _organisationUserService.GetInactiveUsersAsync((pageSize * pageNumber) - pageSize, pageSize);
+                    totalUserCount = await _organisationUserService.GetInactiveUserCountAsync();
+                break;
                 case true:
-                    var activeUsers = await _organisationUserService.GetActiveUsersAsync();
-                    return View(activeUsers);
+                    users = await _organisationUserService.GetActiveUsersAsync((pageSize * pageNumber) - pageSize, pageSize);
+                    totalUserCount = await _organisationUserService.GetActiveUserCountAsync();
+                break;
                 default:
-                    var users = await _organisationUserService.GetUsersAsync();
-                    return View(users);
+                    users = await _organisationUserService.GetUsersAsync((pageSize * pageNumber) - pageSize, pageSize);
+                    totalUserCount = await _organisationUserService.GetUsersCountAsync();
+                break;
             }
+
+            var pagedResult = new PagedResult<MemberDTO>
+            {
+                Data = users.ToList(),
+                TotalItems = totalUserCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+            };
+
+            return View(pagedResult);
         }
 
         [HttpGet]
@@ -105,6 +123,7 @@ namespace SeniorLearn.Areas.Administration.Controllers
                 catch (Exception ex)
                 {
                     ModelState.AddModelError("", ex.Message);
+                    _logger.LogError(ex.Message, ex);
                 }
 
                 return RedirectToAction("Edit");
@@ -130,6 +149,9 @@ namespace SeniorLearn.Areas.Administration.Controllers
                     m.RoleTypes = roleType;
 
                     await _organisationUserRoleService.AssignRoleAsync(user, DateTime.UtcNow.Date, m.SelectedRole, m.Duration, m.RenewalDate);
+                    
+                    TempData["Message"] = "User details updated successfully!";
+                    
                     return RedirectToAction("Edit");
                 }
 
@@ -141,9 +163,10 @@ namespace SeniorLearn.Areas.Administration.Controllers
                 catch (Exception ex)
                 {
                     ModelState.AddModelError("", ex.Message);
+                    _logger.LogError(ex.Message, ex);
                 }
             }
-
+            
             return View(m);
         }
     }

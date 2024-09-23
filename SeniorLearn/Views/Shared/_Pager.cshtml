@@ -1,0 +1,15 @@
+﻿@model SeniorLearn.Models.IPager
+
+<cs-pager cs-paging-pagesize="@Model.PageSize"
+          cs-paging-pagenumber="@Model.PageNumber"
+          cs-paging-totalitems="@Model.TotalItems"
+          cs-pagenumber-param="pageNumber"
+          cs-paging-maxpageritems="10"
+          cs-pager-li-current-class="page-item active"
+          cs-pager-li-other-class="page-item"
+          cs-pager-li-non-active-class="page-item disabled"
+          cs-pager-link-current-class="page-link"
+          cs-pager-link-other-class="page-link"
+          asp-controller="@Model.Controller"
+          asp-action="@Model.Action">
+</cs-pager>

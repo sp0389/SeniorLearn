@@ -39,24 +39,25 @@ namespace SeniorLearn.Services
             return user!;
         }
 
-        public async Task<IEnumerable<MemberDTO>> GetUsersAsync()
+        public async Task<IEnumerable<MemberDTO>> GetUsersAsync(int skip = 0, int take = int.MaxValue)
         {
-            var users = await _context.Users.Select(u => new MemberDTO
+            var users = await _context.Users.OrderBy(u => u.LastName).Skip(skip).Take(take)
+            .Select(u => new MemberDTO
             {
                 Id = u.Id,
                 FirstName = u.FirstName,
                 LastName = u.LastName,
                 Email = u.Email!,
-                RenewalDate = u.UserRoles.OrderByDescending(ur => ur.EndDate).FirstOrDefault()!.EndDate.ToShortDateString()
-                ?? "No Role Assigned",
+                RenewalDate = u.UserRoles.OrderByDescending(ur => ur.EndDate).FirstOrDefault()!.EndDate.ToShortDateString() ?? "No Role Assigned",
             }).ToListAsync();
 
             return users;
         }
 
-        public async Task<IEnumerable<MemberDTO>> GetInactiveUsersAsync()
+        public async Task<IEnumerable<MemberDTO>> GetInactiveUsersAsync(int skip = 0, int take = int.MaxValue)
         {
             var inactiveUsers = await _context.Users.Where(u => u.UserRoles.Count == 0)
+            .OrderBy(u => u.LastName).Skip(skip).Take(take)
                 .Select(u => new MemberDTO
                 {
                     Id = u.Id,
@@ -65,13 +66,15 @@ namespace SeniorLearn.Services
                     Email = u.Email!,
                     RenewalDate = "No Role Assigned",
                 }).ToListAsync();
-
+                
             return inactiveUsers;
         }
 
-        public async Task<IEnumerable<MemberDTO>> GetActiveUsersAsync()
+        public async Task<IEnumerable<MemberDTO>> GetActiveUsersAsync(int skip = 0, int take = int.MaxValue)
         {
-            var activeUsers = await _context.Users.Where(u => u.UserRoles.Any(ur => ur.StartDate <= ur.EndDate))
+            var activeUsers = await _context.Users.Include(u => u.UserRoles)
+            .Where(u => u.UserRoles.Count != 0)
+            .OrderBy(u => u.LastName).Skip(skip).Take(take)
                 .Select(u => new MemberDTO
                 {
                     Id = u.Id,
@@ -80,8 +83,31 @@ namespace SeniorLearn.Services
                     Email = u.Email!,
                     RenewalDate = u.UserRoles.OrderByDescending(ur => ur.EndDate).FirstOrDefault()!.EndDate.ToShortDateString(),
                 }).ToListAsync();
-
+                
             return activeUsers;
+        }
+
+        public async Task<int> GetUsersCountAsync()
+        {
+            var userCount = await _context.Users.CountAsync();
+            
+            return userCount;
+        }
+
+        public async Task<int> GetInactiveUserCountAsync()
+        {
+            var inactiveUserCount = await _context.Users.Where(u => u.UserRoles.Count == 0)
+            .CountAsync();
+
+            return inactiveUserCount;
+        }
+
+        public async Task<int> GetActiveUserCountAsync()
+        {
+            var activeUserCount = await _context.Users.Where(u => u.UserRoles.Count != 0)
+            .CountAsync();
+            
+            return activeUserCount;
         }
     }
 }

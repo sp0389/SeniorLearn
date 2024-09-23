@@ -29,28 +29,36 @@ namespace SeniorLearn.Services
 
         public async Task AssignRoleAsync(OrganisationUser user, DateTime startDate, RoleTypes? roleType, int duration, DateTime? renewalDate)
         {
-            var userRoles = await _userManager.GetRolesAsync(user);
-            var role = await GetUserRoleAsync(roleType);
-
-            var assignUserRole = new OrganisationUserRole(user, role);
-            assignUserRole.RoleValidationCheck(startDate, roleType, duration, renewalDate, userRoles);
-
-            switch (roleType)
+            if (roleType == null)
             {
-                case RoleTypes.Standard:
-                    assignUserRole.GrantStandardRole(startDate, renewalDate);
-                    break;
-                case RoleTypes.Professional:
-                    assignUserRole.GrantProfessionalRole(startDate, duration, renewalDate);
-                    break;
-                case RoleTypes.Honorary:
-                    assignUserRole.GrantHonoraryRole();
-                    break;
+                await _context.SaveChangesAsync();
             }
-            _context.UserRoles.Add(assignUserRole);
-            await _context.SaveChangesAsync();
-        }
 
+            else
+            {
+                var userRoles = await _userManager.GetRolesAsync(user);
+                var role = await GetUserRoleAsync(roleType);
+
+                var assignUserRole = new OrganisationUserRole(user, role);
+                assignUserRole.RoleValidationCheck(startDate, roleType, duration, renewalDate, userRoles);
+
+                switch (roleType)
+                {
+                    case RoleTypes.Standard:
+                        assignUserRole.GrantStandardRole(startDate, renewalDate);
+                        break;
+                    case RoleTypes.Professional:
+                        assignUserRole.GrantProfessionalRole(startDate, duration, renewalDate);
+                        break;
+                    case RoleTypes.Honorary:
+                        assignUserRole.GrantHonoraryRole();
+                        break;
+                }
+                await _context.UserRoles.AddAsync(assignUserRole);
+                await _context.SaveChangesAsync(); 
+            }
+        }
+        
         public async Task<OrganisationRole> GetUserRoleAsync(RoleTypes? roleType)
         {
             var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == roleType.ToString());
