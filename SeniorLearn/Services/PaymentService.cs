@@ -24,9 +24,14 @@ namespace SeniorLearn.Services
             return payment.Adapt<PaymentDTO>();
         }
 
-        public async Task<IEnumerable<PaymentDTO>> GetPaymentsAsync(OrganisationUser user)
+        public async Task<IEnumerable<PaymentDTO>> GetPaymentsAsync(OrganisationUser user, int skip = 0, int take = int.MaxValue)
         {
-            return await _context.Payments.Where(p => p.UserId == user.Id).ProjectToType<PaymentDTO>().ToListAsync();
+            return await _context.Payments.Where(p => p.UserId == user.Id).Skip(skip).Take(take).ProjectToType<PaymentDTO>().ToListAsync();
+        }
+
+        public async Task<int> GetPaymentsCountAsync(OrganisationUser user)
+        {
+            return await _context.Payments.Where(p => p.UserId == user.Id).CountAsync();
         }
     }
 }

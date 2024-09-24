@@ -1,5 +1,4 @@
-﻿@using SeniorLearn.Models
-@model IEnumerable<PaymentDTO>
+﻿@model PagedResult<PaymentDTO>
 @{
     ViewData["Title"] = "Payment History";
 }
@@ -27,7 +26,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var p in Model)
+        @foreach (var p in Model.Data)
         {
             <tr>
                 <th scope="row">@Html.DisplayFor(modelItem => p.Id)</th>
@@ -38,3 +37,7 @@
         }
     </tbody>
 </table>
+
+<div class="d-flex mt-1">
+    <partial name="_Pager" model='Model.GetPagerModel<PaymentDTO>("Payment", "Index")' />
+</div>

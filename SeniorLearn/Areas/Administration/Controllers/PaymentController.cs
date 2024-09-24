@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using cloudscribe.Pagination.Models;
+using Microsoft.AspNetCore.Mvc;
 using SeniorLearn.Areas.Administration.Models.Payment;
 using SeniorLearn.Controllers;
 using SeniorLearn.Data.Core;
+using SeniorLearn.Models;
 using SeniorLearn.Services;
 
 namespace SeniorLearn.Areas.Administration.Controllers
@@ -20,7 +22,7 @@ namespace SeniorLearn.Areas.Administration.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string id)
+        public async Task<IActionResult> Index(string id, int pageNumber = 1, int pageSize = 10)
         {
             var user = await _organisationUserService.GetUserByIdAsync(id);
 
@@ -29,8 +31,17 @@ namespace SeniorLearn.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            var userPayments = await _paymentService.GetPaymentsAsync(user);
-            return View(userPayments);
+            var userPayments = await _paymentService.GetPaymentsAsync(user, (pageSize * pageNumber) - pageSize, pageSize);
+
+            var pagedResult = new PagedResult<PaymentDTO>
+            {
+                Data  = userPayments.ToList(),
+                TotalItems = await _paymentService.GetPaymentsCountAsync(user),
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+            };
+
+            return View(pagedResult);
         }
 
         [HttpGet]
