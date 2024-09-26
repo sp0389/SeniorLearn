@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
-namespace SeniorLearn.Areas.Administration.Models.Lesson
+namespace SeniorLearn.Areas.Member.Models.Lesson
 {
     public class CreateLesson
     {

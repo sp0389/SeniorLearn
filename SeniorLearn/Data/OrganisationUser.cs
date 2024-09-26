@@ -7,6 +7,7 @@ namespace SeniorLearn.Data
         public string FirstName { get; set; } = default!;
         public string LastName { get; set; } = default!;
         public DateTime Registered { get; set; }
+        public byte[] Version { get; set;} = default!;
         public int OrganisationId { get; set; }
         public Organisation Organisation { get; set; } = default!;
         public ICollection<OrganisationUserRole> UserRoles { get; set; } = new List<OrganisationUserRole>();

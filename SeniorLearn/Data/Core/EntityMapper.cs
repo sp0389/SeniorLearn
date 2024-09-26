@@ -18,6 +18,8 @@ namespace SeniorLearn.Data.Core
 
             mb.Entity<OrganisationUser>(ou =>
             {
+                ou.Property(p => p.Version)
+                .IsRowVersion();
                 ou.HasMany(ur => ur.UserRoles)
                  .WithOne(ur => ur.User)
                  .HasForeignKey(ur => ur.UserId)

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using SeniorLearn.Areas.Administration.Models.Lesson;
-using SeniorLearn.Areas.Administration.Models.Course;
+using SeniorLearn.Areas.Member.Models.Lesson;
+using SeniorLearn.Areas.Member.Models.Course;
 using SeniorLearn.Data;
 using SeniorLearn.Data.Core;
 using SeniorLearn.Data.Scheduling;

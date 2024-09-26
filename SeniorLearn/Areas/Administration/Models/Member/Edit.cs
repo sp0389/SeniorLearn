@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using SeniorLearn.Data;
-using System.ComponentModel.DataAnnotations;
 
 namespace SeniorLearn.Areas.Administration.Models.Member
 {
