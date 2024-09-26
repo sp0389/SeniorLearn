@@ -32,6 +32,7 @@ namespace SeniorLearn.Services
             services.AddScoped<OrganisationUserService>();
             services.AddScoped<OrganisationUserRoleService>();
             services.AddScoped<PaymentService>();
+            services.AddScoped<LessonService>();
 
             return services;
         }

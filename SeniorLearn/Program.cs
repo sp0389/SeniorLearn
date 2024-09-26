@@ -37,7 +37,6 @@ public class Program
                 policy.RequireRole("ActiveRole"));
         });
 
-
         builder.Services.AddMapster();
         builder.Services.AddLibraryServices();
         builder.Services.AddControllersWithViews()

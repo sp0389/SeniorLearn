@@ -7,9 +7,11 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SeniorLearn.styles.css" asp-append-version="true" />
+ 
 </head>
 <body>
     <header>
+        @* <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3"> *@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm bg-dark border-bottom box-shadow mb-3" data-bs-theme="dark">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SeniorLearn</a>
@@ -29,18 +31,8 @@
                         @if (User.IsInRole("Administrator"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="Administration" asp-controller="Member" asp-action="Index">Administration</a>
-                            </li>
-                        }
-
-                        @if (User.IsInRole("Professional"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="Member" asp-controller="Lesson" asp-action="Create">Lessons</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="Member" asp-controller="Lesson" asp-action="Index">Calendar</a>
-                            </li>
+                            <a class="nav-link text-light" asp-area="Administration" asp-controller="Member" asp-action="">Administration</a>
+                        </li>
                         }
                         
                     </ul>
@@ -60,14 +52,9 @@
             &copy; 2024 - SeniorLearn - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    <!-- FullCalendar CSS from CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet" />
-    <!-- Flatpickr CSS for date-time picker -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
-
 </body>
 </html>

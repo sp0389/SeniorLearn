@@ -9,6 +9,7 @@ using SeniorLearn.Controllers;
 
 namespace SeniorLearn.Areas.Member.Controllers
 {
+    [Area("Member")]
     [Authorize(Roles = "Professional")]
     public class LessonController : BaseController
     {
