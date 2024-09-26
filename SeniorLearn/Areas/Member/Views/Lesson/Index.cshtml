@@ -17,17 +17,17 @@
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 events: [
-                    @foreach (var lesson in Model)
-                    {
-                        <text>
+        @foreach (var lesson in Model)
+        {
+            <text>
                             {
                                 title: '@lesson.Title',
-                                start: '@lesson.StartDate.ToString("yyyy-MM-ddTHH:mm:ss")',
-                                end: '@lesson.EndDate.ToString("yyyy-MM-ddTHH:mm:ss")'
-                            }@(Model.Last() != lesson ? "," : "")
-                        </text>
-                    }
-                ]
+                            start: '@lesson.StartDate.ToString("yyyy-MM-ddTHH:mm:ss")',
+                            end: '@lesson.EndDate.ToString("yyyy-MM-ddTHH:mm:ss")'
+                                        }@(Model.Last() != lesson ? "," : "")
+            </text>
+        }
+                        ]
             });
 
             calendar.render();

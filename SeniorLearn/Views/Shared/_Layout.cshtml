@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SeniorLearn.styles.css" asp-append-version="true" />
+    <!-- FullCalendar CSS from CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet" />
+    <!-- Flatpickr CSS for date-time picker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body>
     <header>
@@ -25,14 +29,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-
                         @if (User.IsInRole("Administrator"))
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-light" asp-area="Administration" asp-controller="Member" asp-action="Index">Administration</a>
                             </li>
                         }
-
                         @if (User.IsInRole("Professional"))
                         {
                             <li class="nav-item">
@@ -60,13 +62,15 @@
             &copy; 2024 - SeniorLearn - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    <!-- FullCalendar CSS from CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet" />
-    <!-- Flatpickr CSS for date-time picker -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- FullCalendar JS from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+    <!-- Flatpickr JS for date-time picker -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 
 </body>
