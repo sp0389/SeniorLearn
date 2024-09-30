@@ -1,7 +1,23 @@
-﻿using SeniorLearn.Models.Enum;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace SeniorLearn.Data
 {
+    public enum DeliveryType
+    {
+        Virtual,
+        [Display(Name = "On Campus")]
+        OnCampus
+    }
+
+    public enum Availability
+    {
+        Draft,
+        Scheduled,
+        Closed,
+        Complete,
+        Cancelled
+    }
+
     // Purpose: Represents a lesson entity, which can be standalone or part of a course.
     // Includes properties like Title, Description, StartDate, EndDate, and Duration.
     public class Lesson
@@ -17,22 +33,14 @@ namespace SeniorLearn.Data
         public int Duration { get; set; }
         public DeliveryType Type { get; set; }
         public Availability Availability { get; set; } = Availability.Draft;
-
-        // Flag to indicate if the lesson is standalone or part of a course
-        public bool IsStandalone { get; set; }
-
-        // Course relationship properties
-        public int? CourseId { get; set; }  // Nullable if not part of a course
+        public Guid GroupId { get; set; }
+        public bool IsInCourse { get; set; }
+        public int? CourseId { get; set; } 
         public Course? Course { get; set; }
+        public ICollection<Enrolment> Enrolments { get; set; } = new List<Enrolment>();
+        private Lesson() { }
 
-        // Collection of lesson enrollments
-        public ICollection<LessonEnrolment> LessonEnrolments { get; set; } = new List<LessonEnrolment>();
-
-        // Default parameterless constructor for Entity Framework
-        protected Lesson() { }
-
-        // Constructor for a standalone lesson
-        public Lesson(string title, string description, int duration, Member member, string address, DateTime startDate, DateTime endDate, DeliveryType type)
+        public Lesson(string title, string description, int duration, Member member, string address, DateTime startDate, DateTime endDate, DeliveryType type, bool isInCourse, int? courseId, Guid groupId)
         {
             Title = title;
             Description = description;
@@ -43,16 +51,9 @@ namespace SeniorLearn.Data
             StartDate = startDate;
             EndDate = endDate;
             Type = type;
-            IsStandalone = true;
-        }
-
-        // Constructor for a lesson within a course
-        public Lesson(string title, string description, int duration, Member member, Course course, string address, DateTime startDate, DateTime endDate, DeliveryType type)
-            : this(title, description, duration, member, address, startDate, endDate, type)
-        {
-            Course = course;
-            CourseId = course.Id;
-            IsStandalone = false;
+            IsInCourse = isInCourse;
+            CourseId = courseId;
+            GroupId = groupId;
         }
     }
 }

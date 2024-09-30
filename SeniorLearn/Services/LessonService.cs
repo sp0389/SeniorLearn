@@ -4,51 +4,84 @@ using SeniorLearn.Areas.Member.Models.Lesson;
 using SeniorLearn.Areas.Member.Models.Course;
 using SeniorLearn.Data;
 using SeniorLearn.Data.Core;
-using SeniorLearn.Data.Scheduling;
-using SeniorLearn.Models.Enum;
+using SeniorLearn.Data.Schedule;
 
 namespace SeniorLearn.Services
 {
     public class LessonService
     {
         private readonly ApplicationDbContext _context;
-
-        public LessonService(ApplicationDbContext context)
+        private readonly OrganisationUserService _organisationUserService;
+        public LessonService(ApplicationDbContext context, OrganisationUserService organisationUserService)
         {
             _context = context;
+            _organisationUserService = organisationUserService;
         }
 
-        public async Task CreateLessonAsync(CreateLesson model)
+        public async Task CreateLessonAsync(CreateLesson model, string userId)
         {
-            if (model == null) throw new ArgumentNullException(nameof(model));
+            var member = await _organisationUserService.GetUserByUserNameAsync(userId);
 
-            var member = _context.Users.OfType<Member>().FirstOrDefault();
-            if (member == null)
-                throw new InvalidOperationException("Member not found.");
+            Timetable timetable = new();
+            var groupId = Guid.NewGuid();
 
-            Timetable timetable = new Timetable();
-
-            // Create lessons based on frequency
             if (model.IsRecurring)
             {
                 if (model.Frequency == "Daily")
                 {
-                    var dailySchedule = new DailyRepeating(model.StartDate, model.StartDate.AddDays(model.Occurrences - 1), model.Occurrences);
-                    timetable.ScheduleDailyLessons(dailySchedule, model.LessonName, model.Description, model.Duration, member, model.Location, model.DeliveryMode == "OnPremise" ? DeliveryType.OnCampus : DeliveryType.Virtual);
+                    var dailySchedule = new DailyRepeating(
+                        model.StartDate,
+                        model.StartDate.AddDays(model.Occurrences - 1),
+                        model.Occurrences
+                    );
+
+                    timetable.ScheduleDailyLessons(
+                        dailySchedule, model.LessonName,
+                        model.Description, model.Duration,
+                        member!,
+                        model.Location,
+                        model.DeliveryMode == "OnPremise" ? DeliveryType.OnCampus : DeliveryType.Virtual, model.IsCourse,
+                        model.SelectedCourseId,
+                        groupId
+                    );
                 }
+
                 else if (model.Frequency == "Weekly")
                 {
-                    var weeklySchedule = new WeeklyRepeating(model.StartDate, model.StartDate.AddDays(model.Occurrences * 7 - 1), model.Occurrences, new List<DayOfWeek> { model.StartDate.DayOfWeek });
-                    timetable.ScheduleWeeklyLessons(weeklySchedule, model.LessonName, model.Description, model.Duration, member, model.Location, model.DeliveryMode == "OnPremise" ? DeliveryType.OnCampus : DeliveryType.Virtual);
+                    var weeklySchedule = new WeeklyRepeating(
+                        model.StartDate,
+                        model.StartDate.AddDays(model.Occurrences * 7 - 1),
+                        model.Occurrences, new List<DayOfWeek> { model.StartDate.DayOfWeek }
+                    );
+
+                    timetable.ScheduleWeeklyLessons(
+                        weeklySchedule,
+                        model.LessonName,
+                        model.Description,
+                        model.Duration,
+                        member!,
+                        model.Location,
+                        model.DeliveryMode == "OnPremise" ? DeliveryType.OnCampus : DeliveryType.Virtual, model.IsCourse,
+                        model.SelectedCourseId,
+                        groupId
+                    );
                 }
             }
             else
             {
-                var lesson = new Lesson(model.LessonName, model.Description, model.Duration, member, model.Location, model.StartDate, model.StartDate.AddMinutes(model.Duration), model.DeliveryMode == "OnPremise" ? DeliveryType.OnCampus : DeliveryType.Virtual);
-                if (model.IsCourse && model.SelectedCourseId.HasValue)
-                {
-                    lesson.CourseId = model.SelectedCourseId.Value;
-                }
+                var lesson = new Lesson(
+                    model.LessonName,
+                    model.Description,
+                    model.Duration,
+                    member!,
+                    model.Location,
+                    model.StartDate,
+                    model.StartDate.AddMinutes(model.Duration),
+                    model.DeliveryMode == "OnPremise" ? DeliveryType.OnCampus : DeliveryType.Virtual, model.IsCourse,
+                    model.SelectedCourseId,
+                    groupId
+                );
+
                 _context.Lessons.Add(lesson);
             }
 

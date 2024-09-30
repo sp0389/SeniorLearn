@@ -64,7 +64,8 @@ namespace SeniorLearn.Areas.Member.Controllers
 
             try
             {
-                await _lessonService.CreateLessonAsync(model);
+                var user = HttpContext.User.Identity!.Name;
+                await _lessonService.CreateLessonAsync(model, user!);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)

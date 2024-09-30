@@ -33,9 +33,19 @@ namespace SeniorLearn.Services
             throw new ApplicationException(result.Errors.First().Description);
         }
 
-        public async Task<OrganisationUser> GetUserByIdAsync(string id)
+        public async Task<Member> GetUserByIdAsync(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            // var user = await _userManager.FindByIdAsync(id);
+            var user = await _context.Users.OfType<Member>().Where(u => u.Id == id)
+                .FirstOrDefaultAsync();
+
+            return user!;
+        }
+        public async Task<Member> GetUserByUserNameAsync(string id)
+        {
+            var user = await _context.Users.OfType<Member>()
+                .Where(u => u.UserName == id).FirstOrDefaultAsync();
+
             return user!;
         }
 

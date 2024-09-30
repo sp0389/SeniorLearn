@@ -51,7 +51,7 @@ namespace SeniorLearn.Data.Core
                 c.HasMany(course => course.Lessons)
                  .WithOne(lesson => lesson.Course)
                  .HasForeignKey(lesson => lesson.CourseId)
-                 .OnDelete(DeleteBehavior.Restrict);
+                 .OnDelete(DeleteBehavior.Cascade);
             });
 
             mb.Entity<Lesson>(l =>
@@ -62,10 +62,10 @@ namespace SeniorLearn.Data.Core
                  .OnDelete(DeleteBehavior.Restrict);
             });
 
-            mb.Entity<LessonEnrolment>(le =>{
-                le.HasOne(le => le.Lesson)
-                .WithMany(l => l.LessonEnrolments)
-                .HasForeignKey(le => le.LessonId)
+            mb.Entity<Enrolment>(e => {
+                e.HasOne(e => e.Lesson)
+                .WithMany(l => l.Enrolments)
+                .HasForeignKey(e => e.LessonId)
                 .OnDelete(DeleteBehavior.Restrict);
             });
 
