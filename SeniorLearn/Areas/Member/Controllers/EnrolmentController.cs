@@ -23,5 +23,22 @@ namespace SeniorLearn.Areas.Member1.Controllers
             var lessons = await _lessonService.GetLessonOverviewAsync();
             return View(lessons);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(Guid id)
+        {
+            try
+            {
+                var user = HttpContext.User.Identity!.Name;
+                var lessonDetails = await _lessonService.GetLessonDetailsAsync(id, user!);
+                return View(lessonDetails);
+            }
+            catch (DomainRuleException ex)
+            {
+                //TODO: Hack & I hate it, but it does work. Should probably log it also.
+                TempData["Error"] = ex.Message;
+            }
+            return RedirectToAction("Index");
+        }
     }
 }
