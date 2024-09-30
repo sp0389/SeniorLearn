@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SeniorLearn.Data.Core;
+using System.ComponentModel.DataAnnotations;
 
 namespace SeniorLearn.Data
 {
@@ -54,6 +55,19 @@ namespace SeniorLearn.Data
             IsInCourse = isInCourse;
             CourseId = courseId;
             GroupId = groupId;
+        }
+
+        public Enrolment EnrolMemberInLesson(Member member, Lesson lesson, DateTime enrolmentDate)
+        {
+            var enrol = new Enrolment(member, lesson, lesson.CourseId, enrolmentDate);
+            return enrol;
+        }
+        public void EnrolmentValidationChecks(Member member, Lesson lesson)
+        {
+            if (member.Id == lesson.MemberId)
+            {
+                throw new DomainRuleException("You cannot enrol in a lesson you created.");
+            }
         }
     }
 }

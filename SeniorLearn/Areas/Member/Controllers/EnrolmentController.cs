@@ -11,10 +11,12 @@ namespace SeniorLearn.Areas.Member1.Controllers
     public class EnrolmentController : BaseController
     {
         private readonly LessonService _lessonService;
-        public EnrolmentController(ApplicationDbContext context, ILogger<EnrolmentController> logger, LessonService lessonService) 
+        private readonly EnrolmentService _enrolmentService;
+        public EnrolmentController(ApplicationDbContext context, ILogger<EnrolmentController> logger, LessonService lessonService, EnrolmentService enrolmentService) 
             : base(context, logger)
         {
             _lessonService = lessonService;
+            _enrolmentService = enrolmentService;
         }
 
         [HttpGet]
@@ -38,6 +40,26 @@ namespace SeniorLearn.Areas.Member1.Controllers
                 //TODO: Hack & I hate it, but it does work. Should probably log it also.
                 TempData["Error"] = ex.Message;
             }
+            return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public async Task<IActionResult> Enrol(IList<int> Lessons)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = HttpContext.User.Identity!.Name;
+                try
+                {
+                    await _enrolmentService.EnrolMemberAsync(user!, Lessons);
+                    TempData["Success"] = "You have been successfully enroled.";
+                }
+                catch (DomainRuleException ex)
+                {
+                    //TODO: Hack & I hate it, but it does work. Should probably log it also.
+                    TempData["Error"] = ex.Message;
+                }
+            }
+            //TODO: This should return to the calendar view or a list of enrolments for the user. Index for now.
             return RedirectToAction("Index");
         }
     }
