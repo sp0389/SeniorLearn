@@ -5,6 +5,8 @@ using SeniorLearn.Areas.Member.Models.Course;
 using SeniorLearn.Data;
 using SeniorLearn.Data.Core;
 using SeniorLearn.Data.Schedule;
+using Mapster;
+using SeniorLearn.Models;
 
 namespace SeniorLearn.Services
 {
@@ -130,6 +132,14 @@ namespace SeniorLearn.Services
         public IEnumerable<Lesson> GetLessonsForCalendar()
         {
             return _context.Lessons.Include(l => l.Course).ToList();
+        }
+
+        public async Task<IEnumerable<LessonDTO>> GetLessonOverviewAsync()
+        {
+            var lessons = await _context.Lessons.Where(l => l.Availability == Availability.Scheduled)
+                .ProjectToType<LessonDTO>()
+                .ToListAsync();
+            return lessons.GroupBy(l => l.GroupId).Select(l => l.First()).ToList();
         }
     }
 }
