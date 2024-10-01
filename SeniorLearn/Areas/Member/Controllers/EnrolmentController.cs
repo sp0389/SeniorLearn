@@ -22,7 +22,7 @@ namespace SeniorLearn.Areas.Member1.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var lessons = await _lessonService.GetLessonOverviewAsync();
+            var lessons = await _enrolmentService.GetLessonOverviewForEnrolmentAsync();
             return View(lessons);
         }
 
@@ -32,7 +32,7 @@ namespace SeniorLearn.Areas.Member1.Controllers
             try
             {
                 var user = HttpContext.User.Identity!.Name;
-                var lessonDetails = await _lessonService.GetLessonDetailsAsync(id, user!);
+                var lessonDetails = await _enrolmentService.GetLessonDetailsForEnrolmentAsync(id, user!);
                 return View(lessonDetails);
             }
             catch (DomainRuleException ex)

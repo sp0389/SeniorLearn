@@ -133,34 +133,5 @@ namespace SeniorLearn.Services
         {
             return _context.Lessons.Include(l => l.Course).ToList();
         }
-
-        public async Task<IEnumerable<LessonDTO>> GetLessonOverviewAsync()
-        {
-            var lessons = await _context.Lessons.Where(l => l.Availability == Availability.Scheduled)
-                .ProjectToType<LessonDTO>()
-                .ToListAsync();
-            return lessons.GroupBy(l => l.GroupId).Select(l => l.First()).ToList();
-        }
-
-        public async Task<IEnumerable<LessonDTO>> GetLessonDetailsAsync(Guid id, string userId)
-        {
-            //TODO: member should never technically ever be null as long as they are logged in, but maybe should consider implementing a null check for an edge case.
-            var member = await _organisationUserService.GetUserByUserNameAsync(userId);
-
-            var lessons = await _context.Lessons
-                .Include(l => l.Enrolments)
-                .Where(l => l.GroupId == id
-                            && l.Availability == Availability.Scheduled
-                            && l.StartDate <= l.EndDate
-                            && !l.Enrolments.Any(e => e.MemberId == member!.Id))
-                .ProjectToType<LessonDTO>()
-                .ToListAsync();
-
-            if (lessons.Count == 0)
-            {
-                throw new DomainRuleException("You have already enroled in all lessons available.");
-            }
-            return lessons;
-        }
     }
 }
