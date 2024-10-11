@@ -5,8 +5,6 @@ using SeniorLearn.Areas.Member.Models.Course;
 using SeniorLearn.Data;
 using SeniorLearn.Data.Core;
 using SeniorLearn.Data.Schedule;
-using Mapster;
-using SeniorLearn.Models;
 
 namespace SeniorLearn.Services
 {

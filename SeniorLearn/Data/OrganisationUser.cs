@@ -26,6 +26,8 @@ namespace SeniorLearn.Data
         }
 
         public abstract Payment CreateNewPaymentRecord(OrganisationUser user, DateTime paymentDate, PaymentType paymentType, decimal paymentAmount);
+        public abstract void AssignRoleToMember(RoleTypes? roleType, OrganisationUserRole assignUserRole, DateTime startDate,
+            DateTime? renewalDate, int duration);
     }
 
     public class Member : OrganisationUser
@@ -38,6 +40,23 @@ namespace SeniorLearn.Data
         {
             var payment = new Payment(user, paymentDate, paymentType, paymentAmount);
             return payment;
+        }
+
+        public override void AssignRoleToMember(RoleTypes? roleType, OrganisationUserRole assignUserRole, DateTime startDate,
+            DateTime? renewalDate, int duration)
+        {
+            switch (roleType)
+            {
+                case RoleTypes.Standard:
+                    assignUserRole.GrantStandardRole(startDate, renewalDate);
+                    break;
+                case RoleTypes.Professional:
+                    assignUserRole.GrantProfessionalRole(startDate, duration, renewalDate);
+                    break;
+                case RoleTypes.Honorary:
+                    assignUserRole.GrantHonoraryRole();
+                    break;
+            }
         }
     }
 }

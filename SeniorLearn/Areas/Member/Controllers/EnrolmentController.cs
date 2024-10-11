@@ -37,7 +37,6 @@ namespace SeniorLearn.Areas.Member1.Controllers
             }
             catch (DomainRuleException ex)
             {
-                //TODO: Hack & I hate it, but it does work. Should probably log it also.
                 TempData["Error"] = ex.Message;
             }
             return RedirectToAction("Index");
@@ -55,11 +54,9 @@ namespace SeniorLearn.Areas.Member1.Controllers
                 }
                 catch (DomainRuleException ex)
                 {
-                    //TODO: Hack & I hate it, but it does work. Should probably log it also.
                     TempData["Error"] = ex.Message;
                 }
             }
-            //TODO: This should return to the calendar view or a list of enrolments for the user. Index for now.
             return RedirectToAction("Index");
         }
     }

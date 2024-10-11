@@ -72,10 +72,8 @@ namespace SeniorLearn.Data
             {
                 throw new DomainRuleException("Member cannot hold a professional and a standard role at the same time.");
             }
-
         }
     }
-    
     public class OrganisationRole : IdentityRole
     {
         public ICollection<OrganisationUserRole> UserRoles { get; set; } = new List<OrganisationUserRole>();

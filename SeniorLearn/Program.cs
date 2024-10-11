@@ -31,17 +31,17 @@ public class Program
             .AddDefaultTokenProviders()
             .AddRoles<OrganisationRole>();
 
+        builder.Services.AddMapster();
+        builder.Services.AddOrganisationServices();
+        builder.Services.AddControllersWithViews()
+            .AddViewOptions(o => o.HtmlHelperOptions.ClientValidationEnabled = true);
+
         builder.Services.AddAuthorization(options =>
         {
             options.AddPolicy("ActiveRole", policy =>
                 policy.RequireRole("ActiveRole"));
         });
 
-        builder.Services.AddMapster();
-        builder.Services.AddLibraryServices();
-        builder.Services.AddControllersWithViews()
-            .AddViewOptions(o => o.HtmlHelperOptions.ClientValidationEnabled = true);
-        
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.

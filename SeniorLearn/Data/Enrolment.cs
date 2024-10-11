@@ -11,7 +11,6 @@
         public Lesson Lesson { get; private set; } = default!;
         public int? CourseId { get; private set; }
         public Course? Course { get; private set; } = default!;
-
         public DateTime EnrolmentDate { get; private set; }
 
         private Enrolment() { }

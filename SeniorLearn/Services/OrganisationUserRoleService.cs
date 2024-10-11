@@ -42,18 +42,8 @@ namespace SeniorLearn.Services
                 var assignUserRole = new OrganisationUserRole(user, role);
                 assignUserRole.RoleValidationCheck(startDate, roleType, duration, renewalDate, userRoles);
 
-                switch (roleType)
-                {
-                    case RoleTypes.Standard:
-                        assignUserRole.GrantStandardRole(startDate, renewalDate);
-                        break;
-                    case RoleTypes.Professional:
-                        assignUserRole.GrantProfessionalRole(startDate, duration, renewalDate);
-                        break;
-                    case RoleTypes.Honorary:
-                        assignUserRole.GrantHonoraryRole();
-                        break;
-                }
+                user.AssignRoleToMember(roleType, assignUserRole, startDate, renewalDate, duration);
+
                 await _context.UserRoles.AddAsync(assignUserRole);
                 await _context.SaveChangesAsync(); 
             }
