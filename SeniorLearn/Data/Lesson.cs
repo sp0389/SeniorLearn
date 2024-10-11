@@ -23,6 +23,7 @@ namespace SeniorLearn.Data
     // Includes properties like Title, Description, StartDate, EndDate, and Duration.
     public class Lesson
     {
+        private State _state = default!;
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
@@ -33,10 +34,10 @@ namespace SeniorLearn.Data
         public string Address { get; set; } = string.Empty;
         public int Duration { get; set; }
         public DeliveryType Type { get; set; }
-        public Availability Availability { get; set; } = Availability.Draft;
+        public Availability Availability { get; set; }
         public Guid GroupId { get; set; }
         public bool IsInCourse { get; set; }
-        public int? CourseId { get; set; } 
+        public int? CourseId { get; set; }
         public Course? Course { get; set; }
         public ICollection<Enrolment> Enrolments { get; set; } = new List<Enrolment>();
         private Lesson() { }
@@ -55,6 +56,7 @@ namespace SeniorLearn.Data
             IsInCourse = isInCourse;
             CourseId = courseId;
             GroupId = groupId;
+            _state = new Draft(this);
         }
 
         public Enrolment EnrolMemberInLesson(Member member, Lesson lesson, DateTime enrolmentDate)
@@ -69,5 +71,10 @@ namespace SeniorLearn.Data
                 throw new DomainRuleException("You cannot enrol in a lesson you created.");
             }
         }
+        public void ManageLessonState(State state) => _state = state;
+        public void Schedule() => _state.Schedule(this);
+        public void Complete() => _state.Complete(this);
+        public void Cancel() => _state.Cancel(this);
+        public void Close() => _state.Close(this);
     }
 }
