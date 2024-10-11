@@ -44,7 +44,15 @@
                                 <a class="nav-link text-light" asp-area="Member" asp-controller="Lesson" asp-action="Index">Calendar</a>
                             </li>
                         }
-                        
+                        @if (User.IsInRole("Standard") || User.IsInRole("Honorary") || User.IsInRole("Professional") || User.IsInRole("Administrator"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="Member" asp-controller="Enrolment" asp-action="Index">Enrol In Lessons</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="Member" asp-controller="Calendar" asp-action="Index">My Calendar</a>
+                            </li>
+                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>

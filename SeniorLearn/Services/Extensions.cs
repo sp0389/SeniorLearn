@@ -15,7 +15,6 @@ namespace SeniorLearn.Services
                 .Map(dest => dest.PaymentDate, src => src.PaymentDate)
                 .Map(dest => dest.PaymentType, src => src.PaymentType)
                 .Map(dest => dest.PaymentAmount, src => src.PaymentAmount);
-
             TypeAdapterConfig<Member, MemberDTO>
                 .NewConfig()
                 .Map(dest => dest.Id, src => src.Id)
@@ -28,18 +27,26 @@ namespace SeniorLearn.Services
                 .Map(dest => dest.Title, src => src.Title)
                 .Map(dest => dest.Description, src => src.Description)
                 .Map(dest => dest.GroupId, src => src.GroupId);
+            TypeAdapterConfig<Lesson, CalendarDTO>
+                .NewConfig()
+                .Map(dest => dest.Title, src => src.Title)
+                .Map(dest => dest.Start, src => src.StartDate)
+                .Map(dest => dest.End, src => src.EndDate)
+                .Map(dest => dest.Address, src => src.Address)
+                .Map(dest => dest.Lecturer, src => $"{src.Member.FirstName} {src.Member.LastName}");
 
             services.AddSingleton(config);
             return services;
         }
 
-        public static IServiceCollection AddLibraryServices(this IServiceCollection services)
+        public static IServiceCollection AddOrganisationServices(this IServiceCollection services)
         {
             services.AddScoped<OrganisationUserService>();
             services.AddScoped<OrganisationUserRoleService>();
             services.AddScoped<PaymentService>();
             services.AddScoped<LessonService>();
             services.AddScoped<EnrolmentService>();
+            services.AddScoped<ApiService>();
 
             return services;
         }
