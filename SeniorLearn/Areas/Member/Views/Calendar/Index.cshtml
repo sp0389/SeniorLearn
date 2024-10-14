@@ -25,10 +25,10 @@
                 events: '/api/utility/member/enrolmentdates',
                 eventClick:  function(info) {
                     $('#modalTitle').html(info.event.title);
-                    $('#modalAddressBody').html("<strong>" + 'Location: ' + "</strong>" + info.event.extendedProps.address);
-                    $('#modalLecturerBody').html("<strong>" + 'Lecturer: ' + "</strong>" + info.event.extendedProps.lecturer);
-                    $('#modalStartBody').html("<strong>" + 'Start Time: ' + "</strong>" + info.event.start);
-                    $('#modalEndBody').html("<strong>" + 'End Time: ' + "</strong>" + info.event.end);
+                    $('#modalAddressBody').html("<strong> Location: </strong>" + info.event.extendedProps.address);
+                    $('#modalLecturerBody').html("<strong> Lecturer: </strong>" + info.event.extendedProps.lecturer);
+                    $('#modalStartBody').html("<strong> Start Time: </strong>" + info.event.start);
+                    $('#modalEndBody').html("<strong> End Time: </strong>" + info.event.end);
                     $('#calendarModal').modal('show');
                 },
             });

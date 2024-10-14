@@ -60,5 +60,40 @@ namespace SeniorLearn.Services
             }
             return lessons;
         }
+
+        public async Task<IEnumerable<EnrolmentDTO>> GetMemberLessonEnrolmentsAsync(string userId)
+        {
+            var member = await _organisationUserService.GetUserByUserNameAsync(userId);
+
+            var enrolments = await _context.Lessons.Include(l => l.Enrolments)
+                .Where(l => l.Enrolments.Any(e => e.MemberId == member.Id))
+                .ProjectToType<EnrolmentDTO>()
+                .ToListAsync();
+                
+            return enrolments;
+        }
+
+        public async Task UnenrolMemberFromLessonAsync(string userId, IList<int> Lessons, int id)
+        {
+            var member = await _organisationUserService.GetUserByUserNameAsync(userId);
+            
+            if (id != 0)
+            {
+                var lessonEnrolment = await _context.Enrolments.Where(e => e.MemberId == member.Id && e.LessonId == id)
+                    .FirstOrDefaultAsync() ?? throw new DomainRuleException("You are not enroled in that lesson!");
+
+                _context.Enrolments.Remove(lessonEnrolment);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                var lessonEnrolment = await _context.Enrolments
+                    .Where(e => e.MemberId == member.Id && Lessons.Contains(e.LessonId))
+                    .ToListAsync() ?? throw new DomainRuleException("You are not enroled in that lesson!");
+
+                _context.RemoveRange(lessonEnrolment);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }

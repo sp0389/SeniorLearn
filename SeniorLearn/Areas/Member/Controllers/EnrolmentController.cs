@@ -4,18 +4,16 @@ using SeniorLearn.Controllers;
 using SeniorLearn.Data.Core;
 using SeniorLearn.Services;
 
-namespace SeniorLearn.Areas.Member1.Controllers
+namespace SeniorLearn.Areas.Member.Controllers
 {
     [Area("Member")]
     [Authorize(Roles = "Standard,Professional,Administrator,Honorary")]
     public class EnrolmentController : BaseController
     {
-        private readonly LessonService _lessonService;
         private readonly EnrolmentService _enrolmentService;
-        public EnrolmentController(ApplicationDbContext context, ILogger<EnrolmentController> logger, LessonService lessonService, EnrolmentService enrolmentService) 
+        public EnrolmentController(ApplicationDbContext context, ILogger<EnrolmentController> logger,  EnrolmentService enrolmentService)
             : base(context, logger)
         {
-            _lessonService = lessonService;
             _enrolmentService = enrolmentService;
         }
 
@@ -41,6 +39,17 @@ namespace SeniorLearn.Areas.Member1.Controllers
             }
             return RedirectToAction("Index");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Overview()
+        {
+            var user = HttpContext.User.Identity!.Name;
+
+            var enrolments = await _enrolmentService.GetMemberLessonEnrolmentsAsync(user!);
+            return View(enrolments);
+        }
+
+        //TODO: Add CSRF prevention
         [HttpPost]
         public async Task<IActionResult> Enrol(IList<int> Lessons)
         {
@@ -57,7 +66,49 @@ namespace SeniorLearn.Areas.Member1.Controllers
                     TempData["Error"] = ex.Message;
                 }
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Overview");
+        }
+
+        //TODO: Add CSRF prevention
+        [HttpPost]
+        public async Task<IActionResult> UnenrolCourseLessons(IList<int> Lessons, int id)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = HttpContext.User.Identity!.Name;
+
+                try
+                {
+                    await _enrolmentService.UnenrolMemberFromLessonAsync(user!, Lessons, id);
+                    TempData["Success"] = "You have been unenroled.";
+                }
+                catch (DomainRuleException ex)
+                {
+                    TempData["Error"] = ex.Message;
+                }
+            }
+            return RedirectToAction("Overview");
+        }
+        
+        //TODO: Add CSRF prevention
+        [HttpPost]
+        public async Task<IActionResult> UnenrolLessons(IList<int>Lessons, int id)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = HttpContext.User.Identity!.Name;
+
+                try
+                {
+                    await _enrolmentService.UnenrolMemberFromLessonAsync(user!, Lessons, id);
+                    TempData["Success"] = "You have been unenroled from this lesson";
+                }
+                catch (DomainRuleException ex)
+                {
+                    TempData["Error"] = ex.Message;
+                }
+            }
+            return RedirectToAction("Overview");
         }
     }
 }

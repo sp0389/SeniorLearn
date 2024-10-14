@@ -21,12 +21,6 @@ namespace SeniorLearn.Services
                 .Map(dest => dest.FirstName, src => src.FirstName)
                 .Map(dest => dest.LastName, src => src.LastName)
                 .Map(dest => dest.Email, src => src.Email);
-            TypeAdapterConfig<Lesson, LessonDTO>
-                .NewConfig()
-                .Map(dest => dest.Id, src => src.Id)
-                .Map(dest => dest.Title, src => src.Title)
-                .Map(dest => dest.Description, src => src.Description)
-                .Map(dest => dest.GroupId, src => src.GroupId);
             TypeAdapterConfig<Lesson, CalendarDTO>
                 .NewConfig()
                 .Map(dest => dest.Title, src => src.Title)

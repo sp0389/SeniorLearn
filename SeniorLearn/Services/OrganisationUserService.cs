@@ -11,19 +11,27 @@ namespace SeniorLearn.Services
     {
         protected readonly ApplicationDbContext _context;
         protected readonly UserManager<OrganisationUser> _userManager;
+        protected readonly OrganisationUserRoleService _organisationUserRoleService;
 
-        public OrganisationUserService(ApplicationDbContext context, UserManager<OrganisationUser> userManager)
+        public OrganisationUserService(ApplicationDbContext context, UserManager<OrganisationUser> userManager, OrganisationUserRoleService organisationUserRoleService)
         {
             _context = context;
             _userManager = userManager;
+            _organisationUserRoleService = organisationUserRoleService;
         }
 
         public async Task<MemberDTO> RegisterMemberAsync(int organisationId, string firstName, string lastName, string email, string password = "1")
         {
             var organisation = await _context.Organisations.FindAsync(organisationId);
-            
             var member = organisation!.RegisterMember(firstName, lastName, email);
             var result = await _userManager.CreateAsync(member, password);
+
+            var role = await _organisationUserRoleService.GetUserRoleAsync(RoleTypes.Standard);
+            var assignStandardRole = new OrganisationUserRole(member, role);
+            
+            member.AssignRoleToMember(RoleTypes.Standard, assignStandardRole, DateTime.UtcNow, default, 12);
+            await _context.UserRoles.AddAsync(assignStandardRole);
+            await _context.SaveChangesAsync();
 
             if (result.Succeeded)
             {
@@ -36,9 +44,6 @@ namespace SeniorLearn.Services
         public async Task<OrganisationUser> GetUserByIdAsync(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-            //var user = await _context.Users.OfType<Member>().Where(u => u.Id == id)
-            //    .FirstOrDefaultAsync();
-
             return user!;
         }
         public async Task<Member> GetUserByUserNameAsync(string id)
