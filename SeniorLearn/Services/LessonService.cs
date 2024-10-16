@@ -4,7 +4,6 @@ using SeniorLearn.Areas.Member.Models.Lesson;
 using SeniorLearn.Areas.Member.Models.Course;
 using SeniorLearn.Data;
 using SeniorLearn.Data.Core;
-using SeniorLearn.Data.Schedule;
 
 namespace SeniorLearn.Services
 {
@@ -99,7 +98,7 @@ namespace SeniorLearn.Services
                 Description = model.Description,
                 StartDate = model.StartDate,
                 EndDate = model.EndDate,
-                UserId = model.SelectedUserId 
+                UserId = model.SelectedUserId
             };
 
             _context.Courses.Add(course);

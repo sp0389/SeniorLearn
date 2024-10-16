@@ -25,8 +25,6 @@ namespace SeniorLearn.Services
 
             foreach (var lesson in lessons)
             {
-                lesson.EnrolmentValidationChecks(member, lesson);
-
                 var enrolment = lesson.EnrolMemberInLesson(member, lesson, DateTime.UtcNow);
                 await _context.AddAsync(enrolment);
             }

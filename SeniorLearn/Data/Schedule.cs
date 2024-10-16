@@ -1,4 +1,4 @@
-﻿namespace SeniorLearn.Data.Schedule
+﻿namespace SeniorLearn.Data
 {
     public abstract class Schedule
     {

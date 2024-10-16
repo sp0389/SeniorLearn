@@ -25,12 +25,11 @@ namespace SeniorLearn.Services
             var organisation = await _context.Organisations.FindAsync(organisationId);
             var member = organisation!.RegisterMember(firstName, lastName, email);
             var result = await _userManager.CreateAsync(member, password);
-
-            var role = await _organisationUserRoleService.GetUserRoleAsync(RoleTypes.Standard);
-            var assignStandardRole = new OrganisationUserRole(member, role);
             
-            member.AssignRoleToMember(RoleTypes.Standard, assignStandardRole, DateTime.UtcNow, default, 12);
-            await _context.UserRoles.AddAsync(assignStandardRole);
+            var role = await _organisationUserRoleService.GetUserRoleAsync(RoleTypes.Standard);
+            var assignRole = member.GrantStandardRole(member, role, DateTime.UtcNow, default);
+            
+            await _context.UserRoles.AddAsync(assignRole);
             await _context.SaveChangesAsync();
 
             if (result.Succeeded)
@@ -65,7 +64,6 @@ namespace SeniorLearn.Services
                 Email = u.Email!,
                 RenewalDate = u.UserRoles.OrderByDescending(ur => ur.EndDate).FirstOrDefault()!.EndDate.ToShortDateString() ?? "No Role Assigned",
             }).ToListAsync();
-
             return users;
         }
 

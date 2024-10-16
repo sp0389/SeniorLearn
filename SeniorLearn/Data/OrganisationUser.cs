@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-
 namespace SeniorLearn.Data
 {
     public abstract class OrganisationUser : IdentityUser
@@ -24,15 +23,17 @@ namespace SeniorLearn.Data
             LastName = lastName;
             Email = email;
         }
-
+        
         public abstract Payment CreateNewPaymentRecord(OrganisationUser user, DateTime paymentDate, PaymentType paymentType, decimal paymentAmount);
-        public abstract void AssignRoleToMember(RoleTypes? roleType, OrganisationUserRole assignUserRole, DateTime startDate,
-            DateTime? renewalDate, int duration);
+        public abstract OrganisationUserRole GrantStandardRole(OrganisationUser user, OrganisationRole role, DateTime startDate, DateTime? renewalDate);
+        public abstract OrganisationUserRole GrantProfessionalRole(OrganisationUser user, OrganisationRole role, DateTime startDate, int duration, DateTime? renewalDate);
+        public abstract OrganisationUserRole GrantHonoraryRole(OrganisationUser user, OrganisationRole role, DateTime startDate);
     }
 
     public class Member : OrganisationUser
     {
         public Member() { }
+
         public Member(int organisationId, string username, string firstName, string lastName, string email) :
             base(organisationId, username, firstName, lastName, email) { }
 
@@ -42,21 +43,45 @@ namespace SeniorLearn.Data
             return payment;
         }
 
-        public override void AssignRoleToMember(RoleTypes? roleType, OrganisationUserRole assignUserRole, DateTime startDate,
-            DateTime? renewalDate, int duration)
+        public override OrganisationUserRole GrantStandardRole(OrganisationUser user, OrganisationRole role, DateTime startDate, DateTime? renewalDate)
         {
-            switch (roleType)
+            var standard = new OrganisationUserRole(user, role)
             {
-                case RoleTypes.Standard:
-                    assignUserRole.GrantStandardRole(startDate, renewalDate);
-                    break;
-                case RoleTypes.Professional:
-                    assignUserRole.GrantProfessionalRole(startDate, duration, renewalDate);
-                    break;
-                case RoleTypes.Honorary:
-                    assignUserRole.GrantHonoraryRole();
-                    break;
+                StartDate = new DateTime(startDate.Year, startDate.Month, 1).AddMonths(1),
+            };
+            standard.EndDate = renewalDate ?? standard.StartDate.AddYears(1);
+            standard.RoleType = RoleTypes.Standard;
+            return standard;
+        }
+
+        public override OrganisationUserRole GrantProfessionalRole(OrganisationUser user, OrganisationRole role, DateTime startDate, int duration, DateTime? renewalDate)
+        {
+            var professional = new OrganisationUserRole(user, role) 
+            {
+                StartDate = new DateTime(startDate.Year, startDate.Month, 1).AddMonths(1),
+            };
+
+            if (renewalDate.HasValue)
+            {
+                professional.EndDate = renewalDate.Value;
             }
+            else
+            {
+                professional.EndDate = duration == 3 ? professional.StartDate.AddMonths(3) : professional.StartDate.AddYears(1);
+            }
+            professional.RoleType = RoleTypes.Professional;
+            return professional;
+        }
+
+        public override OrganisationUserRole GrantHonoraryRole(OrganisationUser user, OrganisationRole role, DateTime startDate)
+        {
+            var honorary = new OrganisationUserRole(user, role)
+            {
+                StartDate = new DateTime(startDate.Year, startDate.Month, 1).AddMonths(1),
+                EndDate = DateTime.MaxValue,
+                RoleType = RoleTypes.Honorary,
+            };
+            return honorary;
         }
     }
 }

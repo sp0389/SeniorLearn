@@ -39,12 +39,37 @@ namespace SeniorLearn.Services
                 var userRoles = await _userManager.GetRolesAsync(user);
                 var role = await GetUserRoleAsync(roleType);
 
-                var assignUserRole = new OrganisationUserRole(user, role);
-                assignUserRole.RoleValidationCheck(startDate, roleType, duration, renewalDate, userRoles);
+                if (roleType == RoleTypes.Professional && renewalDate == null && duration == 0)
+                {
+                    throw new DomainRuleException("You must select a renewal date.");
+                }
 
-                user.AssignRoleToMember(roleType, assignUserRole, startDate, renewalDate, duration);
+                if (startDate >= renewalDate)
+                {
+                    throw new DomainRuleException("Renewal date must come after todays date.");
+                }
+                
+                if (roleType == RoleTypes.Standard && userRoles.Contains("Professional") || roleType == RoleTypes.Professional && userRoles.Contains("Standard"))
+                {   
+                    throw new DomainRuleException("Member cannot hold a professional and a standard role at the same time.");
+                }
 
-                await _context.UserRoles.AddAsync(assignUserRole);
+                switch (roleType)
+                {
+                    case RoleTypes.Standard:
+                        var standard = user.GrantStandardRole(user, role, startDate, renewalDate);
+                        await _context.UserRoles.AddAsync(standard);
+                    break;
+                    case RoleTypes.Professional:
+                        var professional = user.GrantProfessionalRole(user, role, startDate, duration, renewalDate);
+                        await _context.UserRoles.AddAsync(professional);
+                    break;
+                    case RoleTypes.Honorary:
+                        var honorary = user.GrantHonoraryRole(user, role, startDate);
+                        await _context.UserRoles.AddAsync(honorary);
+                    break;
+                }
+
                 await _context.SaveChangesAsync(); 
             }
         }
