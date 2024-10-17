@@ -81,6 +81,7 @@ namespace SeniorLearn.Data.Core
                     TwoFactorEnabled = false,
                     LockoutEnabled = false,
                     AccessFailedCount = 0,
+                    Status = Status.Active,
                 },
 
                 new Member
@@ -102,6 +103,7 @@ namespace SeniorLearn.Data.Core
                     TwoFactorEnabled = false,
                     LockoutEnabled = false,
                     AccessFailedCount = 0,
+                    Status = Status.Active,
                 },
 
                 new Member
@@ -123,6 +125,7 @@ namespace SeniorLearn.Data.Core
                     TwoFactorEnabled = false,
                     LockoutEnabled = false,
                     AccessFailedCount = 0,
+                    Status = Status.Active,
                 }
             );
         }

@@ -69,7 +69,7 @@ namespace SeniorLearn.Services
 
         public async Task<IEnumerable<MemberDTO>> GetInactiveUsersAsync(int skip = 0, int take = int.MaxValue)
         {
-            var inactiveUsers = await _context.Users.Where(u => u.UserRoles.Count == 0)
+            var inactiveUsers = await _context.Users.Where(u => u.Status == Status.Inactive)
             .OrderBy(u => u.LastName).Skip(skip).Take(take)
                 .Select(u => new MemberDTO
                 {
@@ -85,8 +85,7 @@ namespace SeniorLearn.Services
 
         public async Task<IEnumerable<MemberDTO>> GetActiveUsersAsync(int skip = 0, int take = int.MaxValue)
         {
-            var activeUsers = await _context.Users.Include(u => u.UserRoles)
-            .Where(u => u.UserRoles.Count != 0)
+            var activeUsers = await _context.Users.Where(u => u.Status == Status.Active)
             .OrderBy(u => u.LastName).Skip(skip).Take(take)
                 .Select(u => new MemberDTO
                 {
@@ -109,7 +108,7 @@ namespace SeniorLearn.Services
 
         public async Task<int> GetInactiveUserCountAsync()
         {
-            var inactiveUserCount = await _context.Users.Where(u => u.UserRoles.Count == 0)
+            var inactiveUserCount = await _context.Users.Where(u => u.Status == Status.Inactive)
             .CountAsync();
 
             return inactiveUserCount;
@@ -117,7 +116,7 @@ namespace SeniorLearn.Services
 
         public async Task<int> GetActiveUserCountAsync()
         {
-            var activeUserCount = await _context.Users.Where(u => u.UserRoles.Count != 0)
+            var activeUserCount = await _context.Users.Where(u => u.Status == Status.Active)
             .CountAsync();
             
             return activeUserCount;

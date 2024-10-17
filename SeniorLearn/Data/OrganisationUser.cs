@@ -1,6 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 namespace SeniorLearn.Data
 {
+    public enum Status
+    {
+        Inactive,
+        Active,
+    }
     public abstract class OrganisationUser : IdentityUser
     {
         public string FirstName { get; set; } = default!;
@@ -8,6 +13,7 @@ namespace SeniorLearn.Data
         public DateTime Registered { get; set; }
         public byte[] Version { get; set;} = default!;
         public int OrganisationId { get; set; }
+        public Status Status { get; set; }
         public Organisation Organisation { get; set; } = default!;
         public ICollection<OrganisationUserRole> UserRoles { get; set; } = new List<OrganisationUserRole>();
         public ICollection<Payment> Payments { get; set; } = new List<Payment>();
@@ -51,6 +57,7 @@ namespace SeniorLearn.Data
             };
             standard.EndDate = renewalDate ?? standard.StartDate.AddYears(1);
             standard.RoleType = RoleTypes.Standard;
+            user.Status = Status.Active;
             return standard;
         }
 
@@ -70,6 +77,7 @@ namespace SeniorLearn.Data
                 professional.EndDate = duration == 3 ? professional.StartDate.AddMonths(3) : professional.StartDate.AddYears(1);
             }
             professional.RoleType = RoleTypes.Professional;
+            user.Status = Status.Active;
             return professional;
         }
 
@@ -81,6 +89,7 @@ namespace SeniorLearn.Data
                 EndDate = DateTime.MaxValue,
                 RoleType = RoleTypes.Honorary,
             };
+            user.Status = Status.Active;
             return honorary;
         }
     }
