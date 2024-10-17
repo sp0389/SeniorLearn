@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using SeniorLearn.Data.Core;
 using SeniorLearn.Data;
 using SeniorLearn.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 
 public class Program
 {
@@ -42,6 +45,40 @@ public class Program
                 policy.RequireRole("ActiveRole"));
         });
 
+        builder.Services.AddAuthentication(o =>
+        {
+            o.DefaultScheme = "JWT_OR_COOKIE";
+            o.DefaultChallengeScheme = "JWT_OR_COOKIE";
+        }).AddJwtBearer(options =>
+        {
+            options.RequireHttpsMetadata = false;
+            options.SaveToken = true;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(builder.Configuration["Jwt:Key"])),
+                RequireExpirationTime = true,
+                ClockSkew = TimeSpan.Zero
+            };
+        }).AddPolicyScheme("JWT_OR_COOKIE", null, o =>
+        {
+            o.ForwardDefaultSelector = c =>
+            {
+                string auth = c.Request.Headers[HeaderNames.Authorization];
+                if (!string.IsNullOrWhiteSpace(auth) && auth.StartsWith("Bearer "))
+                {
+                    return JwtBearerDefaults.AuthenticationScheme;
+                }
+
+                return IdentityConstants.ApplicationScheme;
+            };
+        });
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -59,16 +96,12 @@ public class Program
         app.UseStaticFiles();
 
         app.UseRouting();
-
+        
+        app.UseAuthentication();
         app.UseAuthorization();
 
-        app.MapControllerRoute(
-            name: "areas",
-            pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-
-        app.MapControllerRoute(
-            name: "default",
-            pattern: "{controller=Home}/{action=Index}/{id?}");
+        app.MapControllerRoute(name: "areas", pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+        app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
         app.MapRazorPages();
 
         app.Run();

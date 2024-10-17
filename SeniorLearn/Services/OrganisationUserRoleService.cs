@@ -63,11 +63,11 @@ namespace SeniorLearn.Services
                     case RoleTypes.Professional:
                         var professional = user.GrantProfessionalRole(user, role, startDate, duration, renewalDate);
                         await _context.UserRoles.AddAsync(professional);
-                    break;
+                        break;
                     case RoleTypes.Honorary:
                         var honorary = user.GrantHonoraryRole(user, role, startDate);
                         await _context.UserRoles.AddAsync(honorary);
-                    break;
+                        break;
                 }
 
                 await _context.SaveChangesAsync(); 
@@ -89,6 +89,7 @@ namespace SeniorLearn.Services
         public async Task<bool> RemoveRoleFromUserAsync(string userId, string role)
         {
             var user = await _userManager.FindByIdAsync(userId);
+            user!.Status = Status.Inactive;
             return (await _userManager.RemoveFromRoleAsync(user!, role)).Succeeded;
         }
     }

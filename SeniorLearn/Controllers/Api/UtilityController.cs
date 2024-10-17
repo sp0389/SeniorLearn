@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SeniorLearn.Models;
 using SeniorLearn.Services;
 
 namespace SeniorLearn.Controllers.Api
@@ -15,11 +16,27 @@ namespace SeniorLearn.Controllers.Api
         }
 
         [HttpGet, Route("member/enrolmentdates")]
-        public async Task <IActionResult> Index()
+        public async Task <IActionResult> EnrolmentDatesForCalendar()
         {
             var user = HttpContext.User.Identity!.Name;
             var dates = await _apiService.GetDatesForApiAsync(user!);
             return Ok(dates);
+        }
+
+        [AllowAnonymous]
+        [HttpPost, Route("token")]
+        public async Task<IActionResult> Login(LoginDTO loginDto)
+        {
+            var token = string.Empty;
+            if (ModelState.IsValid)
+            {
+                token = await _apiService.GetJwtTokenAsync(loginDto);
+                if (token != "Invalid Credentials!")
+                {
+                    return Ok(token);  
+                }
+            }
+            return BadRequest(token);
         }
     }
 }
