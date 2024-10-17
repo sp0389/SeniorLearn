@@ -4,7 +4,6 @@ using SeniorLearn.Areas.Member.Models.Lesson;
 using SeniorLearn.Areas.Member.Models.Course;
 using SeniorLearn.Data;
 using SeniorLearn.Data.Core;
-using SeniorLearn.Data.Schedule;
 
 namespace SeniorLearn.Services
 {
