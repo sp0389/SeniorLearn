@@ -160,8 +160,11 @@ namespace SeniorLearn.Services
             model.DurationOptions = new List<SelectListItem>
             {
                 new SelectListItem { Value = "30", Text = "30 minutes" },
-                new SelectListItem { Value = "60", Text = "60 minutes" },
-                new SelectListItem { Value = "90", Text = "90 minutes" }
+                new SelectListItem { Value = "60", Text = "1 hour" },
+                new SelectListItem { Value = "90", Text = "1 hour 30 minutes" },
+                new SelectListItem { Value = "120", Text = "2 hours" },
+                new SelectListItem { Value = "150", Text = "2 hours 30 minutes" },
+                new SelectListItem { Value = "180", Text = "3 hours" }
             };
 
             model.DeliveryModes = new List<SelectListItem>
