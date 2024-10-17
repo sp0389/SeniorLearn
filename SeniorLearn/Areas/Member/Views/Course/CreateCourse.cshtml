@@ -28,12 +28,6 @@
         <span asp-validation-for="EndDate" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
-        <label asp-for="SelectedUserId" class="control-label">User</label> <!-- Updated label -->
-        <select asp-for="SelectedUserId" asp-items="Model.Users" class="form-control"></select> <!-- Updated property name -->
-        <span asp-validation-for="SelectedUserId" class="text-danger"></span>
-    </div>
-
     <button type="submit" class="btn btn-primary">Create Course</button>
 
     @if (ViewBag.CourseCreatedMessage != null)
@@ -51,7 +45,7 @@
                 altInput: true,
                 altFormat: "d/m/Y H:i",
                 time_24hr: true
-                    });
+            });
 
             flatpickr("#courseEndDatePicker", {
                 enableTime: true,

@@ -12,155 +12,164 @@
     <button id="toggleButton" class="btn btn-secondary ml-3">Switch to Course</button>
 </h1>
 
-<div id="lessonForm">
-    <form asp-action="Create" method="post">
+<!-- Lesson Form -->
+<div id="lessonForm" style="display: block;">
+    <form asp-action="Create" method="post" id="lessonFormElement">
         @Html.AntiForgeryToken()
         <div asp-validation-summary="All" class="text-danger"></div>
 
+        <!-- Lesson Name -->
         <div class="form-group">
             <label asp-for="LessonName" class="control-label">Lesson Name</label>
             <input asp-for="LessonName" class="form-control" />
             <span asp-validation-for="LessonName" class="text-danger"></span>
         </div>
 
+        <!-- Description -->
         <div class="form-group">
             <label asp-for="Description" class="control-label">Description</label>
             <textarea asp-for="Description" class="form-control"></textarea>
             <span asp-validation-for="Description" class="text-danger"></span>
         </div>
 
+        <!-- Duration -->
         <div class="form-group">
             <label asp-for="Duration" class="control-label">Duration</label>
             <select asp-for="Duration" asp-items="Model.DurationOptions" class="form-control"></select>
             <span asp-validation-for="Duration" class="text-danger"></span>
         </div>
 
+        <!-- Capacity -->
         <div class="form-group">
             <label asp-for="Capacity" class="control-label">Capacity</label>
             <input asp-for="Capacity" class="form-control" />
             <span asp-validation-for="Capacity" class="text-danger"></span>
         </div>
 
-        <div class="form-group">
-            <label asp-for="StartDate" class="control-label">Start Date</label>
-            <input asp-for="StartDate" id="startDatePicker" class="form-control" placeholder="Select date and time" />
-            <span asp-validation-for="StartDate" class="text-danger"></span>
-        </div>
-
+        <!-- Delivery Mode -->
         <div class="form-group">
             <label asp-for="DeliveryMode" class="control-label">Delivery Mode</label>
             <select asp-for="DeliveryMode" asp-items="Model.DeliveryModes" class="form-control"></select>
             <span asp-validation-for="DeliveryMode" class="text-danger"></span>
         </div>
 
+        <!-- Location -->
         <div class="form-group">
             <label asp-for="Location" class="control-label">Location</label>
             <input asp-for="Location" class="form-control" />
             <span asp-validation-for="Location" class="text-danger"></span>
         </div>
 
-        <!-- Recurring Checkbox -->
-        <div class="form-group">
-            <input asp-for="IsRecurring" type="checkbox" id="isRecurringCheckbox" class="form-check-input larger-checkbox" />
-            <label asp-for="IsRecurring" class="control-label">Lesson is Recurring</label>
-        </div>
-
-        <!-- Frequency Dropdown (Initially Hidden) -->
-        <div class="form-group" id="frequency-selection" style="display: none;">
-            <label asp-for="Frequency" class="control-label">Frequency</label>
-            <select asp-for="Frequency" asp-items="Model.FrequencyOptions" class="form-control"></select>
-            <span asp-validation-for="Frequency" class="text-danger"></span>
-        </div>
-
-        <!-- Occurrences Input (Initially Hidden) -->
-        <div class="form-group" id="occurrences-selection" style="display: none;">
-            <label asp-for="Occurrences" class="control-label">Number of Occurrences</label>
-            <input asp-for="Occurrences" class="form-control" />
-            <span asp-validation-for="Occurrences" class="text-danger"></span>
-        </div>
-
-        <!-- Course Checkbox -->
+        <!-- Lesson is part of a course -->
         <div class="form-group">
             <input asp-for="IsCourse" type="checkbox" id="isCourseCheckbox" class="form-check-input larger-checkbox" />
             <label asp-for="IsCourse" class="control-label">Lesson is part of a Course</label>
         </div>
 
-        <!-- Course Dropdown (Initially Hidden) -->
-        <div class="form-group" id="course-selection" style="display: none;">
-            <label asp-for="SelectedCourseId" class="control-label">Course</label>
-            <select asp-for="SelectedCourseId" asp-items="Model.Courses" class="form-control">
-                <option value="">None</option>
-            </select>
-            <span asp-validation-for="SelectedCourseId" class="text-danger"></span>
+        <!-- Recurrence and Lesson Type -->
+        <div class="form-group">
+            <label class="control-label">Lesson Type</label>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="IsRecurring" value="False" id="singleLessonRadio" />
+                <label class="form-check-label" for="singleLessonRadio">Single Lesson</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" name="IsRecurring" value="True" id="recurringLessonRadio" />
+                <label class="form-check-label" for="recurringLessonRadio">Recurring Lesson</label>
+            </div>
         </div>
+
+        <!-- Single Lesson Date -->
+        <div class="form-group" id="singleLessonDate" style="display: none;">
+            <label asp-for="StartDate" class="control-label">Date of Lesson</label>
+            <input asp-for="StartDate" id="startDatePickerSingle" class="form-control" />
+            <span asp-validation-for="StartDate" class="text-danger"></span>
+        </div>
+
+        <!-- Recurring Lesson Options -->
+        <div id="recurringLessonOptions" style="display: none;">
+            <div class="form-group">
+                <label class="control-label">Select Daily or Weekly Recurrence</label>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" name="Frequency" value="Daily" id="dailyRecurrenceRadio" />
+                    <label class="form-check-label" for="dailyRecurrenceRadio">Daily</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" name="Frequency" value="Weekly" id="weeklyRecurrenceRadio" />
+                    <label class="form-check-label" for="weeklyRecurrenceRadio">Weekly</label>
+                </div>
+            </div>
+
+            <!-- Daily Recurrence Options -->
+            <div id="dailyRecurrenceSection" style="display: none;">
+                <div class="form-group">
+                    <label asp-for="StartDate" class="control-label">Start Date</label>
+                    <input asp-for="StartDate" id="startDatePickerDaily" class="form-control" />
+                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                </div>
+
+                <!-- Occurrences and End Date -->
+                <div class="form-group row">
+                    <div class="col-md-5">
+                        <label for="occurrencesInput">Number of Occurrences</label>
+                        <input asp-for="Occurrences" class="form-control" id="occurrencesInput" />
+                        <span asp-validation-for="Occurrences" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-2 text-center align-self-center">
+                        <strong>OR</strong>
+                    </div>
+                    <div class="col-md-5">
+                        <label for="endDatePickerDaily">End Date</label>
+                        <input asp-for="EndDate" id="endDatePickerDaily" class="form-control" />
+                        <span asp-validation-for="EndDate" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hidden fields to capture StartDate and EndDate -->
+        <input type="hidden" name="StartDateHidden" id="startDateHidden" />
+        <input type="hidden" name="EndDateHidden" id="endDateHidden" />
 
         <button type="submit" class="btn btn-primary mt-3">Create Lesson</button>
     </form>
 </div>
 
+<!-- Course Form -->
 <div id="courseForm" style="display: none;">
     @await Html.PartialAsync("~/Areas/Member/Views/Course/CreateCourse.cshtml", (CreateCourse)ViewBag.CreateCourseModel)
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="/js/lesson-create.js"></script>
+
+    <!-- Include the toggle button JavaScript code directly here -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var toggleButton = document.getElementById('toggleButton');
             var lessonForm = document.getElementById('lessonForm');
             var courseForm = document.getElementById('courseForm');
 
-            toggleButton.addEventListener('click', function () {
-                if (lessonForm.style.display === 'none') {
-                    lessonForm.style.display = 'block';
-                    courseForm.style.display = 'none';
-                    toggleButton.innerText = 'Switch to Course';
-                } else {
+            // Ensure lessonForm is shown and courseForm is hidden on page load
+            lessonForm.style.display = 'block';
+            courseForm.style.display = 'none';
+
+            // Toggle button to switch between lesson and course forms
+            toggleButton.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                // Toggle visibility of lessonForm and courseForm
+                if (lessonForm.style.display === 'block' || lessonForm.style.display === '') {
                     lessonForm.style.display = 'none';
                     courseForm.style.display = 'block';
-                    toggleButton.innerText = 'Switch to Lesson';
+                    toggleButton.textContent = 'Switch to Lesson';
+                } else {
+                    lessonForm.style.display = 'block';
+                    courseForm.style.display = 'none';
+                    toggleButton.textContent = 'Switch to Course';
                 }
             });
-
-            // Initialize flatpickr for lesson start date
-            flatpickr("#startDatePicker", {
-                enableTime: true,
-                dateFormat: "Y-m-d H:i",
-                altInput: true,
-                altFormat: "d/m/Y H:i",
-                time_24hr: true,
-                defaultDate: new Date()
-            });
-
-            var isRecurringCheckbox = document.getElementById('isRecurringCheckbox');
-            var frequencySelection = document.getElementById('frequency-selection');
-            var occurrencesSelection = document.getElementById('occurrences-selection');
-            var isCourseCheckbox = document.getElementById('isCourseCheckbox');
-            var courseSelection = document.getElementById('course-selection');
-
-            // Toggle visibility for frequency dropdown and occurrences input based on IsRecurring checkbox
-            isRecurringCheckbox.addEventListener('change', function () {
-                var display = this.checked ? 'block' : 'none';
-                frequencySelection.style.display = display;
-                occurrencesSelection.style.display = display;
-            });
-
-            // Toggle visibility for course dropdown based on IsCourse checkbox
-            isCourseCheckbox.addEventListener('change', function () {
-                courseSelection.style.display = this.checked ? 'block' : 'none';
-            });
-
-            // Initial check for page load
-            frequencySelection.style.display = isRecurringCheckbox.checked ? 'block' : 'none';
-            occurrencesSelection.style.display = isRecurringCheckbox.checked ? 'block' : 'none';
-            courseSelection.style.display = isCourseCheckbox.checked ? 'block' : 'none';
         });
     </script>
-    <style>
-        /* CSS to make checkboxes larger */
-        .larger-checkbox {
-            width: 20px;
-            height: 20px;
-        }
-    </style>
 }

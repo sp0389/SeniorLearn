@@ -50,12 +50,20 @@
 
     public class WeeklyRepeating : Schedule
     {
-        public List<DayOfWeek> ChosenDays { get; set; }
+        public Dictionary<DayOfWeek, bool> DaysOfWeek { get; protected set; } = new();
 
-        public WeeklyRepeating(DateTime startDate, DateTime endDate, int occurrences, List<DayOfWeek> chosenDays)
+        public WeeklyRepeating(DateTime startDate, DateTime endDate, int occurrences, IList<DayOfWeek> chosenDays)
             : base(startDate, endDate, occurrences)
         {
-            ChosenDays = chosenDays;
+            foreach (DayOfWeek day in Enum.GetValues(typeof(DayOfWeek)))
+            {
+                DaysOfWeek[day] = false;
+            }
+
+            foreach (var day in chosenDays)
+            {
+                DaysOfWeek[day] = true;
+            }
         }
 
         public override ICollection<DateTime> GenerateSchedule()
@@ -64,9 +72,15 @@
             var count = 0;
             var currentDate = StartDate;
 
-            while (count < Occurrences)
+            // Move to the first selected day after the start date
+            while (!DaysOfWeek[currentDate.DayOfWeek])
             {
-                if (ChosenDays.Contains(currentDate.DayOfWeek))
+                currentDate = currentDate.AddDays(1);
+            }
+
+            while (count < Occurrences && currentDate <= EndDate)
+            {
+                if (DaysOfWeek[currentDate.DayOfWeek])
                 {
                     scheduledDays.Add(currentDate);
                     count++;

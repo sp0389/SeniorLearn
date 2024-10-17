@@ -25,6 +25,11 @@ namespace SeniorLearn.Areas.Member.Models.Lesson
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
         public DateTime StartDate { get; set; }
 
+        // Optional: End date for recurring lessons or single lesson duration
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
+        public DateTime? EndDate { get; set; }  // Nullable for non-recurring lessons
+
         [Required(ErrorMessage = "Please select a delivery mode.")]
         public string DeliveryMode { get; set; } = default!;
 
@@ -32,8 +37,7 @@ namespace SeniorLearn.Areas.Member.Models.Lesson
 
         public string Location { get; set; } = default!;
 
-        [Required(ErrorMessage = "Please select a frequency.")]
-        public string Frequency { get; set; } = "None";  // Default to 'None'
+        public string Frequency { get; set; } = "None";  // Default to 'None' for single lessons
 
         public List<SelectListItem> FrequencyOptions { get; set; } = new List<SelectListItem>
         {
@@ -44,9 +48,23 @@ namespace SeniorLearn.Areas.Member.Models.Lesson
 
         public bool IsRecurring { get; set; }
 
-        public int Occurrences { get; set; } = 1; // Default to 1
+        public int Occurrences { get; set; } = 1; // Default to 1 for non-recurring lessons
 
-        public List<SelectListItem> Courses { get; set; } = new List<SelectListItem>();
+        // Weekly recurrence: Select specific days of the week
+        public List<DayOfWeek> SelectedDaysOfWeek { get; set; } = new List<DayOfWeek>();
+
+        public List<SelectListItem> DaysOfWeekOptions { get; set; } = new List<SelectListItem>
+        {
+            new SelectListItem { Value = DayOfWeek.Sunday.ToString(), Text = "Sunday" },
+            new SelectListItem { Value = DayOfWeek.Monday.ToString(), Text = "Monday" },
+            new SelectListItem { Value = DayOfWeek.Tuesday.ToString(), Text = "Tuesday" },
+            new SelectListItem { Value = DayOfWeek.Wednesday.ToString(), Text = "Wednesday" },
+            new SelectListItem { Value = DayOfWeek.Thursday.ToString(), Text = "Thursday" },
+            new SelectListItem { Value = DayOfWeek.Friday.ToString(), Text = "Friday" },
+            new SelectListItem { Value = DayOfWeek.Saturday.ToString(), Text = "Saturday" }
+        };
+
+        public IEnumerable<SelectListItem> Courses { get; set; } = new List<SelectListItem>();
 
         public int? SelectedCourseId { get; set; }
 
