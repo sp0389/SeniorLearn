@@ -10,7 +10,7 @@
     // Toggle button to switch between lesson and course forms
     toggleButton.addEventListener('click', function (e) {
         e.preventDefault();
-        
+
         // Toggle visibility of lessonForm and courseForm
         if (lessonForm.style.display === 'block' || lessonForm.style.display === '') {
             lessonForm.style.display = 'none';
@@ -39,39 +39,34 @@
     var endDateHidden = document.getElementById('endDateHidden');
     var endDatePickerDaily = document.getElementById('endDatePickerDaily');
 
-    // Helper function to disable hidden date fields
     function disableHiddenFields() {
         startDateHidden.disabled = true;
         endDateHidden.disabled = true;
-        startDateHidden.value = '';  // Clear value
-        endDateHidden.value = '';    // Clear value
+        startDateHidden.value = '';
+        endDateHidden.value = '';
     }
 
-    // Helper function to enable hidden date fields
     function enableHiddenFields() {
         startDateHidden.disabled = false;
         endDateHidden.disabled = false;
     }
 
-    // Handle Single Lesson Option
     singleLessonRadio.addEventListener('change', function () {
         if (this.checked) {
             singleLessonDate.style.display = 'block';
             recurringLessonOptions.style.display = 'none';
-            disableHiddenFields();  // Disable hidden fields for single lesson
+            disableHiddenFields();
         }
     });
 
-    // Handle Recurring Lesson Option
     recurringLessonRadio.addEventListener('change', function () {
         if (this.checked) {
             recurringLessonOptions.style.display = 'block';
             singleLessonDate.style.display = 'none';
-            enableHiddenFields();  // Enable hidden fields for recurring lesson
+            enableHiddenFields();
         }
     });
 
-    // Control recurrence options display
     dailyRecurrenceRadio.addEventListener('change', function () {
         if (this.checked) {
             dailyRecurrenceSection.style.display = 'block';
@@ -86,17 +81,16 @@
         }
     });
 
-    // Handle Occurrences and EndDate toggling
     occurrencesInput.addEventListener('input', function () {
         if (occurrencesInput.value > 0) {
             endDatePickerDaily.disabled = true;
-            endDateHidden.value = ''; // Clear the hidden EndDate field
+            endDateHidden.value = '';
         } else {
             endDatePickerDaily.disabled = false;
         }
     });
 
-    // Initialize date pickers
+    // Initialize flatpickr for date pickers
     flatpickr("#startDatePickerSingle", {
         enableTime: true,
         dateFormat: "Y-m-d H:i",
@@ -114,7 +108,7 @@
         time_24hr: true,
         defaultDate: new Date(),
         onChange: function (selectedDates, dateStr) {
-            startDateHidden.value = dateStr; // Store in hidden field for recurring
+            startDateHidden.value = dateStr;
         }
     });
 
@@ -126,7 +120,24 @@
         time_24hr: true,
         defaultDate: new Date(),
         onChange: function (selectedDates, dateStr) {
-            endDateHidden.value = dateStr; // Store in hidden field for recurring
+            endDateHidden.value = dateStr;
         }
+    });
+
+    // Flatpickr for Course Form (if needed)
+    flatpickr("#courseStartDatePicker", {
+        enableTime: true,
+        dateFormat: "Y-m-d\\TH:i",
+        altInput: true,
+        altFormat: "d/m/Y H:i",
+        time_24hr: true
+    });
+
+    flatpickr("#courseEndDatePicker", {
+        enableTime: true,
+        dateFormat: "Y-m-d\\TH:i",
+        altInput: true,
+        altFormat: "d/m/Y H:i",
+        time_24hr: true
     });
 });

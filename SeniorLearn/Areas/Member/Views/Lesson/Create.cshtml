@@ -137,39 +137,10 @@
 
 <!-- Course Form -->
 <div id="courseForm" style="display: none;">
-    @await Html.PartialAsync("~/Areas/Member/Views/Course/CreateCourse.cshtml", (CreateCourse)ViewBag.CreateCourseModel)
+    @Html.Partial("~/Areas/Member/Views/Course/CreateCourse.cshtml", (CreateCourse)ViewBag.CreateCourseModel)
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="/js/lesson-create.js"></script>
-
-    <!-- Include the toggle button JavaScript code directly here -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var toggleButton = document.getElementById('toggleButton');
-            var lessonForm = document.getElementById('lessonForm');
-            var courseForm = document.getElementById('courseForm');
-
-            // Ensure lessonForm is shown and courseForm is hidden on page load
-            lessonForm.style.display = 'block';
-            courseForm.style.display = 'none';
-
-            // Toggle button to switch between lesson and course forms
-            toggleButton.addEventListener('click', function (e) {
-                e.preventDefault();
-
-                // Toggle visibility of lessonForm and courseForm
-                if (lessonForm.style.display === 'block' || lessonForm.style.display === '') {
-                    lessonForm.style.display = 'none';
-                    courseForm.style.display = 'block';
-                    toggleButton.textContent = 'Switch to Lesson';
-                } else {
-                    lessonForm.style.display = 'block';
-                    courseForm.style.display = 'none';
-                    toggleButton.textContent = 'Switch to Course';
-                }
-            });
-        });
-    </script>
 }
