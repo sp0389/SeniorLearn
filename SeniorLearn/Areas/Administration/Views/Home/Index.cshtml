@@ -1,0 +1,42 @@
+﻿@{
+    ViewData["Title"] = "Overall Member Enrolments";
+}
+
+<h1 class="text-center mt-4 mb-3">@ViewData["Title"]</h1>
+<canvas id="doughnutChart"></canvas>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <script>
+        async function getEnrolmentDataFromApi() {
+            
+            const url = "/api/utility/member/enrolments";
+
+            try {
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch data from Api!`);
+                }
+
+                const data = await response.json();
+                const ctx = document.getElementById('doughnutChart');
+                
+                Chart.defaults.font.size = 16;
+
+                const chart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Active Members with Enrolments', 'Inactive Members with Enrolments'],
+                        datasets: [{
+                            data: data,
+                        }]
+                    },
+                });
+            } catch (error) {
+                console.log(error.message);
+            }
+        }
+        getEnrolmentDataFromApi();
+    </script>
+}

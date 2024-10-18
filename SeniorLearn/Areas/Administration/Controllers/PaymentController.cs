@@ -1,7 +1,6 @@
 ﻿using cloudscribe.Pagination.Models;
 using Microsoft.AspNetCore.Mvc;
 using SeniorLearn.Areas.Administration.Models.Payment;
-using SeniorLearn.Controllers;
 using SeniorLearn.Data.Core;
 using SeniorLearn.Models;
 using SeniorLearn.Services;
@@ -24,19 +23,19 @@ namespace SeniorLearn.Areas.Administration.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string id, int pageNumber = 1, int pageSize = 10)
         {
-            var user = await _organisationUserService.GetUserByIdAsync(id);
+            var member = await _organisationUserService.GetUserByIdAsync(id);
 
-            if (user == null)
+            if (member == null)
             {
                 return NotFound();
             }
 
-            var userPayments = await _paymentService.GetPaymentsAsync(user, (pageSize * pageNumber) - pageSize, pageSize);
+            var memberPayments = await _paymentService.GetPaymentsAsync(member, (pageSize * pageNumber) - pageSize, pageSize);
 
             var pagedResult = new PagedResult<PaymentDTO>
             {
-                Data  = userPayments.ToList(),
-                TotalItems = await _paymentService.GetPaymentsCountAsync(user),
+                Data  = memberPayments.ToList(),
+                TotalItems = await _paymentService.GetPaymentsCountAsync(member),
                 PageNumber = pageNumber,
                 PageSize = pageSize,
             };
@@ -61,16 +60,16 @@ namespace SeniorLearn.Areas.Administration.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _organisationUserService.GetUserByIdAsync(id);
+                var member = await _organisationUserService.GetUserByIdAsync(id);
 
-                if (user == null)
+                if (member == null)
                 {
                     return NotFound();
                 }
 
                 try
                 {
-                    await _paymentService.CreateNewPaymentAsync(user, p.PaymentDate!.Value, p.PaymentType!.Value, p.PaymentAmount!.Value);
+                    await _paymentService.CreateNewPaymentAsync(member, p.PaymentDate!.Value, p.PaymentType!.Value, p.PaymentAmount!.Value);
                     return RedirectToAction("Index", new { id });
                 }
                 

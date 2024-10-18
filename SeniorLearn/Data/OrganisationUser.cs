@@ -16,8 +16,6 @@ namespace SeniorLearn.Data
         public Status Status { get; set; }
         public Organisation Organisation { get; set; } = default!;
         public ICollection<OrganisationUserRole> UserRoles { get; set; } = new List<OrganisationUserRole>();
-        public ICollection<Payment> Payments { get; set; } = new List<Payment>();
-        public ICollection<Enrolment> Enrolments { get; set; } = new List<Enrolment>();
 
         protected OrganisationUser() { }
 
@@ -29,41 +27,38 @@ namespace SeniorLearn.Data
             LastName = lastName;
             Email = email;
         }
-        
-        public abstract Payment CreateNewPaymentRecord(OrganisationUser user, DateTime paymentDate, PaymentType paymentType, decimal paymentAmount);
-        public abstract OrganisationUserRole GrantStandardRole(OrganisationUser user, OrganisationRole role, DateTime startDate, DateTime? renewalDate);
-        public abstract OrganisationUserRole GrantProfessionalRole(OrganisationUser user, OrganisationRole role, DateTime startDate, int duration, DateTime? renewalDate);
-        public abstract OrganisationUserRole GrantHonoraryRole(OrganisationUser user, OrganisationRole role, DateTime startDate);
     }
 
     public class Member : OrganisationUser
     {
+        public ICollection<Enrolment> Enrolments { get; set; } = new List<Enrolment>();
+        public ICollection<Payment> Payments { get; set; } = new List<Payment>();
         public Member() { }
 
         public Member(int organisationId, string username, string firstName, string lastName, string email) :
             base(organisationId, username, firstName, lastName, email) { }
 
-        public override Payment CreateNewPaymentRecord(OrganisationUser user, DateTime paymentDate, PaymentType paymentType, decimal paymentAmount)
+        public Payment CreateNewPaymentRecord(Member member, DateTime paymentDate, PaymentType paymentType, decimal paymentAmount)
         {
-            var payment = new Payment(user, paymentDate, paymentType, paymentAmount);
+            var payment = new Payment(member, paymentDate, paymentType, paymentAmount);
             return payment;
         }
 
-        public override OrganisationUserRole GrantStandardRole(OrganisationUser user, OrganisationRole role, DateTime startDate, DateTime? renewalDate)
+        public OrganisationUserRole GrantStandardRole(Member member, OrganisationRole role, DateTime startDate, DateTime? renewalDate)
         {
-            var standard = new OrganisationUserRole(user, role)
+            var standard = new OrganisationUserRole(member, role)
             {
                 StartDate = new DateTime(startDate.Year, startDate.Month, 1).AddMonths(1),
             };
             standard.EndDate = renewalDate ?? standard.StartDate.AddYears(1);
             standard.RoleType = RoleTypes.Standard;
-            user.Status = Status.Active;
+            member.Status = Status.Active;
             return standard;
         }
 
-        public override OrganisationUserRole GrantProfessionalRole(OrganisationUser user, OrganisationRole role, DateTime startDate, int duration, DateTime? renewalDate)
+        public OrganisationUserRole GrantProfessionalRole(Member member, OrganisationRole role, DateTime startDate, int duration, DateTime? renewalDate)
         {
-            var professional = new OrganisationUserRole(user, role) 
+            var professional = new OrganisationUserRole(member, role) 
             {
                 StartDate = new DateTime(startDate.Year, startDate.Month, 1).AddMonths(1),
             };
@@ -77,19 +72,19 @@ namespace SeniorLearn.Data
                 professional.EndDate = duration == 3 ? professional.StartDate.AddMonths(3) : professional.StartDate.AddYears(1);
             }
             professional.RoleType = RoleTypes.Professional;
-            user.Status = Status.Active;
+            member.Status = Status.Active;
             return professional;
         }
 
-        public override OrganisationUserRole GrantHonoraryRole(OrganisationUser user, OrganisationRole role, DateTime startDate)
+        public OrganisationUserRole GrantHonoraryRole(Member member, OrganisationRole role, DateTime startDate)
         {
-            var honorary = new OrganisationUserRole(user, role)
+            var honorary = new OrganisationUserRole(member, role)
             {
                 StartDate = new DateTime(startDate.Year, startDate.Month, 1).AddMonths(1),
                 EndDate = DateTime.MaxValue,
                 RoleType = RoleTypes.Honorary,
             };
-            user.Status = Status.Active;
+            member.Status = Status.Active;
             return honorary;
         }
     }

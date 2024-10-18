@@ -27,7 +27,7 @@ namespace SeniorLearn.Services
             }).ToList();
         }
 
-        public async Task AssignRoleAsync(OrganisationUser user, DateTime startDate, RoleTypes? roleType, int duration, DateTime? renewalDate)
+        public async Task AssignRoleAsync(Member member, DateTime startDate, RoleTypes? roleType, int duration, DateTime? renewalDate)
         {
             if (roleType == null)
             {
@@ -36,7 +36,7 @@ namespace SeniorLearn.Services
 
             else
             {
-                var userRoles = await _userManager.GetRolesAsync(user);
+                var userRoles = await _userManager.GetRolesAsync(member);
                 var role = await GetUserRoleAsync(roleType);
 
                 if (roleType == RoleTypes.Professional && renewalDate == null && duration == 0)
@@ -57,15 +57,15 @@ namespace SeniorLearn.Services
                 switch (roleType)
                 {
                     case RoleTypes.Standard:
-                        var standard = user.GrantStandardRole(user, role, startDate, renewalDate);
+                        var standard = member.GrantStandardRole(member, role, startDate, renewalDate);
                         await _context.UserRoles.AddAsync(standard);
                     break;
                     case RoleTypes.Professional:
-                        var professional = user.GrantProfessionalRole(user, role, startDate, duration, renewalDate);
+                        var professional = member.GrantProfessionalRole(member, role, startDate, duration, renewalDate);
                         await _context.UserRoles.AddAsync(professional);
                         break;
                     case RoleTypes.Honorary:
-                        var honorary = user.GrantHonoraryRole(user, role, startDate);
+                        var honorary = member.GrantHonoraryRole(member, role, startDate);
                         await _context.UserRoles.AddAsync(honorary);
                         break;
                 }
@@ -76,21 +76,19 @@ namespace SeniorLearn.Services
         
         public async Task<OrganisationRole> GetUserRoleAsync(RoleTypes? roleType)
         {
-            var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == roleType.ToString());
-
-            return role!;
+            return await _context.Roles.FirstOrDefaultAsync(r => r.Name == roleType.ToString()) ?? throw new ApplicationException("Role not found");
         }
 
-        public async Task<IList<string>> GetUserRolesAsync(OrganisationUser user)
+        public async Task<IList<string>> GetUserRolesAsync(Member member)
         {
-            return await _userManager.GetRolesAsync(user);
+            return await _userManager.GetRolesAsync(member);
         }
 
-        public async Task<bool> RemoveRoleFromUserAsync(string userId, string role)
+        public async Task<bool> RemoveRoleFromUserAsync(string memberId, string role)
         {
-            var user = await _userManager.FindByIdAsync(userId);
-            user!.Status = Status.Inactive;
-            return (await _userManager.RemoveFromRoleAsync(user!, role)).Succeeded;
+            var member = await _userManager.FindByIdAsync(memberId);
+            member!.Status = Status.Inactive;
+            return (await _userManager.RemoveFromRoleAsync(member!, role)).Succeeded;
         }
     }
 }

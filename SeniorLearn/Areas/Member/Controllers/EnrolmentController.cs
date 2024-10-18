@@ -29,8 +29,8 @@ namespace SeniorLearn.Areas.Member.Controllers
         {
             try
             {
-                var user = HttpContext.User.Identity!.Name;
-                var lessonDetails = await _enrolmentService.GetLessonDetailsForEnrolmentAsync(id, user!);
+                var member = HttpContext.User.Identity!.Name;
+                var lessonDetails = await _enrolmentService.GetLessonDetailsForEnrolmentAsync(id, member!);
                 return View(lessonDetails);
             }
             catch (DomainRuleException ex)
@@ -43,9 +43,9 @@ namespace SeniorLearn.Areas.Member.Controllers
         [HttpGet]
         public async Task<IActionResult> Overview()
         {
-            var user = HttpContext.User.Identity!.Name;
+            var member = HttpContext.User.Identity!.Name;
 
-            var enrolments = await _enrolmentService.GetMemberLessonEnrolmentsAsync(user!);
+            var enrolments = await _enrolmentService.GetMemberLessonEnrolmentsAsync(member!);
             return View(enrolments);
         }
 
@@ -55,10 +55,10 @@ namespace SeniorLearn.Areas.Member.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = HttpContext.User.Identity!.Name;
+                var member = HttpContext.User.Identity!.Name;
                 try
                 {
-                    await _enrolmentService.EnrolMemberAsync(user!, Lessons);
+                    await _enrolmentService.EnrolMemberAsync(member!, Lessons);
                     TempData["Success"] = "You have been successfully enroled.";
                 }
                 catch (DomainRuleException ex)
@@ -75,11 +75,11 @@ namespace SeniorLearn.Areas.Member.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = HttpContext.User.Identity!.Name;
+                var member = HttpContext.User.Identity!.Name;
 
                 try
                 {
-                    await _enrolmentService.UnenrolMemberFromLessonAsync(user!, Lessons, id);
+                    await _enrolmentService.UnenrolMemberFromLessonAsync(member!, Lessons, id);
                     TempData["Success"] = "You have been unenroled.";
                 }
                 catch (DomainRuleException ex)
@@ -96,11 +96,11 @@ namespace SeniorLearn.Areas.Member.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = HttpContext.User.Identity!.Name;
+                var member = HttpContext.User.Identity!.Name;
 
                 try
                 {
-                    await _enrolmentService.UnenrolMemberFromLessonAsync(user!, Lessons, id);
+                    await _enrolmentService.UnenrolMemberFromLessonAsync(member!, Lessons, id);
                     TempData["Success"] = "You have been unenroled from this lesson";
                 }
                 catch (DomainRuleException ex)

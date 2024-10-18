@@ -68,5 +68,21 @@ namespace SeniorLearn.Services
             }
             return "Invalid Credentials!";
         }
+
+        public async Task<int> GetActiveUserEnrolmentCountForApiAsync()
+        {
+            return await _context.Users.OfType<Member>()
+                .Include(u => u.Enrolments)
+                .Where(u => u.Enrolments.Count != 0 && u.Status == Status.Active)
+                .CountAsync();
+        }
+
+        public async Task<int> GetInactiveUserEnrolmentCountForApiAsync()
+        {
+            return await _context.Users.OfType<Member>()
+                .Include(u => u.Enrolments)
+                .Where(u => u.Enrolments.Count != 0 && u.Status == Status.Inactive)
+                .CountAsync();
+        }
     }
 }

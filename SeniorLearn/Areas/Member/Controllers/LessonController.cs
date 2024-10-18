@@ -83,8 +83,8 @@ namespace SeniorLearn.Areas.Member.Controllers
 
                 try
                 {
-                    var user = HttpContext.User.Identity!.Name;
-                    await _lessonService.CreateLessonAsync(model, user!);
+                    var member = HttpContext.User.Identity!.Name;
+                    await _lessonService.CreateLessonAsync(model, member!);
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
@@ -98,8 +98,8 @@ namespace SeniorLearn.Areas.Member.Controllers
 
                 try
                 {
-                    var user = HttpContext.User.Identity!.Name;
-                    await _lessonService.CreateLessonAsync(model, user!);
+                    var member = HttpContext.User.Identity!.Name;
+                    await _lessonService.CreateLessonAsync(model, member!);
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)

@@ -3,7 +3,6 @@ using SeniorLearn.Data.Core;
 using SeniorLearn.Data;
 using Microsoft.EntityFrameworkCore;
 using SeniorLearn.Models;
-using Mapster;
 
 namespace SeniorLearn.Services
 {
@@ -20,7 +19,7 @@ namespace SeniorLearn.Services
             _organisationUserRoleService = organisationUserRoleService;
         }
 
-        public async Task<MemberDTO> RegisterMemberAsync(int organisationId, string firstName, string lastName, string email, string password = "1")
+        public async Task<Member> RegisterMemberAsync(int organisationId, string firstName, string lastName, string email, string password = "1")
         {
             var organisation = await _context.Organisations.FindAsync(organisationId);
             var member = organisation!.RegisterMember(firstName, lastName, email);
@@ -34,28 +33,26 @@ namespace SeniorLearn.Services
 
             if (result.Succeeded)
             {
-                return member.Adapt<MemberDTO>();
+                return member;
             }
 
             throw new ApplicationException(result.Errors.First().Description);
         }
 
-        public async Task<OrganisationUser> GetUserByIdAsync(string id)
+        public async Task<Member> GetUserByIdAsync(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
-            return user!;
+            return await _context.Users.OfType<Member>()
+                .Where(u => u.Id == id).FirstOrDefaultAsync() ?? throw new ApplicationException("User not found");
         }
         public async Task<Member> GetUserByUserNameAsync(string id)
         {
-            var user = await _context.Users.OfType<Member>()
-                .Where(u => u.UserName == id).FirstOrDefaultAsync();
-
-            return user!;
+            return await _context.Users.OfType<Member>()
+                .Where(u => u.UserName == id).FirstOrDefaultAsync() ?? throw new ApplicationException("User not found");
         }
 
         public async Task<IEnumerable<MemberDTO>> GetUsersAsync(int skip = 0, int take = int.MaxValue)
         {
-            var users = await _context.Users.OrderBy(u => u.LastName).Skip(skip).Take(take)
+            return await _context.Users.OfType<Member>().OrderBy(u => u.LastName).Skip(skip).Take(take)
             .Select(u => new MemberDTO
             {
                 Id = u.Id,
@@ -64,12 +61,11 @@ namespace SeniorLearn.Services
                 Email = u.Email!,
                 RenewalDate = u.UserRoles.OrderByDescending(ur => ur.EndDate).FirstOrDefault()!.EndDate.ToShortDateString() ?? "No Role Assigned",
             }).ToListAsync();
-            return users;
         }
 
         public async Task<IEnumerable<MemberDTO>> GetInactiveUsersAsync(int skip = 0, int take = int.MaxValue)
         {
-            var inactiveUsers = await _context.Users.Where(u => u.Status == Status.Inactive)
+            return await _context.Users.OfType<Member>().Where(u => u.Status == Status.Inactive)
             .OrderBy(u => u.LastName).Skip(skip).Take(take)
                 .Select(u => new MemberDTO
                 {
@@ -79,13 +75,11 @@ namespace SeniorLearn.Services
                     Email = u.Email!,
                     RenewalDate = "No Role Assigned",
                 }).ToListAsync();
-                
-            return inactiveUsers;
         }
 
         public async Task<IEnumerable<MemberDTO>> GetActiveUsersAsync(int skip = 0, int take = int.MaxValue)
         {
-            var activeUsers = await _context.Users.Where(u => u.Status == Status.Active)
+            return await _context.Users.OfType<Member>().Where(u => u.Status == Status.Active)
             .OrderBy(u => u.LastName).Skip(skip).Take(take)
                 .Select(u => new MemberDTO
                 {
@@ -95,31 +89,24 @@ namespace SeniorLearn.Services
                     Email = u.Email!,
                     RenewalDate = u.UserRoles.OrderByDescending(ur => ur.EndDate).FirstOrDefault()!.EndDate.ToShortDateString(),
                 }).ToListAsync();
-                
-            return activeUsers;
         }
 
         public async Task<int> GetUsersCountAsync()
         {
-            var userCount = await _context.Users.CountAsync();
+            return await _context.Users.OfType<Member>().CountAsync();
             
-            return userCount;
         }
 
         public async Task<int> GetInactiveUserCountAsync()
         {
-            var inactiveUserCount = await _context.Users.Where(u => u.Status == Status.Inactive)
-            .CountAsync();
-
-            return inactiveUserCount;
+            return await _context.Users.OfType<Member>().Where(u => u.Status == Status.Inactive)
+                .CountAsync();
         }
 
         public async Task<int> GetActiveUserCountAsync()
         {
-            var activeUserCount = await _context.Users.Where(u => u.Status == Status.Active)
-            .CountAsync();
-            
-            return activeUserCount;
+            return await _context.Users.OfType<Member>().Where(u => u.Status == Status.Active)
+                .CountAsync();
         }
     }
 }

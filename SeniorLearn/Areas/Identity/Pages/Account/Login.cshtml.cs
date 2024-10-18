@@ -108,8 +108,17 @@ namespace SeniorLearn.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+                    var user = await _signInManager.UserManager.FindByNameAsync(Input.Email) ?? throw new InvalidOperationException();
+                    if (_signInManager.UserManager.IsInRoleAsync(user, RoleTypes.Administrator.ToString()).Result)
+                    {
+                        _logger.LogInformation("User logged in.");
+                        return LocalRedirect("/Administration");
+                    }
+                    else
+                    {
+                        //TODO: Update these with the other role home locations (default for now)
+                        return LocalRedirect("/");
+                    }
                 }
                 if (result.RequiresTwoFactor)
                 {

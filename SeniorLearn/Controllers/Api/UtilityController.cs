@@ -23,6 +23,20 @@ namespace SeniorLearn.Controllers.Api
             return Ok(dates);
         }
 
+        [HttpGet, Route("member/enrolments")]
+        public async Task<IActionResult> UsersWithEnrolmentsCount()
+        {
+            var activeMemberEnrolments = await _apiService.GetActiveUserEnrolmentCountForApiAsync();
+            var inactiveMemberEnrolments = await _apiService.GetInactiveUserEnrolmentCountForApiAsync();
+
+            var enrolments = new List<int>
+            {
+                activeMemberEnrolments,
+                inactiveMemberEnrolments,
+            };
+            return Ok(enrolments);
+        }
+
         [AllowAnonymous]
         [HttpPost, Route("token")]
         public async Task<IActionResult> Login(LoginDTO loginDto)

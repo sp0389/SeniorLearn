@@ -23,28 +23,28 @@ namespace SeniorLearn.Areas.Administration.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(bool? isActive, int pageNumber = 1, int pageSize = 10)
         {
-            IEnumerable<MemberDTO> users;
+            IEnumerable<MemberDTO> members;
             int totalUserCount;
             
             switch(isActive)
             {
                 case false:
-                    users = await _organisationUserService.GetInactiveUsersAsync((pageSize * pageNumber) - pageSize, pageSize);
+                    members = await _organisationUserService.GetInactiveUsersAsync((pageSize * pageNumber) - pageSize, pageSize);
                     totalUserCount = await _organisationUserService.GetInactiveUserCountAsync();
                 break;
                 case true:
-                    users = await _organisationUserService.GetActiveUsersAsync((pageSize * pageNumber) - pageSize, pageSize);
+                    members = await _organisationUserService.GetActiveUsersAsync((pageSize * pageNumber) - pageSize, pageSize);
                     totalUserCount = await _organisationUserService.GetActiveUserCountAsync();
                 break;
                 default:
-                    users = await _organisationUserService.GetUsersAsync((pageSize * pageNumber) - pageSize, pageSize);
+                    members = await _organisationUserService.GetUsersAsync((pageSize * pageNumber) - pageSize, pageSize);
                     totalUserCount = await _organisationUserService.GetUsersCountAsync();
                 break;
             }
 
             var pagedResult = new PagedResult<MemberDTO>
             {
-                Data = users.ToList(),
+                Data = members.ToList(),
                 TotalItems = totalUserCount,
                 PageNumber = pageNumber,
                 PageSize = pageSize,
@@ -82,21 +82,21 @@ namespace SeniorLearn.Areas.Administration.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var user = await _organisationUserService.GetUserByIdAsync(id);
+            var member = await _organisationUserService.GetUserByIdAsync(id);
 
-            if (user == null)
+            if (member == null)
             {
                 return NotFound();
             }
 
-            var assignedRoles = await _organisationUserRoleService.GetUserRolesAsync(user);
+            var assignedRoles = await _organisationUserRoleService.GetUserRolesAsync(member);
             var roleType = _organisationUserRoleService.MapRolesToSelectList(assignedRoles);
 
             var vm = new Edit
             {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email!,
+                FirstName = member.FirstName,
+                LastName = member.LastName,
+                Email = member.Email!,
                 AssignedRoles = assignedRoles,
                 RoleTypes = roleType,
             };
@@ -131,24 +131,24 @@ namespace SeniorLearn.Areas.Administration.Controllers
 
             if (ModelState.IsValid)
             {
-                var user = await _organisationUserService.GetUserByIdAsync(id);
-                var assignedRoles = await _organisationUserRoleService.GetUserRolesAsync(user);
+                var member = await _organisationUserService.GetUserByIdAsync(id);
+                var assignedRoles = await _organisationUserRoleService.GetUserRolesAsync(member);
                 var roleType = _organisationUserRoleService.MapRolesToSelectList(assignedRoles);
 
-                if (user == null)
+                if (member == null)
                 {
                     return NotFound();
                 }
 
                 try
                 {
-                    user.FirstName = m.FirstName!;
-                    user.LastName = m.LastName!;
-                    user.Email = m.Email!;
+                    member.FirstName = m.FirstName!;
+                    member.LastName = m.LastName!;
+                    member.Email = m.Email!;
                     m.AssignedRoles = assignedRoles;
                     m.RoleTypes = roleType;
 
-                    await _organisationUserRoleService.AssignRoleAsync(user, DateTime.UtcNow.Date, m.SelectedRole, m.Duration, m.RenewalDate);
+                    await _organisationUserRoleService.AssignRoleAsync(member, DateTime.UtcNow.Date, m.SelectedRole, m.Duration, m.RenewalDate);
                     
                     TempData["Message"] = "User details updated successfully!";
                     

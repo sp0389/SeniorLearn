@@ -15,23 +15,26 @@ namespace SeniorLearn.Services
             _context = context;
         }
 
-        public async Task<PaymentDTO> CreateNewPaymentAsync(OrganisationUser user, DateTime paymentDate, PaymentType paymentType, decimal paymentAmount)
+        public async Task<Payment> CreateNewPaymentAsync(Member member, DateTime paymentDate, PaymentType paymentType, decimal paymentAmount)
         {
-            var payment = user.CreateNewPaymentRecord(user, paymentDate, paymentType, paymentAmount);
+            var payment = member.CreateNewPaymentRecord(member, paymentDate, paymentType, paymentAmount);
 
             await _context.AddAsync(payment);
             await _context.SaveChangesAsync();
-            return payment.Adapt<PaymentDTO>();
+            return payment;
         }
 
-        public async Task<IEnumerable<PaymentDTO>> GetPaymentsAsync(OrganisationUser user, int skip = 0, int take = int.MaxValue)
+        public async Task<IEnumerable<PaymentDTO>> GetPaymentsAsync(Member member, int skip = 0, int take = int.MaxValue)
         {
-            return await _context.Payments.Where(p => p.UserId == user.Id).Skip(skip).Take(take).ProjectToType<PaymentDTO>().ToListAsync();
+            return await _context.Payments.Where(p => p.MemberId == member.Id).Skip(skip).Take(take)
+                .ProjectToType<PaymentDTO>()
+                .ToListAsync();
         }
 
-        public async Task<int> GetPaymentsCountAsync(OrganisationUser user)
+        public async Task<int> GetPaymentsCountAsync(Member member)
         {
-            return await _context.Payments.Where(p => p.UserId == user.Id).CountAsync();
+            return await _context.Payments.Where(p => p.MemberId == member.Id)
+                .CountAsync();
         }
     }
 }

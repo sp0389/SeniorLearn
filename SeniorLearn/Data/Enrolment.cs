@@ -1,7 +1,5 @@
 ﻿namespace SeniorLearn.Data
 {
-    // Purpose: Represents the base class for LessonEnrolment.
-    // Each enrollment ties a member to a lesson with an enrollment date.
     public class Enrolment
     {
         public int Id { get; private set; }

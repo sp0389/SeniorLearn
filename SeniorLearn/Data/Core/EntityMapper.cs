@@ -29,12 +29,16 @@ namespace SeniorLearn.Data.Core
                  .HasValue<Member>("Member");
             });
 
-            mb.Entity<OrganisationUser>(ou =>
+            mb.Entity<Member>(m =>
             {
-                ou.HasMany(p => p.Payments)
-                 .WithOne(p => p.User)
-                 .HasForeignKey(p => p.UserId)
-                 .OnDelete(DeleteBehavior.Restrict);
+                m.HasMany(m => m.Enrolments)
+                .WithOne(e => e.Member)
+                .HasForeignKey(e => e.MemberId)
+                .OnDelete(DeleteBehavior.Cascade);
+                m.HasMany(m => m.Payments)
+                 .WithOne(p => p.Member)
+                 .HasForeignKey(p => p.MemberId)
+                 .OnDelete(DeleteBehavior.Cascade);
             });
 
             mb.Entity<OrganisationRole>(or =>
@@ -45,7 +49,6 @@ namespace SeniorLearn.Data.Core
                   .IsRequired();
             });
 
-            // Course and Lesson relationships
             mb.Entity<Course>(c =>
             {
                 c.HasMany(course => course.Lessons)
@@ -66,7 +69,11 @@ namespace SeniorLearn.Data.Core
                 e.HasOne(e => e.Lesson)
                 .WithMany(l => l.Enrolments)
                 .HasForeignKey(e => e.LessonId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
+                e.HasOne(e => e.Member)
+                .WithMany(ou => ou.Enrolments)
+                .HasForeignKey(e => e.MemberId)
+                .OnDelete(DeleteBehavior.Cascade);
             });
 
             mb.Entity<Payment>()

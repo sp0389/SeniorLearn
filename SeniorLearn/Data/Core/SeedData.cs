@@ -110,11 +110,11 @@ namespace SeniorLearn.Data.Core
                 {
                     Id = "7610170e-d0e7-43b9-a289-02d13056d54e",
                     UserName = "j.bloggs@seniorlearn.com.au",
-                    NormalizedUserName = "J.BLOGGS@SENIORLEARN.COM.AU",
                     FirstName = "Joe",
                     LastName = "Bloggs",
                     Registered = DateTime.UtcNow,
                     OrganisationId = 1,
+                    NormalizedUserName = "J.BLOGGS@SENIORLEARN.COM.AU",
                     Email = "j.bloggs@seniorlearn.com.au",
                     EmailConfirmed = true,
                     PasswordHash = "AQAAAAIAAYagAAAAENaAF8X3fgawsa7CT8EKV1Bm+PGcrq9PhRBL+ee6Rb8lCZVRf/6it+zEesnSHS6q1w==",
