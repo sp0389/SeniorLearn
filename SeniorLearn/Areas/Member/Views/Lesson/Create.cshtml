@@ -1,6 +1,5 @@
 ﻿@model SeniorLearn.Areas.Member.Models.Lesson.CreateLesson
 @using SeniorLearn.Data
-@using SeniorLearn.Areas.Member.Models.Course;
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -9,136 +8,136 @@
 
 <h1>
     Create Lesson
-    <button id="toggleButton" class="btn btn-secondary ml-3">Switch to Course</button>
+    <a href="@Url.Action("Create", "Course")" class="btn btn-primary">Switch to Course</a>
 </h1>
 
-<!-- Lesson Form -->
-<div id="lessonForm" style="display: block;">
-    <form asp-action="Create" method="post" id="lessonFormElement">
-        @Html.AntiForgeryToken()
-        <div asp-validation-summary="All" class="text-danger"></div>
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="text-danger"></div>
 
-        <!-- Lesson Name -->
-        <div class="form-group">
-            <label asp-for="LessonName" class="control-label">Lesson Name</label>
-            <input asp-for="LessonName" class="form-control" />
-            <span asp-validation-for="LessonName" class="text-danger"></span>
+    <!-- Lesson Name -->
+    <div class="form-group">
+        <label asp-for="LessonName" class="control-label">Lesson Name</label>
+        <input asp-for="LessonName" class="form-control" />
+        <span asp-validation-for="LessonName" class="text-danger"></span>
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+        <label asp-for="Description" class="control-label">Description</label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <!-- Duration -->
+    <div class="form-group">
+        <label asp-for="Duration" class="control-label">Duration</label>
+        <select asp-for="Duration" asp-items="Model.DurationOptions" class="form-control"></select>
+        <span asp-validation-for="Duration" class="text-danger"></span>
+    </div>
+
+    <!-- Capacity -->
+    <div class="form-group">
+        <label asp-for="Capacity" class="control-label">Capacity</label>
+        <input asp-for="Capacity" class="form-control" />
+        <span asp-validation-for="Capacity" class="text-danger"></span>
+    </div>
+
+    <!-- Delivery Mode -->
+    <div class="form-group">
+        <label asp-for="DeliveryMode" class="control-label">Delivery Mode</label>
+        <select asp-for="DeliveryMode" asp-items="Model.DeliveryModes" class="form-control"></select>
+        <span asp-validation-for="DeliveryMode" class="text-danger"></span>
+    </div>
+
+    <!-- Location -->
+    <div class="form-group">
+        <label asp-for="Location" class="control-label">Location</label>
+        <input asp-for="Location" class="form-control" />
+        <span asp-validation-for="Location" class="text-danger"></span>
+    </div>
+
+    <!-- Lesson is part of a course -->
+    <div class="form-group">
+        <input asp-for="IsCourse" type="checkbox" id="isCourseCheckbox" class="form-check-input larger-checkbox" />
+        <label asp-for="IsCourse" class="control-label">Lesson is part of a Course</label>
+    </div>
+
+    <div class="form-group" id="course-selection" style="display: none;">
+        <label asp-for="SelectedCourseId" class="control-label">Course</label>
+        <select asp-for="SelectedCourseId" asp-items="Model.Courses" class="form-control">
+            <option value="">None</option>
+        </select>
+        <span asp-validation-for="SelectedCourseId" class="text-danger"></span>
+    </div>
+
+    <!-- Recurrence and Lesson Type -->
+    <div class="form-group">
+        <label class="control-label">Lesson Type</label>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="IsRecurring" value="False" id="singleLessonRadio" />
+            <label class="form-check-label" for="singleLessonRadio">Single Lesson</label>
         </div>
-
-        <!-- Description -->
-        <div class="form-group">
-            <label asp-for="Description" class="control-label">Description</label>
-            <textarea asp-for="Description" class="form-control"></textarea>
-            <span asp-validation-for="Description" class="text-danger"></span>
+        <div class="form-check">
+            <input type="radio" class="form-check-input" name="IsRecurring" value="True" id="recurringLessonRadio" />
+            <label class="form-check-label" for="recurringLessonRadio">Recurring Lesson</label>
         </div>
+    </div>
 
-        <!-- Duration -->
-        <div class="form-group">
-            <label asp-for="Duration" class="control-label">Duration</label>
-            <select asp-for="Duration" asp-items="Model.DurationOptions" class="form-control"></select>
-            <span asp-validation-for="Duration" class="text-danger"></span>
-        </div>
+    <!-- Single Lesson Date -->
+    <div class="form-group" id="singleLessonDate" style="display: none;">
+        <label asp-for="StartDate" class="control-label">Date of Lesson</label>
+        <input asp-for="StartDate" id="startDatePickerSingle" class="form-control" />
+        <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
 
-        <!-- Capacity -->
+    <!-- Recurring Lesson Options -->
+    <div id="recurringLessonOptions" style="display: none;">
         <div class="form-group">
-            <label asp-for="Capacity" class="control-label">Capacity</label>
-            <input asp-for="Capacity" class="form-control" />
-            <span asp-validation-for="Capacity" class="text-danger"></span>
-        </div>
-
-        <!-- Delivery Mode -->
-        <div class="form-group">
-            <label asp-for="DeliveryMode" class="control-label">Delivery Mode</label>
-            <select asp-for="DeliveryMode" asp-items="Model.DeliveryModes" class="form-control"></select>
-            <span asp-validation-for="DeliveryMode" class="text-danger"></span>
-        </div>
-
-        <!-- Location -->
-        <div class="form-group">
-            <label asp-for="Location" class="control-label">Location</label>
-            <input asp-for="Location" class="form-control" />
-            <span asp-validation-for="Location" class="text-danger"></span>
-        </div>
-
-        <!-- Lesson is part of a course -->
-        <div class="form-group">
-            <input asp-for="IsCourse" type="checkbox" id="isCourseCheckbox" class="form-check-input larger-checkbox" />
-            <label asp-for="IsCourse" class="control-label">Lesson is part of a Course</label>
-        </div>
-
-        <!-- Recurrence and Lesson Type -->
-        <div class="form-group">
-            <label class="control-label">Lesson Type</label>
+            <label class="control-label">Select Daily or Weekly Recurrence</label>
             <div class="form-check">
-                <input type="radio" class="form-check-input" name="IsRecurring" value="False" id="singleLessonRadio" />
-                <label class="form-check-label" for="singleLessonRadio">Single Lesson</label>
+                <input type="radio" class="form-check-input" name="Frequency" value="Daily" id="dailyRecurrenceRadio" />
+                <label class="form-check-label" for="dailyRecurrenceRadio">Daily</label>
             </div>
             <div class="form-check">
-                <input type="radio" class="form-check-input" name="IsRecurring" value="True" id="recurringLessonRadio" />
-                <label class="form-check-label" for="recurringLessonRadio">Recurring Lesson</label>
+                <input type="radio" class="form-check-input" name="Frequency" value="Weekly" id="weeklyRecurrenceRadio" />
+                <label class="form-check-label" for="weeklyRecurrenceRadio">Weekly</label>
             </div>
         </div>
 
-        <!-- Single Lesson Date -->
-        <div class="form-group" id="singleLessonDate" style="display: none;">
-            <label asp-for="StartDate" class="control-label">Date of Lesson</label>
-            <input asp-for="StartDate" id="startDatePickerSingle" class="form-control" />
-            <span asp-validation-for="StartDate" class="text-danger"></span>
-        </div>
-
-        <!-- Recurring Lesson Options -->
-        <div id="recurringLessonOptions" style="display: none;">
+        <!-- Daily Recurrence Options -->
+        <div id="dailyRecurrenceSection" style="display: none;">
             <div class="form-group">
-                <label class="control-label">Select Daily or Weekly Recurrence</label>
-                <div class="form-check">
-                    <input type="radio" class="form-check-input" name="Frequency" value="Daily" id="dailyRecurrenceRadio" />
-                    <label class="form-check-label" for="dailyRecurrenceRadio">Daily</label>
-                </div>
-                <div class="form-check">
-                    <input type="radio" class="form-check-input" name="Frequency" value="Weekly" id="weeklyRecurrenceRadio" />
-                    <label class="form-check-label" for="weeklyRecurrenceRadio">Weekly</label>
-                </div>
+                <label asp-for="StartDate" class="control-label">Start Date</label>
+                <input asp-for="StartDate" id="startDatePickerDaily" class="form-control" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
             </div>
 
-            <!-- Daily Recurrence Options -->
-            <div id="dailyRecurrenceSection" style="display: none;">
-                <div class="form-group">
-                    <label asp-for="StartDate" class="control-label">Start Date</label>
-                    <input asp-for="StartDate" id="startDatePickerDaily" class="form-control" />
-                    <span asp-validation-for="StartDate" class="text-danger"></span>
+            <!-- Occurrences and End Date -->
+            <div class="form-group row">
+                <div class="col-md-5">
+                    <label for="occurrencesInput">Number of Occurrences</label>
+                    <input asp-for="Occurrences" class="form-control" id="occurrencesInput" />
+                    <span asp-validation-for="Occurrences" class="text-danger"></span>
                 </div>
-
-                <!-- Occurrences and End Date -->
-                <div class="form-group row">
-                    <div class="col-md-5">
-                        <label for="occurrencesInput">Number of Occurrences</label>
-                        <input asp-for="Occurrences" class="form-control" id="occurrencesInput" />
-                        <span asp-validation-for="Occurrences" class="text-danger"></span>
-                    </div>
-                    <div class="col-md-2 text-center align-self-center">
-                        <strong>OR</strong>
-                    </div>
-                    <div class="col-md-5">
-                        <label for="endDatePickerDaily">End Date</label>
-                        <input asp-for="EndDate" id="endDatePickerDaily" class="form-control" />
-                        <span asp-validation-for="EndDate" class="text-danger"></span>
-                    </div>
+                <div class="col-md-2 text-center align-self-center">
+                    <strong>OR</strong>
+                </div>
+                <div class="col-md-5">
+                    <label for="endDatePickerDaily">End Date</label>
+                    <input asp-for="EndDate" id="endDatePickerDaily" class="form-control" />
+                    <span asp-validation-for="EndDate" class="text-danger"></span>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Hidden fields to capture StartDate and EndDate -->
-        <input type="hidden" name="StartDateHidden" id="startDateHidden" />
-        <input type="hidden" name="EndDateHidden" id="endDateHidden" />
+    <!-- Hidden fields to capture StartDate and EndDate -->
+    <input type="hidden" name="StartDateHidden" id="startDateHidden" />
+    <input type="hidden" name="EndDateHidden" id="endDateHidden" />
 
-        <button type="submit" class="btn btn-primary mt-3">Create Lesson</button>
-    </form>
-</div>
-
-<!-- Course Form -->
-<div id="courseForm" style="display: none;">
-    @Html.Partial("~/Areas/Member/Views/Course/CreateCourse.cshtml", (CreateCourse)ViewBag.CreateCourseModel)
-</div>
+    <button type="submit" class="btn btn-primary mt-3">Create Lesson</button>
+</form>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

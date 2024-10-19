@@ -111,9 +111,9 @@ namespace SeniorLearn.Services
         }
 
 
-        public async Task CreateCourseAsync(CreateCourse model)
+        public async Task CreateCourseAsync(Create model, string userId)
         {
-            if (model == null) throw new ArgumentNullException(nameof(model));
+            var member = await _organisationUserService.GetUserByUserNameAsync(userId);
 
             var course = new Course
             {
@@ -121,7 +121,7 @@ namespace SeniorLearn.Services
                 Description = model.Description,
                 StartDate = model.StartDate,
                 EndDate = model.EndDate,
-                UserId = model.SelectedUserId!
+                UserId = member.Id,
             };
 
             _context.Courses.Add(course);

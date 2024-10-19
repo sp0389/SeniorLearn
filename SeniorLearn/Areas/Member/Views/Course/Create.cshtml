@@ -1,0 +1,58 @@
+﻿@model SeniorLearn.Areas.Member.Models.Course.Create
+@{
+    ViewData["Title"] = "Create a Course";
+}
+
+<h1 class="text-center mt-4">@ViewData["Title"]</h1>
+
+<form asp-action="Create" method="post" class="border p-4 shadow-sm rounded-bg-dark">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-floating mb-3">
+        <input asp-for="CourseName" class="form-control" placeholder="e.g. Programming Fundamentals">
+        <label asp-for="CourseName">Course Name</label>
+        <span asp-validation-for="CourseName" class="text-danger mb-3"></span>
+    </div>
+
+    <div class="form-floating">
+        <textarea asp-for="Description" class="form-control" placeholder="A description about the course" style="height: 100px"></textarea>
+        <label asp-for="Description">Description</label>
+        <span asp-validation-for="Description" class="text-danger mb-3"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="StartDate" class="control-label">End Date</label>
+        <input asp-for="StartDate" id="courseEndDatePicker" class="form-control mb-3" type="datetime-local" />
+        <span asp-validation-for="StartDate" class="text-danger mb-3"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="EndDate" class="control-label">End Date</label>
+        <input asp-for="EndDate" id="courseEndDatePicker" class="form-control mb-3" type="datetime-local" />
+        <span asp-validation-for="EndDate" class="text-danger mb-3"></span>
+    </div>
+
+    <button type="submit" class="w-100 btn btn-lg btn-primary w-100">Create Course</button>
+</form>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            flatpickr("#courseStartDatePicker", {
+                enableTime: true,
+                dateFormat: "Y-m-d\\TH:i",
+                altInput: true,
+                altFormat: "d/m/Y H:i",
+                time_24hr: true
+            });
+
+            flatpickr("#courseEndDatePicker", {
+                enableTime: true,
+                dateFormat: "Y-m-d\\TH:i",
+                altInput: true,
+                altFormat: "d/m/Y H:i",
+                time_24hr: true
+            });
+        });
+    </script>
+}

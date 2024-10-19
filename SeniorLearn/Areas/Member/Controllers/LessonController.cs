@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using SeniorLearn.Areas.Member.Models.Lesson;
-using SeniorLearn.Areas.Member.Models.Course;
 using SeniorLearn.Data.Core;
 using SeniorLearn.Services;
 using SeniorLearn.Controllers;
@@ -28,17 +26,7 @@ namespace SeniorLearn.Areas.Member.Controllers
             {
                 StartDate = DateTime.UtcNow
             };
-
             await _lessonService.PopulateLessonDropdownsAsync(lessonModel);
-
-            // Initialize the CreateCourse model and set it in ViewBag
-            var createCourseModel = new CreateCourse
-            {
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddDays(30),
-            };
-            ViewBag.CreateCourseModel = createCourseModel;
-
             return View(lessonModel);
         }
 

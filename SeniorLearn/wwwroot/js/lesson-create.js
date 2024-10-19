@@ -1,29 +1,6 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
-    var toggleButton = document.getElementById('toggleButton');
-    var lessonForm = document.getElementById('lessonForm');
-    var courseForm = document.getElementById('courseForm');
-
-    // Ensure lessonForm is shown and courseForm is hidden on page load
-    lessonForm.style.display = 'block';
-    courseForm.style.display = 'none';
-
-    // Toggle button to switch between lesson and course forms
-    toggleButton.addEventListener('click', function (e) {
-        e.preventDefault();
-
-        // Toggle visibility of lessonForm and courseForm
-        if (lessonForm.style.display === 'block' || lessonForm.style.display === '') {
-            lessonForm.style.display = 'none';
-            courseForm.style.display = 'block';
-            toggleButton.textContent = 'Switch to Lesson';
-        } else {
-            lessonForm.style.display = 'block';
-            courseForm.style.display = 'none';
-            toggleButton.textContent = 'Switch to Course';
-        }
-    });
-
     // Handle Lesson Recurrence Visibility
+
     var singleLessonRadio = document.getElementById('singleLessonRadio');
     var recurringLessonRadio = document.getElementById('recurringLessonRadio');
     var dailyRecurrenceRadio = document.getElementById('dailyRecurrenceRadio');
@@ -39,6 +16,9 @@
     var endDateHidden = document.getElementById('endDateHidden');
     var endDatePickerDaily = document.getElementById('endDatePickerDaily');
 
+    var isCourseCheckbox = document.getElementById('isCourseCheckbox');
+    var courseSelection = document.getElementById('course-selection');
+
     function disableHiddenFields() {
         startDateHidden.disabled = true;
         endDateHidden.disabled = true;
@@ -51,31 +31,33 @@
         endDateHidden.disabled = false;
     }
 
+    isCourseCheckbox.addEventListener('change', function () {
+        courseSelection.style.display = this.checked ? 'block' : 'none';
+    });
+
     singleLessonRadio.addEventListener('change', function () {
-        if (this.checked) {
+        if (singleLessonRadio.checked) {
             singleLessonDate.style.display = 'block';
             recurringLessonOptions.style.display = 'none';
-            disableHiddenFields();
         }
     });
 
     recurringLessonRadio.addEventListener('change', function () {
-        if (this.checked) {
+        if (recurringLessonRadio.checked) {
             recurringLessonOptions.style.display = 'block';
             singleLessonDate.style.display = 'none';
-            enableHiddenFields();
         }
     });
 
     dailyRecurrenceRadio.addEventListener('change', function () {
-        if (this.checked) {
+        if (dailyRecurrenceRadio.checked) {
             dailyRecurrenceSection.style.display = 'block';
             weeklyRecurrenceOptions.style.display = 'none';
         }
     });
 
     weeklyRecurrenceRadio.addEventListener('change', function () {
-        if (this.checked) {
+        if (weeklyRecurrenceRadio.checked) {
             dailyRecurrenceSection.style.display = 'none';
             weeklyRecurrenceOptions.style.display = 'block';
         }
