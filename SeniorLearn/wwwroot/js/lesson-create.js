@@ -1,6 +1,4 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
-    // Handle Lesson Recurrence Visibility
-
     var singleLessonRadio = document.getElementById('singleLessonRadio');
     var recurringLessonRadio = document.getElementById('recurringLessonRadio');
     var dailyRecurrenceRadio = document.getElementById('dailyRecurrenceRadio');
@@ -12,24 +10,10 @@
     var weeklyRecurrenceOptions = document.getElementById('weeklyRecurrenceOptions');
 
     var occurrencesInput = document.getElementById('occurrencesInput');
-    var startDateHidden = document.getElementById('startDateHidden');
-    var endDateHidden = document.getElementById('endDateHidden');
     var endDatePickerDaily = document.getElementById('endDatePickerDaily');
 
     var isCourseCheckbox = document.getElementById('isCourseCheckbox');
     var courseSelection = document.getElementById('course-selection');
-
-    function disableHiddenFields() {
-        startDateHidden.disabled = true;
-        endDateHidden.disabled = true;
-        startDateHidden.value = '';
-        endDateHidden.value = '';
-    }
-
-    function enableHiddenFields() {
-        startDateHidden.disabled = false;
-        endDateHidden.disabled = false;
-    }
 
     isCourseCheckbox.addEventListener('change', function () {
         courseSelection.style.display = this.checked ? 'block' : 'none';
@@ -58,7 +42,7 @@
 
     weeklyRecurrenceRadio.addEventListener('change', function () {
         if (weeklyRecurrenceRadio.checked) {
-            dailyRecurrenceSection.style.display = 'none';
+            dailyRecurrenceSection.style.display = 'block';
             weeklyRecurrenceOptions.style.display = 'block';
         }
     });
@@ -66,7 +50,6 @@
     occurrencesInput.addEventListener('input', function () {
         if (occurrencesInput.value > 0) {
             endDatePickerDaily.disabled = true;
-            endDateHidden.value = '';
         } else {
             endDatePickerDaily.disabled = false;
         }
@@ -89,9 +72,6 @@
         altFormat: "d/m/Y H:i",
         time_24hr: true,
         defaultDate: new Date(),
-        onChange: function (selectedDates, dateStr) {
-            startDateHidden.value = dateStr;
-        }
     });
 
     flatpickr("#endDatePickerDaily", {
@@ -101,25 +81,5 @@
         altFormat: "d/m/Y H:i",
         time_24hr: true,
         defaultDate: new Date(),
-        onChange: function (selectedDates, dateStr) {
-            endDateHidden.value = dateStr;
-        }
-    });
-
-    // Flatpickr for Course Form (if needed)
-    flatpickr("#courseStartDatePicker", {
-        enableTime: true,
-        dateFormat: "Y-m-d\\TH:i",
-        altInput: true,
-        altFormat: "d/m/Y H:i",
-        time_24hr: true
-    });
-
-    flatpickr("#courseEndDatePicker", {
-        enableTime: true,
-        dateFormat: "Y-m-d\\TH:i",
-        altInput: true,
-        altFormat: "d/m/Y H:i",
-        time_24hr: true
     });
 });

@@ -4,91 +4,103 @@
     {
         public DateTime StartDate { get; protected set; }
         public DateTime EndDate { get; protected set; }
-        public int Occurrences { get; set; } = 0;
-
-        protected Schedule(DateTime startDate, DateTime endDate, int occurrences)
+        public Schedule(DateTime startDate, DateTime endDate)
         {
             StartDate = startDate;
             EndDate = endDate;
+        }
+    }
+    public abstract class Repeating : Schedule
+    {
+        public int Occurrences { get; set; } = default;
+        public Repeating(DateTime startDate, DateTime endDate) : base(startDate, endDate){}
+        public abstract ICollection<DateTime> GenerateScheduledDates();
+    }
+    public class DailyRepeating : Repeating
+    {
+        public ICollection<DateTime> ScheduledDates { get; protected set; } = new List<DateTime>();
+
+        public DailyRepeating(DateTime startDate, DateTime endDate, int occurrences)
+            : base(startDate, endDate)
+        {
             Occurrences = occurrences;
         }
-
-        public abstract ICollection<DateTime> GenerateSchedule();
-    }
-
-    public class OneTime : Schedule
-    {
-        public OneTime(DateTime startDate, DateTime endDate) : base(startDate, endDate, 1) { }
-
-        public override ICollection<DateTime> GenerateSchedule()
+        public override ICollection<DateTime> GenerateScheduledDates()
         {
-            return new List<DateTime> { StartDate };
-        }
-    }
-
-    public class DailyRepeating : Schedule
-    {
-        public DailyRepeating(DateTime startDate, DateTime endDate, int occurrences)
-            : base(startDate, endDate, occurrences) { }
-
-        public override ICollection<DateTime> GenerateSchedule()
-        {
-            var scheduledDays = new List<DateTime>();
-            var count = 0;
-            var currentDate = StartDate;
-
-            while (count < Occurrences)
+            if (Occurrences > 0)
             {
-                scheduledDays.Add(currentDate);
-                currentDate = currentDate.AddDays(1);
-                count++;
-            }
+                var count = 0;
+                var currentDate = StartDate;
 
-            return scheduledDays;
-        }
-    }
-
-    public class WeeklyRepeating : Schedule
-    {
-        public Dictionary<DayOfWeek, bool> DaysOfWeek { get; protected set; } = new();
-
-        public WeeklyRepeating(DateTime startDate, DateTime endDate, int occurrences, IList<DayOfWeek> chosenDays)
-            : base(startDate, endDate, occurrences)
-        {
-            foreach (DayOfWeek day in Enum.GetValues(typeof(DayOfWeek)))
-            {
-                DaysOfWeek[day] = false;
-            }
-
-            foreach (var day in chosenDays)
-            {
-                DaysOfWeek[day] = true;
-            }
-        }
-
-        public override ICollection<DateTime> GenerateSchedule()
-        {
-            var scheduledDays = new List<DateTime>();
-            var count = 0;
-            var currentDate = StartDate;
-
-            // Move to the first selected day after the start date
-            while (!DaysOfWeek[currentDate.DayOfWeek])
-            {
-                currentDate = currentDate.AddDays(1);
-            }
-
-            while (count < Occurrences && currentDate <= EndDate)
-            {
-                if (DaysOfWeek[currentDate.DayOfWeek])
+                while (count < Occurrences)
                 {
-                    scheduledDays.Add(currentDate);
+                    ScheduledDates.Add(currentDate);
+                    currentDate = currentDate.AddDays(1);
                     count++;
                 }
-                currentDate = currentDate.AddDays(1);
             }
+            else
+            {
+                var currentDate = StartDate;
+                while (currentDate < EndDate)
+                {
+                    ScheduledDates.Add(currentDate);
+                    currentDate = currentDate.AddDays(1);
+                }
+            }
+            return ScheduledDates;
+        }
+    }
+    public class WeeklyRepeating : Repeating
+    {
+        public Dictionary<DayOfWeek, bool> ChosenDaysOfWeek { get; protected set; } = new();
+        public ICollection<DateTime> ScheduledDates { get; protected set; } = new List<DateTime>();
+        public WeeklyRepeating(DateTime startDate, DateTime endDate, int occurrence, IList<DayOfWeek> chosenDays) : base(startDate, endDate)
+        {
+            Occurrences = occurrence;
 
-            return scheduledDays;
+            foreach (DayOfWeek day in Enum.GetValues(typeof(DayOfWeek)))
+            {
+                ChosenDaysOfWeek[day] = false;
+            }
+            SetChosenDays(chosenDays);
+        }
+        public void SetChosenDays(IList<DayOfWeek> chosenDays)
+        {
+            foreach (var day in chosenDays)
+            {
+                ChosenDaysOfWeek[day] = true;
+            }
+        }
+        public override ICollection<DateTime> GenerateScheduledDates()
+        {
+            var currentDate = StartDate;
+            var count = 0;
+
+            if (Occurrences > 0)
+            {
+                while (count < Occurrences)
+                {
+                    if (ChosenDaysOfWeek[currentDate.DayOfWeek])
+                    {
+                        ScheduledDates.Add(currentDate);
+                        count++;
+                    }
+                    currentDate = currentDate.AddDays(1);
+                }
+            }
+            else
+            {
+                while (currentDate <= EndDate)
+                {
+                    if (ChosenDaysOfWeek[currentDate.DayOfWeek])
+                    {
+                        ScheduledDates.Add(currentDate);
+                    }
+                    currentDate = currentDate.AddDays(1);
+                }
+            }
+            return ScheduledDates;
         }
     }
 }

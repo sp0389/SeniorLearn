@@ -28,11 +28,10 @@ namespace SeniorLearn.Services
         {
             var member = await _organisationUserService.GetUserByUserNameAsync(userId);
 
-            var dates = await _context.Lessons.Include(l => l.Enrolments)
+            return await _context.Lessons.Include(l => l.Enrolments)
                 .Where(l => l.Enrolments.Any(e => e.LessonId == l.Id && e.MemberId == member.Id))
                 .ProjectToType<CalendarDTO>()
                 .ToListAsync();
-            return dates;
         }
 
         public async Task<string> GetJwtTokenAsync(LoginDTO loginDto)

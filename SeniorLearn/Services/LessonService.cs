@@ -4,6 +4,7 @@ using SeniorLearn.Areas.Member.Models.Lesson;
 using SeniorLearn.Areas.Member.Models.Course;
 using SeniorLearn.Data;
 using SeniorLearn.Data.Core;
+using Microsoft.IdentityModel.Tokens;
 
 namespace SeniorLearn.Services
 {
@@ -21,95 +22,40 @@ namespace SeniorLearn.Services
         public async Task CreateLessonAsync(CreateLesson model, string userId)
         {
             var member = await _organisationUserService.GetUserByUserNameAsync(userId);
+            var timetable = new Timetable();
             var groupId = Guid.NewGuid();
 
-            // Check if it's a recurring lesson
-            if (model.IsRecurring)
+            if (model.IsRecurring && model.SelectedDaysOfWeek.IsNullOrEmpty())
             {
-                var startDate = model.StartDate;
-                var endDate = model.EndDate ?? startDate; // Default to start date if no end date provided
-                int occurrences = model.Occurrences;
+                var endDate = model.EndDate ?? model.RecurringStartDate;
+                var daily = new DailyRepeating(model.RecurringStartDate, endDate, model.Occurrences);
 
-                // Handle recurrence by occurrence number if no end date is provided
-                if (occurrences > 0 && !model.EndDate.HasValue)
+                var lessons = timetable.DailyLessons(daily, model.LessonName, model.Description, model.Duration, member, model.Location, model.DeliveryMode == "OnPremise" ? DeliveryType.OnCampus : DeliveryType.Virtual, model.IsCourse, model.SelectedCourseId, groupId);
+
+                foreach (var lesson in lessons)
                 {
-                    for (int i = 0; i < occurrences; i++)
-                    {
-                        var lessonStartDate = startDate.AddDays(i);
-
-                        // Create and log the lesson
-                        var lesson = new Lesson(
-                            model.LessonName,
-                            model.Description,
-                            model.Duration,
-                            member!,
-                            model.Location,
-                            lessonStartDate,
-                            lessonStartDate.AddMinutes(model.Duration),
-                            model.DeliveryMode == "OnPremise" ? DeliveryType.OnCampus : DeliveryType.Virtual,
-                            model.IsCourse,
-                            model.SelectedCourseId,
-                            groupId
-                        );
-                        _context.Lessons.Add(lesson);
-                    }
+                    await _context.Lessons.AddAsync(lesson);
                 }
-                // Handle recurrence by end date
-                else if (model.EndDate.HasValue)
+            }
+            else if (model.IsRecurring)
+            {
+                var endDate = model.EndDate ?? model.RecurringStartDate;
+                var weekly = new WeeklyRepeating(model.RecurringStartDate, endDate, model.Occurrences, model.SelectedDaysOfWeek);
+
+                var lessons = timetable.WeeklyLessons(weekly, model.LessonName, model.Description, model.Duration, member, model.Location, model.DeliveryMode == "OnPremise" ? DeliveryType.OnCampus : DeliveryType.Virtual, model.IsCourse, model.SelectedCourseId, groupId);
+
+                foreach (var lesson in lessons)
                 {
-                    occurrences = (int)(endDate.Date - startDate.Date).TotalDays + 1; // Calculate days between start and end date
-
-                    for (int i = 0; i < occurrences; i++)
-                    {
-                        var lessonStartDate = startDate.AddDays(i);
-
-                        // Stop if we go past the end date
-                        if (lessonStartDate > endDate)
-                        {
-                            break;
-                        }
-
-                        // Create and log the lesson
-                        var lesson = new Lesson(
-                            model.LessonName,
-                            model.Description,
-                            model.Duration,
-                            member!,
-                            model.Location,
-                            lessonStartDate,
-                            lessonStartDate.AddMinutes(model.Duration),
-                            model.DeliveryMode == "OnPremise" ? DeliveryType.OnCampus : DeliveryType.Virtual,
-                            model.IsCourse,
-                            model.SelectedCourseId,
-                            groupId
-                        );
-                        _context.Lessons.Add(lesson);
-                    }
+                    await _context.Lessons.AddAsync(lesson);
                 }
             }
             else
             {
-                // Create a single lesson for non-recurring cases
-                var lesson = new Lesson(
-                    model.LessonName,
-                    model.Description,
-                    model.Duration,
-                    member!,
-                    model.Location,
-                    model.StartDate,
-                    model.StartDate.AddMinutes(model.Duration),
-                    model.DeliveryMode == "OnPremise" ? DeliveryType.OnCampus : DeliveryType.Virtual,
-                    model.IsCourse,
-                    model.SelectedCourseId,
-                    groupId
-                );
-                _context.Lessons.Add(lesson);
+                var lesson = timetable.CreateLesson(model.LessonName, model.Description, model.Duration, member, model.Location, model.SingleStartDate, model.DeliveryMode == "OnPremise" ? DeliveryType.OnCampus : DeliveryType.Virtual, model.IsCourse, model.SelectedCourseId, groupId);
+                await _context.Lessons.AddAsync(lesson);
             }
-
-            // Save all changes to the database
             await _context.SaveChangesAsync();
         }
-
 
         public async Task CreateCourseAsync(Create model, string userId)
         {
@@ -174,16 +120,6 @@ namespace SeniorLearn.Services
             };
 
             model.Courses = await GetAllCourses();
-            model.DaysOfWeekOptions = new List<SelectListItem>
-            {
-                new SelectListItem { Value = DayOfWeek.Monday.ToString(), Text = "Monday" },
-                new SelectListItem { Value = DayOfWeek.Tuesday.ToString(), Text = "Tuesday" },
-                new SelectListItem { Value = DayOfWeek.Wednesday.ToString(), Text = "Wednesday" },
-                new SelectListItem { Value = DayOfWeek.Thursday.ToString(), Text = "Thursday" },
-                new SelectListItem { Value = DayOfWeek.Friday.ToString(), Text = "Friday" },
-                new SelectListItem { Value = DayOfWeek.Saturday.ToString(), Text = "Saturday" },
-                new SelectListItem { Value = DayOfWeek.Sunday.ToString(), Text = "Sunday" }
-            };
         }
     }
 }

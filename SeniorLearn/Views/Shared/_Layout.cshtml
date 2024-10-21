@@ -35,10 +35,10 @@
                         @if (User.IsInRole("Professional"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="Member" asp-controller="Lesson" asp-action="Create">Lessons</a>
+                                <a class="nav-link text-light" asp-area="Member" asp-controller="Lesson" asp-action="Create">My Lesson Plan</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="Member" asp-controller="Lesson" asp-action="Index">Calendar</a>
+                                <a class="nav-link text-light" asp-area="Member" asp-controller="Lesson" asp-action="Index">My Lessons</a>
                             </li>
                         }
                         @if (User.IsInRole("Standard") || User.IsInRole("Honorary") || User.IsInRole("Professional"))
