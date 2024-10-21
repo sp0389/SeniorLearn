@@ -24,7 +24,8 @@ namespace SeniorLearn.Areas.Member.Controllers
         {
             var lessonModel = new CreateLesson
             {
-                StartDate = DateTime.UtcNow
+                RecurringStartDate = DateTime.UtcNow,
+                SingleStartDate = DateTime.UtcNow,
             };
             await _lessonService.PopulateLessonDropdownsAsync(lessonModel);
             return View(lessonModel);
@@ -32,70 +33,46 @@ namespace SeniorLearn.Areas.Member.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public async Task<IActionResult> Create(CreateLesson model, string StartDateHidden, string EndDateHidden)
+        public async Task<IActionResult> Create(CreateLesson model)
         {
-            // Remove validation for hidden fields when occurrences are provided
-            if (model.IsRecurring && model.Occurrences > 0)
+            if (ModelState.IsValid)
             {
-                ModelState.Remove("StartDateHidden");
-                ModelState.Remove("EndDateHidden");
-            }
-            else if (!model.IsRecurring)
-            {
-                ModelState.Remove("StartDateHidden");
-                ModelState.Remove("EndDateHidden");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                await _lessonService.PopulateLessonDropdownsAsync(model);
-                return View(model);
-            }
-
-            // Handle recurring lesson dates
-            if (model.IsRecurring)
-            {
-                if (!string.IsNullOrEmpty(StartDateHidden))
+                if (model.IsRecurring)
                 {
-                    model.StartDate = DateTime.Parse(StartDateHidden);
+                    try
+                    {
+                        var member = HttpContext.User.Identity!.Name;
+                        await _lessonService.CreateLessonAsync(model, member!);
+                        return RedirectToAction("Index");
+                    }
+                    catch (DomainRuleException ex)
+                    {
+                        ModelState.AddModelError("", ex.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        ModelState.AddModelError("", ex.Message);
+                    }
                 }
-
-                if (!string.IsNullOrEmpty(EndDateHidden))
-                {
-                    model.EndDate = DateTime.Parse(EndDateHidden);
-                }
-                else if (model.Occurrences > 0)
+                else
                 {
                     model.EndDate = null;
-                }
-
-                try
-                {
-                    var member = HttpContext.User.Identity!.Name;
-                    await _lessonService.CreateLessonAsync(model, member!);
-                    return RedirectToAction("Index");
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", ex.Message);
-                }
-            }
-            else
-            {
-                model.EndDate = null;
-
-                try
-                {
-                    var member = HttpContext.User.Identity!.Name;
-                    await _lessonService.CreateLessonAsync(model, member!);
-                    return RedirectToAction("Index");
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", ex.Message);
+                    try
+                    {
+                        var member = HttpContext.User.Identity!.Name;
+                        await _lessonService.CreateLessonAsync(model, member!);
+                        return RedirectToAction("Index");
+                    }
+                    catch (DomainRuleException ex)
+                    {
+                        ModelState.AddModelError("", ex.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        ModelState.AddModelError("", ex.Message);
+                    }
                 }
             }
-
             await _lessonService.PopulateLessonDropdownsAsync(model);
             return View(model);
         }
