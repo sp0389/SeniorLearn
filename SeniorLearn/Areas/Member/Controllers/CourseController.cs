@@ -21,13 +21,7 @@ namespace SeniorLearn.Areas.Member.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            var create = new Create()
-            {
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddMonths(6)
-            };
-
-            return View(create);
+            return View();
         }
 
         [HttpPost]

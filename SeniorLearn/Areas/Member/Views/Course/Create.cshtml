@@ -18,45 +18,11 @@
         <span asp-validation-for="CourseName" class="text-danger mb-3"></span>
     </div>
 
-    <div class="form-floating">
-        <textarea asp-for="Description" class="form-control" placeholder="A description about the course" style="height: 100px"></textarea>
+    <div class="form-floating mb-3">
+        <textarea asp-for="Description" class="form-control mb-3" placeholder="A description about the course" style="height: 100px"></textarea>
         <label asp-for="Description">Description</label>
         <span asp-validation-for="Description" class="text-danger mb-3"></span>
     </div>
 
-    <div class="form-group">
-        <label asp-for="StartDate" class="control-label">End Date</label>
-        <input asp-for="StartDate" id="courseEndDatePicker" class="form-control mb-3" type="datetime-local" />
-        <span asp-validation-for="StartDate" class="text-danger mb-3"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="EndDate" class="control-label">End Date</label>
-        <input asp-for="EndDate" id="courseEndDatePicker" class="form-control mb-3" type="datetime-local" />
-        <span asp-validation-for="EndDate" class="text-danger mb-3"></span>
-    </div>
-
     <button type="submit" class="w-100 btn btn-primary w-100">Create Course</button>
 </form>
-
-@section Scripts {
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            flatpickr("#courseStartDatePicker", {
-                enableTime: true,
-                dateFormat: "Y-m-d\\TH:i",
-                altInput: true,
-                altFormat: "d/m/Y H:i",
-                time_24hr: true
-            });
-
-            flatpickr("#courseEndDatePicker", {
-                enableTime: true,
-                dateFormat: "Y-m-d\\TH:i",
-                altInput: true,
-                altFormat: "d/m/Y H:i",
-                time_24hr: true
-            });
-        });
-    </script>
-}

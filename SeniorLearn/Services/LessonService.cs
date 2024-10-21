@@ -65,8 +65,6 @@ namespace SeniorLearn.Services
             {
                 Title = model.CourseName,
                 Description = model.Description,
-                StartDate = model.StartDate,
-                EndDate = model.EndDate,
                 UserId = member.Id,
             };
 
