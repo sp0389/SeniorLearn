@@ -19,17 +19,36 @@ namespace SeniorLearn.Data
         public string ContentMessage { get; set; } = default!;
         public List<string> Tags { get; set; } = new();
         public int Likes { get; set; }
-        public BulletinStatus Status { get; set; } = BulletinStatus.Active;
-        public List<BulletinComment> Comments { get; set; } = new();
+        public string Status { get; set; }
+        public LinkedList<BulletinComment> Comments { get; set; }
+
+        public Bulletin()
+        {
+            CreatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
+            Likes = 0;
+            Status = BulletinStatus.Active.ToString();
+            Comments = new LinkedList<BulletinComment>();
+        }
     }
 
     public class BulletinComment
     {
-        public ObjectId Id { get; set; }
-        public ObjectId BulletinId { get; set; } = default!;
         public string MemberId { get; set; } = default!;
         public string ProfileImageUrl { get; set; } = default!;
         public DateTime CommentedAt { get; set; }
         public string Message { get; set; } = default!;
+
+        public BulletinComment()
+        {
+            CommentedAt = DateTime.UtcNow;
+        }
+    }
+
+    public class BulletinDatabaseSettings
+    {
+        public string ConnectionString { get; set; } = null!;
+        public string DatabaseName { get; set; } = null!;
+        public string BulletinCollectionName { get; set; } = null!;
     }
 }

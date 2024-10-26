@@ -1,0 +1,135 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using SeniorLearn.Data;
+using SeniorLearn.Services;
+
+namespace SeniorLearn.Controllers.Api
+{
+    //Hack: Not sure why Program.cs isn't handling this, so I've manually added it here for now.
+    [Authorize(AuthenticationSchemes = "JWT_OR_COOKIE", Roles = "Administrator, Standard, Honorary, Professional")]
+    [ApiController, Route("api/[controller]")]
+    public class BulletinController : ControllerBase
+    {
+        private readonly BulletinService _bulletinService;
+
+        public BulletinController(BulletinService bulletinService)
+        {
+             _bulletinService = bulletinService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllBulletins()
+        {
+            var result = await _bulletinService.GetBulletinsAsync();
+            
+            if (result.IsNullOrEmpty())
+            {
+                return NotFound();
+            }
+            
+            return Ok(result);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetBulletinsById([FromRoute] string id)
+        {
+            var result = await _bulletinService.GetBulletinByIdAsync(id);
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);   
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> GetBulletinsBySearch([FromQuery] string searchTerm)
+        {
+            var result = await _bulletinService.GetBulletinsBySearchTermAsync(searchTerm);
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateNewBulletin([FromBody] Bulletin bulletin)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var member = HttpContext.User.Identity!.Name;
+                    await _bulletinService.SaveNewBulletinAsync(bulletin, member!);
+                    return CreatedAtAction(nameof(GetBulletinsById), new { id = bulletin.Id }, bulletin);
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
+            }
+            return BadRequest();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateBulletin([FromRoute] string id, [FromBody] Bulletin bulletin)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var member = HttpContext.User.Identity!.Name;
+                    var result = await _bulletinService.UpdateExistingBulletinAsync(id, bulletin);
+                    return Ok(result);
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
+            }
+            return BadRequest();
+        }
+
+        [HttpPost("{id}")]
+        public async Task<IActionResult> AddCommentToBulletin([FromRoute]string id, [FromBody] BulletinComment bulletinComment)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var member = HttpContext.User.Identity!.Name;
+                    var result = await _bulletinService.AddCommentToBulletinAsync(id, bulletinComment, member!);
+                    return Ok(result);
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
+            }
+            return BadRequest();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task <IActionResult> DeleteBulletinById([FromRoute]string id)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _bulletinService.DeleteBulletinAsync(id);
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
+            }
+            return BadRequest();
+        }
+    }
+}

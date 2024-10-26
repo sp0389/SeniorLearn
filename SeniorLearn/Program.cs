@@ -11,6 +11,7 @@ public class Program
 {
     public static void Main(string[] args)
     {
+        var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
@@ -34,15 +35,33 @@ public class Program
             .AddDefaultTokenProviders()
             .AddRoles<OrganisationRole>();
 
+        // TODO: Debug only -- remove later
+        builder.Logging.AddDebug();
+        builder.Logging.AddConsole();
+
         builder.Services.AddMapster();
         builder.Services.AddOrganisationServices();
         builder.Services.AddControllersWithViews()
             .AddViewOptions(o => o.HtmlHelperOptions.ClientValidationEnabled = true);
 
-        builder.Services.AddAuthorization(options =>
+
+        builder.Services.Configure<BulletinDatabaseSettings>(
+        builder.Configuration.GetSection("SeniorLearnDatabase"));
+
+        builder.Services.AddMapster();
+        builder.Services.AddOrganisationServices();
+        builder.Services.AddControllersWithViews()
+            .AddViewOptions(o => o.HtmlHelperOptions.ClientValidationEnabled = true);
+
+        builder.Services.AddCors(options =>
         {
-            options.AddPolicy("ActiveRole", policy =>
-                policy.RequireRole("ActiveRole"));
+            options.AddPolicy(name: MyAllowSpecificOrigins,
+                              policy =>
+                              {
+                                  policy.WithOrigins("*")
+                                    .AllowAnyHeader()
+                                    .AllowAnyMethod();
+                              });
         });
 
         builder.Services.AddAuthentication(o =>
@@ -51,6 +70,7 @@ public class Program
             o.DefaultChallengeScheme = "JWT_OR_COOKIE";
         }).AddJwtBearer(options =>
         {
+
             options.RequireHttpsMetadata = false;
             options.SaveToken = true;
             options.TokenValidationParameters = new TokenValidationParameters
@@ -58,7 +78,6 @@ public class Program
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 ValidateLifetime = true,
-
                 ValidIssuer = builder.Configuration["Jwt:Issuer"],
                 ValidAudience = builder.Configuration["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(builder.Configuration["Jwt:Key"])),
@@ -96,7 +115,7 @@ public class Program
         app.UseStaticFiles();
 
         app.UseRouting();
-        
+
         app.UseAuthentication();
         app.UseAuthorization();
 

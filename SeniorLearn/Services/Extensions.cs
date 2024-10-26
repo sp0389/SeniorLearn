@@ -41,6 +41,7 @@ namespace SeniorLearn.Services
             services.AddScoped<LessonService>();
             services.AddScoped<EnrolmentService>();
             services.AddScoped<ApiService>();
+            services.AddScoped<BulletinService>();
 
             return services;
         }
