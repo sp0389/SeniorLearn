@@ -24,7 +24,7 @@ namespace SeniorLearn.Services
 
         public async Task<List<Bulletin>> GetBulletinsAsync()
         {
-            var filter = Builders<Bulletin>.Filter.Empty;
+            var filter = Builders<Bulletin>.Filter.Eq(b => b.Status, "Active");
             var bulletins = await _bulletinCollection
                 .Find(filter)
                 .ToListAsync();
@@ -104,7 +104,7 @@ namespace SeniorLearn.Services
                 .Set(b => b.ContentMessage, bulletin.ContentMessage)
                 .Set(b => b.ContentImageUrl, bulletin.ContentImageUrl)
                 .Set(b => b.UpdatedAt, DateTime.UtcNow)
-                .Set(b => b.Status, BulletinStatus.Archived.ToString())
+                .Set(b => b.Status, bulletin.Status)
                 .Set(b => b.Tags, bulletin.Tags)
                 .Set(b => b.MemberId, existingBulletin.MemberId);
 
@@ -118,7 +118,7 @@ namespace SeniorLearn.Services
                 ?? throw new Exception("Bulletin with that ID does not exist!");
 
             var member = await _organisationUserService.GetUserByUserNameAsync(memberId);
-            bulletinComment.MemberId = memberId;
+            bulletinComment.MemberId = member.Id;
 
             existingBulletin.Comments.AddLast(bulletinComment);
 
@@ -136,6 +136,19 @@ namespace SeniorLearn.Services
 
             var filter = Builders<Bulletin>.Filter.Eq(b => b.Id, existingBulletin.Id);
             await _bulletinCollection.DeleteOneAsync(filter);
+        }
+
+        public async Task<Bulletin> UpdateBulletinLikesAsync(string id)
+        {
+            var existingBulletin = await GetBulletinByIdAsync(id);
+            existingBulletin.Likes++;
+
+            var filter = Builders<Bulletin>.Filter.Eq(b => b.Id, existingBulletin.Id);
+            var update = Builders<Bulletin>.Update.Set(b => b.Likes, existingBulletin.Likes);
+
+            await _bulletinCollection.UpdateOneAsync(filter, update);
+
+            return existingBulletin;
         }
     }
 }
