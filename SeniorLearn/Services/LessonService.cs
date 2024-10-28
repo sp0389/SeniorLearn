@@ -27,6 +27,11 @@ namespace SeniorLearn.Services
 
             if (model.IsRecurring && model.SelectedDaysOfWeek.IsNullOrEmpty())
             {
+                if (model.RecurringStartDate > model.EndDate)
+                {
+                    throw new DomainRuleException("Start date must be before end date!");
+                }
+                
                 var endDate = model.EndDate ?? model.RecurringStartDate;
                 var daily = new DailyRepeating(model.RecurringStartDate, endDate, model.Occurrences);
 
