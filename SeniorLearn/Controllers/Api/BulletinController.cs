@@ -131,5 +131,23 @@ namespace SeniorLearn.Controllers.Api
             }
             return BadRequest();
         }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdateBulletinLikes([FromRoute]string id)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var result = await _bulletinService.UpdateBulletinLikesAsync(id);
+                    return Ok(result);
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
+            }
+            return BadRequest();
+        }
     }
 }
