@@ -19,11 +19,9 @@ namespace SeniorLearn.Data
         Cancelled
     }
 
-    // Purpose: Represents a lesson entity, which can be standalone or part of a course.
-    // Includes properties like Title, Description, StartDate, EndDate, and Duration.
     public class Lesson
     {
-        private State _state = default!;
+        public State _state = default!;
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
@@ -69,6 +67,7 @@ namespace SeniorLearn.Data
             var enrol = new Enrolment(member, lesson, lesson.CourseId, enrolmentDate);
             return enrol;
         }
+
         public void ManageLessonState(State state) => _state = state;
         public void Schedule() => _state.Schedule(this);
         public void Complete() => _state.Complete(this);

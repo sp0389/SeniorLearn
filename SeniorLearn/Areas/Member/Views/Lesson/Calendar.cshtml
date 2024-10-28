@@ -1,0 +1,124 @@
+﻿@model IEnumerable<LessonDTO>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Lesson Calendar";
+}
+
+<h1 class="text-center mt-4 mb-3">@ViewData["Title"]</h1>
+
+
+<div id="calendar" class="my-4"></div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.0/main.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.0/main.min.css" />
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today customLessonList',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                customButtons: {
+                    customLessonList: {
+                        text: 'Lesson Index',
+                        click: function () {
+                            window.location.href = '@Url.Action("Index", "Lesson", new { area = "Member" })';
+                        },
+                        classNames: 'fc-custom-button'  
+                    }
+                },
+                buttonText: {
+                    today: 'Today',
+                    month: 'Month',
+                    week: 'Week',
+                    day: 'Day'
+                },
+                events: [
+        @foreach (var lesson in Model)
+        {
+            <text>
+                            {
+                                title: '@lesson.Title',
+                            start: '@lesson.StartDate.ToString("yyyy-MM-ddTHH:mm:ss")',
+                            end: '@lesson.EndDate.ToString("yyyy-MM-ddTHH:mm:ss")',
+                            extendedProps: {
+                                address: '@lesson.Address',
+                            lecturer: 'Lecturer Name Here'
+                                            }
+                                        }@(Model.Last() != lesson ? "," : "")
+            </text>
+        }
+                        ],
+                eventClick: function (info) {
+                    $('#modalTitle').html(info.event.title);
+                    $('#modalAddressBody').html("<strong> Location: </strong>" + info.event.extendedProps.address);
+                    $('#modalLecturerBody').html("<strong> Lecturer: </strong>" + info.event.extendedProps.lecturer);
+                    $('#modalStartBody').html("<strong> Start Time: </strong>" + info.event.start);
+                    $('#modalEndBody').html("<strong> End Time: </strong>" + info.event.end);
+                    $('#calendarModal').modal('show');
+                }
+            });
+
+            calendar.render();
+        });
+    </script>
+}
+
+<div id="calendarModal" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="modalTitle" style="text-align:center; font-weight:bold" class="modal-title"></h5>
+            </div>
+            <div class="modal-body">
+                <div id="modalAddressBody"></div>
+                <div id="modalLecturerBody"></div>
+                <div id="modalStartBody"></div>
+                <div id="modalEndBody"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --fc-border-color: #39393a;
+    }
+
+    .fc-toolbar-title {
+        color: #007bff; 
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .fc-event {
+        background-color: #2C3E50;
+        filter: drop-shadow(0.35rem 0.35rem 0.4rem rgba(0, 0, 0, 0.5));
+        color: white;
+    }
+
+    .fc-daygrid-day-number {
+        font-weight: bold;
+        color: #2C3E50;
+    }
+
+    .fc-col-header-cell-cushion {
+        color: #2C3E50;
+    }
+
+    .fc-custom-button {
+        color: #007bff; 
+        border-color: #007bff;
+        background-color: #fff;
+    }
+</style>

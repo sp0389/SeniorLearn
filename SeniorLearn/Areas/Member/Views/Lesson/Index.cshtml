@@ -1,36 +1,75 @@
-﻿@model IEnumerable<SeniorLearn.Data.Lesson>
+﻿@model IEnumerable<LessonDTO>
+@{
+    ViewData["Title"] = "Lesson List";
+}
+
+<h1 class="text-center mt-4 mb-3">@ViewData["Title"]</h1>
+
+<h2>
+    <a href="@Url.Action("Calendar", "Lesson", new { area = "Member" })" class="btn btn-primary">Switch to Calendar</a>
+</h2>
 
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = "Lesson Calendar";
+    var error = TempData["Error"];
+    var success = TempData["Success"];
+
+    if (error != null)
+    {
+        <div class="alert alert-danger alert-dismissible d-flex align-items-center fade show" role="alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
+                <use xlink:href="#exclamation-triangle-fill" />
+            </svg>
+            <div>
+                @error
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div style="display: none"></div>
+    }
+    if (success != null)
+    {
+        <div class="alert alert-success alert-dismissible d-flex align-items-center fade show" role="alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                <use xlink:href="#check-circle-fill" />
+            </svg>
+            <div>
+                @success
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    }
 }
 
-<h1>Lesson Calendar</h1>
-
-<div id="calendar"></div>
-
-@section Scripts {
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var calendarEl = document.getElementById('calendar');
-
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                events: [
+<table class="table table-responsive table-bordered table-striped table-hover text-center">
+    <thead>
+        <tr>
+            <th scope="col">Lesson Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Location</th>
+            <th scope="col">Duration</th>
+            <th scope="col">Delivery Mode</th>
+            <th scope="col">Is Part of a Course?</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
         @foreach (var lesson in Model)
         {
-            <text>
-                            {
-                                title: '@lesson.Title',
-                            start: '@lesson.StartDate.ToString("yyyy-MM-ddTHH:mm:ss")',
-                            end: '@lesson.EndDate.ToString("yyyy-MM-ddTHH:mm:ss")'
-                                        }@(Model.Last() != lesson ? "," : "")
-            </text>
+            <tr>
+                <td>@Html.DisplayFor(modelItem => lesson.Title)</td>
+                <td>@Html.DisplayFor(modelItem => lesson.Description)</td>
+                <td>@Html.DisplayFor(modelItem => lesson.Address)</td>
+                <td>@Html.DisplayFor(modelItem => lesson.Duration)</td>
+                <td>@Html.DisplayFor(modelItem => lesson.Type)</td>
+                <td>@(lesson.IsInCourse ? "Yes" : "No")</td>
+                <td>
+                    <a title="Details" class="nav-link p-0 d-inline" style="text-decoration:underline" asp-area="Member"
+                       asp-controller="Lesson" asp-action="Details" asp-route-id="@lesson.GroupId">Details</a>
+                </td>
+            </tr>
         }
-                        ]
-            });
-
-            calendar.render();
-        });
-    </script>
-}
+    </tbody>
+</table>

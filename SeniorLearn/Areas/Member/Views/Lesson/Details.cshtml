@@ -1,0 +1,58 @@
+﻿@model IEnumerable<LessonDTO>
+
+<form method="post" asp-action="UpdateLessonState">
+    <table class="table table-responsive table-bordered table-striped table-hover text-center">
+        <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Description</th>
+                <th scope="col">Address</th>
+                <th scope="col">Duration</th>
+                <th scope="col">Selection</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var m in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => m.Title)</td>
+                    <td>@Html.DisplayFor(modelItem => m.Description)</td>
+                    <td>@Html.DisplayFor(modelItem => m.Address)</td>
+                    <td>@Html.DisplayFor(modelItem => m.Duration)</td>
+                    <td>
+                        @if (m.IsInCourse)
+                        {
+                            <input type="hidden" name="Lessons" value="@m.Id" />
+                            <input type="checkbox" disabled checked />
+                        }
+                        else
+                        {
+                            <input class="lesson-checkbox" type="checkbox" name="Lessons" value="@m.Id" />
+
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#lessonModal">
+        Submit
+    </button>
+    <div class="modal fade" id="lessonModal" tabindex="-1" aria-labelledby="lessonModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="lessonModalLabel">Confirm</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to update these lessons?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

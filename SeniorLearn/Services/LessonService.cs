@@ -5,6 +5,8 @@ using SeniorLearn.Areas.Member.Models.Course;
 using SeniorLearn.Data;
 using SeniorLearn.Data.Core;
 using Microsoft.IdentityModel.Tokens;
+using Mapster;
+using SeniorLearn.Models;
 
 namespace SeniorLearn.Services
 {
@@ -94,9 +96,35 @@ namespace SeniorLearn.Services
             return users;
         }
 
-        public async Task<IEnumerable<Lesson>> GetLessonsForCalendarAsync()
+        public async Task<IEnumerable<LessonDTO>> GetLessonsForCalendarAsync()
         {
-            return await _context.Lessons.Include(l => l.Course).ToListAsync();
+            var lessons = await _context.Lessons
+                .Where(l => l.Availability == Availability.Draft)
+                .ProjectToType<LessonDTO>()
+                .ToListAsync();
+            return lessons.GroupBy(l => l.GroupId).Select(l => l.First()).ToList();
+
+        }
+
+        public async Task<IEnumerable<LessonDTO>> GetLessonDetailsAsync(Guid id)
+        {
+            return await _context.Lessons
+                .Where(l => l.GroupId == id)
+                .ProjectToType<LessonDTO>()
+                .ToListAsync();
+        }
+
+        public async Task UpdateLessonStateAsync(IList<int> Lessons)
+        {
+            var lessons = await _context.Lessons.Where(l => Lessons.Contains(l.Id))
+                .ToListAsync();
+            foreach (var lesson in lessons)
+            {
+                lesson._state = new Draft(lesson);
+                lesson.Schedule();
+                await _context.AddAsync(lesson);
+            }
+            await _context.SaveChangesAsync();
         }
 
         public async Task PopulateLessonDropdownsAsync(CreateLesson model)
