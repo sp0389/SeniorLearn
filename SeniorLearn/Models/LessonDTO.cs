@@ -1,4 +1,5 @@
-﻿using SeniorLearn.Data;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using SeniorLearn.Data;
 
 namespace SeniorLearn.Models
 {
@@ -14,6 +15,14 @@ namespace SeniorLearn.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public Guid GroupId { get; set; }
-        
+        public Availability Availability { get; set; }
+        public IEnumerable<SelectListItem> StateList { get; set; } = new List<SelectListItem>
+        {
+            new SelectListItem { Text = "Scheduled", Value = "Scheduled"},
+            new SelectListItem { Text = "Cancelled", Value = "Cancelled"},
+            new SelectListItem { Text = "Closed", Value = "Closed"},
+            new SelectListItem { Text = "Complete", Value = "Complete"},
+
+        };
     }
 }

@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<LessonDTO>
 @{
-    ViewData["Title"] = "Lesson List";
+    ViewData["Title"] = "My Lessons";
 }
 
 <h1 class="text-center mt-4 mb-3">@ViewData["Title"]</h1>
@@ -51,7 +51,7 @@
             <th scope="col">Location</th>
             <th scope="col">Duration</th>
             <th scope="col">Delivery Mode</th>
-            <th scope="col">Is Part of a Course?</th>
+            <th scope="col">Course?</th>
             <th scope="col">Actions</th>
         </tr>
     </thead>
@@ -64,7 +64,7 @@
                 <td>@Html.DisplayFor(modelItem => lesson.Address)</td>
                 <td>@Html.DisplayFor(modelItem => lesson.Duration)</td>
                 <td>@Html.DisplayFor(modelItem => lesson.Type)</td>
-                <td>@(lesson.IsInCourse ? "Yes" : "No")</td>
+                <td>@Html.DisplayFor(modelItem => lesson.IsInCourse)</td>
                 <td>
                     <a title="Details" class="nav-link p-0 d-inline" style="text-decoration:underline" asp-area="Member"
                        asp-controller="Lesson" asp-action="Details" asp-route-id="@lesson.GroupId">Details</a>

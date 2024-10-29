@@ -90,25 +90,13 @@ namespace SeniorLearn.Services
             return courses;
         }
 
-        public async Task<IEnumerable<SelectListItem>> GetAllUsers()
-        {
-            var users = await _context.Users.Select(u => new SelectListItem
-            {
-                Value = u.Id,
-                Text = u.FirstName
-            }).ToListAsync();
-
-            return users;
-        }
-
         public async Task<IEnumerable<LessonDTO>> GetLessonsForCalendarAsync()
         {
             var lessons = await _context.Lessons
-                .Where(l => l.Availability == Availability.Draft)
+
                 .ProjectToType<LessonDTO>()
                 .ToListAsync();
             return lessons.GroupBy(l => l.GroupId).Select(l => l.First()).ToList();
-
         }
 
         public async Task<IEnumerable<LessonDTO>> GetLessonDetailsAsync(Guid id)
@@ -119,15 +107,30 @@ namespace SeniorLearn.Services
                 .ToListAsync();
         }
 
-        public async Task UpdateLessonStateAsync(IList<int> Lessons)
+        public async Task UpdateLessonStateAsync(IList<int> Lessons, string lessonState)
         {
             var lessons = await _context.Lessons.Where(l => Lessons.Contains(l.Id))
                 .ToListAsync();
+
             foreach (var lesson in lessons)
             {
-                lesson._state = new Draft(lesson);
-                lesson.Schedule();
-                await _context.AddAsync(lesson);
+                lesson.SetInitialLessonState(lesson);
+
+                switch (lessonState)
+                {
+                    case "Scheduled":
+                        lesson.Schedule();
+                        break;
+                    case "Cancelled":
+                        lesson.Cancel();
+                        break;
+                    case "Complete":
+                        lesson.Complete();
+                        break;
+                    case "Closed":
+                        lesson.Close();
+                        break;
+                }
             }
             await _context.SaveChangesAsync();
         }

@@ -18,10 +18,9 @@ namespace SeniorLearn.Data
         Complete,
         Cancelled
     }
-
     public class Lesson
     {
-        public State _state = default!;
+        private State _state = default!;
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
@@ -39,7 +38,6 @@ namespace SeniorLearn.Data
         public Course? Course { get; set; }
         public ICollection<Enrolment> Enrolments { get; set; } = new List<Enrolment>();
         private Lesson() { }
-
         public Lesson(string title, string description, int duration, Member member, string address, DateTime startDate, DateTime endDate, DeliveryType type, bool isInCourse, int? courseId, Guid groupId)
         {
             Title = title;
@@ -66,6 +64,28 @@ namespace SeniorLearn.Data
             
             var enrol = new Enrolment(member, lesson, lesson.CourseId, enrolmentDate);
             return enrol;
+        }
+
+        public void SetInitialLessonState (Lesson lesson)
+        {
+            switch (lesson.Availability)
+            {
+                case Availability.Draft:
+                    _state= new Draft (this); 
+                    break;
+                case Availability.Cancelled:
+                    _state= new Cancelled (this);
+                    break;
+                case Availability.Closed:
+                    _state= new Closed (this);
+                    break;
+                case Availability.Complete:
+                    _state = new Completed (this);
+                    break;
+                case Availability.Scheduled:
+                    _state = new Scheduled (this);
+                    break;
+            }
         }
 
         public void ManageLessonState(State state) => _state = state;

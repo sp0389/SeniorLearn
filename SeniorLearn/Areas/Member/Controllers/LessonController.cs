@@ -80,16 +80,15 @@ namespace SeniorLearn.Areas.Member.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var lessons = await _lessonService.GetLessonsForCalendarAsync(); // Now returns IEnumerable<LessonDTO>
+            var lessons = await _lessonService.GetLessonsForCalendarAsync(); 
             return View(lessons);
         }
 
         [HttpGet]
         public async Task<IActionResult> Calendar()
         {
-            // Retrieve data needed for the calendar view (e.g., lessons)
             var lessons = await _lessonService.GetLessonsForCalendarAsync();
-            return View(lessons); // Pass lessons or any other data the calendar view requires
+            return View(lessons); 
         }
 
         [HttpGet]
@@ -109,22 +108,20 @@ namespace SeniorLearn.Areas.Member.Controllers
 
         [HttpPost]
 
-        public async Task<IActionResult> UpdateLessonState(IList<int> Lessons)
+        public async Task<IActionResult> UpdateLessonState(IList<int> Lessons, string lessonState)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    await _lessonService.UpdateLessonStateAsync(Lessons);
+                    await _lessonService.UpdateLessonStateAsync(Lessons, lessonState);
                 }
                 catch (Exception ex)
                 {
                     TempData["Error"] = ex.Message;
                 }
-                
             }
             return RedirectToAction("Index");
-
         }
     }
 }
