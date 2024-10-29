@@ -80,7 +80,7 @@ namespace SeniorLearn.Areas.Member.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var lessons = await _lessonService.GetLessonsForCalendarAsync(); 
+            var lessons = await _lessonService.GetLessonsForIndexAsync(); 
             return View(lessons);
         }
 
@@ -105,7 +105,7 @@ namespace SeniorLearn.Areas.Member.Controllers
             }
             return RedirectToAction("Index");
         }
-
+        [ValidateAntiForgeryToken]
         [HttpPost]
 
         public async Task<IActionResult> UpdateLessonState(IList<int> Lessons, string lessonState)

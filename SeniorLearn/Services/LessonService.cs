@@ -99,6 +99,13 @@ namespace SeniorLearn.Services
             return lessons.GroupBy(l => l.GroupId).Select(l => l.First()).ToList();
         }
 
+        public async Task<IEnumerable<LessonDTO>> GetLessonsForIndexAsync()
+        {
+            return await _context.Lessons.ProjectToType<LessonDTO>()
+            .ProjectToType<LessonDTO>()
+            .ToListAsync();
+        }
+
         public async Task<IEnumerable<LessonDTO>> GetLessonDetailsAsync(Guid id)
         {
             return await _context.Lessons
