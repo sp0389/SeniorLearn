@@ -92,18 +92,17 @@ namespace SeniorLearn.Services
 
         public async Task<IEnumerable<LessonDTO>> GetLessonsForCalendarAsync()
         {
-            var lessons = await _context.Lessons
-
-                .ProjectToType<LessonDTO>()
-                .ToListAsync();
-            return lessons.GroupBy(l => l.GroupId).Select(l => l.First()).ToList();
+            return await _context.Lessons.ProjectToType<LessonDTO>()
+            .ProjectToType<LessonDTO>()
+            .ToListAsync();
         }
 
         public async Task<IEnumerable<LessonDTO>> GetLessonsForIndexAsync()
         {
-            return await _context.Lessons.ProjectToType<LessonDTO>()
-            .ProjectToType<LessonDTO>()
-            .ToListAsync();
+            var lessons = await _context.Lessons
+                .ProjectToType<LessonDTO>()
+                .ToListAsync();
+            return lessons.GroupBy(l => l.GroupId).Select(l => l.First()).ToList();
         }
 
         public async Task<IEnumerable<LessonDTO>> GetLessonDetailsAsync(Guid id)

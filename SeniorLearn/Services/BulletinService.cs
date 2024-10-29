@@ -8,7 +8,6 @@ namespace SeniorLearn.Services
 {
     public class BulletinService
     {
-        // TODO: Update later. Localhost for now.
         private readonly IMongoCollection<Bulletin> _bulletinCollection;
         private readonly OrganisationUserService _organisationUserService;
 

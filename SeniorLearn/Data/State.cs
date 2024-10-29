@@ -12,13 +12,13 @@ namespace SeniorLearn.Data
 
     public abstract class TerminalState : State
     {
-        public override void Schedule(Lesson lesson) => throw new DomainRuleException("You cannot schedule a lesson in this state!");
+        public override void Schedule(Lesson lesson) => throw new DomainRuleException("You cannot schedule a lesson with this status.");
 
-        public override void Complete(Lesson lesson) => throw new DomainRuleException("You cannot complete a lesson in this state!");
+        public override void Complete(Lesson lesson) => throw new DomainRuleException("You cannot complete a lesson with this status.");
  
-        public override void Cancel(Lesson lesson) => throw new DomainRuleException("You cannot cancel a lesson in this state!");
+        public override void Cancel(Lesson lesson) => throw new DomainRuleException("You cannot cancel a lesson with this status.");
 
-        public override void Close(Lesson lesson) => throw new DomainRuleException("You cannot close a lesson in this state!");             
+        public override void Close(Lesson lesson) => throw new DomainRuleException("You cannot close a lesson with this status.");             
     }
 
     public class Draft : State
@@ -31,7 +31,7 @@ namespace SeniorLearn.Data
         {
             lesson.ManageLessonState(new Scheduled(lesson));
         }
-        public override void Complete(Lesson lesson) => throw new DomainRuleException("You cannot complete a lesson in a draft state!");
+        public override void Complete(Lesson lesson) => throw new DomainRuleException("You cannot complete a lesson that has a draft status.");
         public override void Cancel(Lesson lesson)
         {
             lesson.ManageLessonState(new Cancelled(lesson));
@@ -49,7 +49,7 @@ namespace SeniorLearn.Data
         {
             lesson.Availability = Availability.Scheduled;
         }
-        public override void Schedule(Lesson lesson) => throw new DomainRuleException("You cannot schedule a lesson that is in a scheduled state!");
+        public override void Schedule(Lesson lesson) => throw new DomainRuleException("You cannot schedule a lesson that has a scheduled status.");
         public override void Complete(Lesson lesson)
         {
             lesson.ManageLessonState(new Completed(lesson));

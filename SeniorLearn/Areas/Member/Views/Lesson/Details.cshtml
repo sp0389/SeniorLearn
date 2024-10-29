@@ -1,17 +1,41 @@
 ﻿@model IEnumerable<LessonDTO>
-
 @{
-    ViewData["Title"] = "Lesson Overview";
+    ViewData["Title"] = $"{Model.First().Title}";
 }
 
 <h1 class="text-center mt-4 mb-3">@ViewData["Title"]</h1>
+@{
+    if (Model.First().IsInCourse)
+    {
+        <div class="alert alert-warning alert-dismissible d-flex align-items-center fade show" role="alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Alert:">
+                <use xlink:href="#exclamation-triangle-fill" />
+            </svg>
+            <div>
+                Updating the status of a course will simultaneously update the status of all its lessons.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div id="error" class="alert alert-danger alert-dismissible fade show" style="display:none;" role="alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
+                <use xlink:href="#exclamation-triangle-fill" />
+            </svg>
+            Please select at least one lesson to update.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+}
 
-<form method="post" asp-action="UpdateLessonState">
+<form method="post" asp-action="UpdateLessonState" onsubmit="return checkIfChecked();">
+    @Html.AntiForgeryToken()
     <table class="table table-responsive table-bordered table-striped table-hover text-center">
         <thead>
             <tr>
-                <th scope="col">Title</th>
-                <th scope="col">Description</th>
+                <th scope="col">Start Date</th>
+                <th scope="col">End Date</th>
                 <th scope="col">Address</th>
                 <th scope="col">Duration</th>
                 <th scope="col">Status</th>
@@ -22,8 +46,8 @@
             @foreach (var m in Model)
             {
                 <tr>
-                    <td>@Html.DisplayFor(modelItem => m.Title)</td>
-                    <td>@Html.DisplayFor(modelItem => m.Description)</td>
+                    <td>@Html.DisplayFor(modelItem => m.StartDate)</td>
+                    <td>@Html.DisplayFor(modelItem => m.EndDate)</td>
                     <td>@Html.DisplayFor(modelItem => m.Address)</td>
                     <td>@Html.DisplayFor(modelItem => m.Duration)</td>
                     <td>@Html.DisplayFor(modelItem => m.Availability)</td>
@@ -42,6 +66,7 @@
             }
         </tbody>
     </table>
+    
     <label class="mb-3" style="font-weight: bold" for="lessonState"> Update Lesson Status</label>
     <div class="mb-3">
     @Html.DropDownList("lessonState", Model.First().StateList, "Select a Status", new { @class = "form-control"})
@@ -68,3 +93,22 @@
         </div>
     </div>
 </form>
+
+<script>
+    function checkIfChecked() {
+        const checkBoxes = document.querySelectorAll('.lesson-checkbox');
+        let isChecked = false;
+
+        checkBoxes.forEach((cb) => {
+            if (cb.checked) {
+                isChecked = true;
+            }
+        });
+        if (!isChecked) {
+            document.getElementById('error').style.display = "block";
+            return false;
+        }
+        document.getElementById('error').style.display = "none";
+        return true;
+    }
+</script>

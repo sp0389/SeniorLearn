@@ -39,7 +39,6 @@ public class Program
         builder.Logging.AddDebug();
         builder.Logging.AddConsole();
 
-        builder.Services.AddMapster();
         builder.Services.AddOrganisationServices();
         builder.Services.AddControllersWithViews()
             .AddViewOptions(o => o.HtmlHelperOptions.ClientValidationEnabled = true);
@@ -49,9 +48,6 @@ public class Program
         builder.Configuration.GetSection("SeniorLearnDatabase"));
 
         builder.Services.AddMapster();
-        builder.Services.AddOrganisationServices();
-        builder.Services.AddControllersWithViews()
-            .AddViewOptions(o => o.HtmlHelperOptions.ClientValidationEnabled = true);
 
         builder.Services.AddCors(options =>
         {

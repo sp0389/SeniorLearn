@@ -94,20 +94,12 @@ namespace SeniorLearn.Areas.Member.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(Guid id)
         {
-            try
-            {
-                var lessonDetails = await _lessonService.GetLessonDetailsAsync(id);
-                return View(lessonDetails);
-            }
-            catch (DomainRuleException ex)
-            {
-                TempData["Error"] = ex.Message;
-            }
-            return RedirectToAction("Index");
+            var lessonDetails = await _lessonService.GetLessonDetailsAsync(id);
+            return View(lessonDetails);
         }
+        
         [ValidateAntiForgeryToken]
         [HttpPost]
-
         public async Task<IActionResult> UpdateLessonState(IList<int> Lessons, string lessonState)
         {
             if (ModelState.IsValid)

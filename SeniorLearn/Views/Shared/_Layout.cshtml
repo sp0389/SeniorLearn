@@ -7,16 +7,15 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SeniorLearn.styles.css" asp-append-version="true" />
-    <!-- FullCalendar CSS from CDN -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet" />
-    <!-- Flatpickr CSS for date-time picker -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm bg-dark border-bottom box-shadow mb-3" data-bs-theme="dark">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SeniorLearn</a>
+                <a class="navbar-brand text-light" asp-area="" asp-controller="Home" asp-action="Index">SeniorLearn</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -24,34 +23,40 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index"><i class="fa-solid fa-house-user"></i> Home</a>
                         </li>
                         @if (User.IsInRole("Administrator"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="Administration" asp-controller="Member" asp-action="Index">Administration</a>
+                                <a class="nav-link text-light" asp-area="Administration" asp-controller="Member" asp-action="Index"><i class="fa-solid fa-user-tie"></i> Administration</a>
                             </li>
                         }
                         @if (User.IsInRole("Professional"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="Member" asp-controller="Lesson" asp-action="Create">My Lesson Plan</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="Member" asp-controller="Lesson" asp-action="Index">My Lessons</a>
-                            </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"> <i class="fa-solid fa-person-chalkboard"></i>
+                            Lesson
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-area="Member" asp-controller="Lesson" asp-action="Create">Create Lesson Plan</a></li>
+                                <li><a class="dropdown-item" asp-area="Member" asp-controller="Lesson" asp-action="Index">My Current Lessons</a></li>
+                            </ul>
+                        </li>
                         }
                         @if (User.IsInRole("Standard") || User.IsInRole("Honorary") || User.IsInRole("Professional"))
                         {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"> <i class="fa-solid fa-book"></i>
+                            Enrolment
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-area="Member" asp-controller="Enrolment" asp-action="Index">Enrol In Lessons</a></li>
+                                <li><a class="dropdown-item" asp-area="Member" asp-controller="Enrolment" asp-action="Overview">My Enrolments</a></li>
+                            </ul>
+                        </li>
                             <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="Member" asp-controller="Enrolment" asp-action="Index">Enrol In Lessons</a>
-                            </li>
-                                <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="Member" asp-controller="Enrolment" asp-action="Overview">My Enrolments</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="Member" asp-controller="Calendar" asp-action="Index">My Calendar</a>
-                            </li>
+                                <a class="nav-link text-light" asp-area="Member" asp-controller="Calendar" asp-action="Index"><i class="fa-regular fa-calendar"></i> My Calendar</a>
+                        </li>
                         }
                     </ul>
                     <partial name="_LoginPartial" />
@@ -74,9 +79,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
-    <!-- FullCalendar JS from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
-    <!-- Flatpickr JS for date-time picker -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
