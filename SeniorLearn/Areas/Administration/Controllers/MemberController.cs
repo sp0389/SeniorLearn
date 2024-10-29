@@ -31,15 +31,15 @@ namespace SeniorLearn.Areas.Administration.Controllers
                 case false:
                     members = await _organisationUserService.GetInactiveUsersAsync((pageSize * pageNumber) - pageSize, pageSize);
                     totalUserCount = await _organisationUserService.GetInactiveUserCountAsync();
-                break;
+                    break;
                 case true:
                     members = await _organisationUserService.GetActiveUsersAsync((pageSize * pageNumber) - pageSize, pageSize);
                     totalUserCount = await _organisationUserService.GetActiveUserCountAsync();
-                break;
+                    break;
                 default:
                     members = await _organisationUserService.GetUsersAsync((pageSize * pageNumber) - pageSize, pageSize);
                     totalUserCount = await _organisationUserService.GetUsersCountAsync();
-                break;
+                    break;
             }
 
             var pagedResult = new PagedResult<MemberDTO>

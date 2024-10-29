@@ -36,6 +36,7 @@
     }
 }
 <form method="post" asp-action="UnenrolLessons">
+    @Html.AntiForgeryToken()
     @if (le.Any())
     {
         <h3 class="text-center mt-4 mb-3" style="color: #007bff">Individual Lessons</h3>
@@ -91,6 +92,7 @@
     }
 </form>
 <form method="post" asp-action="UnenrolCourseLessons">
+    @Html.AntiForgeryToken()
     @if (ce.Any())
     {
         <h3 class="text-center mt-4 mb-3" style="color: #007bff">Course Lessons</h3>

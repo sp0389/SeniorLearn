@@ -49,6 +49,7 @@
     }
 }
 <form method="post" asp-action="Enrol" onsubmit="return checkIfChecked();">
+    @Html.AntiForgeryToken()
     <table class="table table-responsive table-bordered table-striped table-hover text-center">
         <thead>
             <tr>

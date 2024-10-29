@@ -37,6 +37,10 @@ namespace SeniorLearn.Areas.Member.Controllers
             {
                 TempData["Error"] = ex.Message;
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
             return RedirectToAction("Index");
         }
 
@@ -49,7 +53,7 @@ namespace SeniorLearn.Areas.Member.Controllers
             return View(enrolments);
         }
 
-        //TODO: Add CSRF prevention
+        [ValidateAntiForgeryToken]
         [HttpPost]
         public async Task<IActionResult> Enrol(IList<int> Lessons)
         {
@@ -65,11 +69,15 @@ namespace SeniorLearn.Areas.Member.Controllers
                 {
                     TempData["Error"] = ex.Message;
                 }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.Message);
+                }
             }
             return RedirectToAction("Overview");
         }
 
-        //TODO: Add CSRF prevention
+        [ValidateAntiForgeryToken]
         [HttpPost]
         public async Task<IActionResult> UnenrolCourseLessons(IList<int> Lessons, int id)
         {
@@ -86,11 +94,15 @@ namespace SeniorLearn.Areas.Member.Controllers
                 {
                     TempData["Error"] = ex.Message;
                 }
+                catch(Exception ex)
+                {
+                    _logger.LogError(ex.Message);
+                }
             }
             return RedirectToAction("Overview");
         }
         
-        //TODO: Add CSRF prevention
+        [ValidateAntiForgeryToken]
         [HttpPost]
         public async Task<IActionResult> UnenrolLessons(IList<int>Lessons, int id)
         {
@@ -106,6 +118,11 @@ namespace SeniorLearn.Areas.Member.Controllers
                 catch (DomainRuleException ex)
                 {
                     TempData["Error"] = ex.Message;
+                }
+                catch (Exception ex)
+                {
+                    TempData["Error"] = ex.Message;
+                    _logger.LogError(ex.Message);
                 }
             }
             return RedirectToAction("Overview");
