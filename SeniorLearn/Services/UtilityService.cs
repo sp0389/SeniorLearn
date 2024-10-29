@@ -9,14 +9,14 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 namespace SeniorLearn.Services
 {
-    public class ApiService
+    public class UtilityService
     {
         private readonly IConfiguration _config;
         private readonly ApplicationDbContext _context;
         private readonly OrganisationUserService _organisationUserService;
         private readonly UserManager<OrganisationUser> _userManager;
 
-        public ApiService(IConfiguration config, ApplicationDbContext context, OrganisationUserService organisationUserService, UserManager<OrganisationUser> userManager)
+        public UtilityService(IConfiguration config, ApplicationDbContext context, OrganisationUserService organisationUserService, UserManager<OrganisationUser> userManager)
         {
             _config = config;
             _context = context;

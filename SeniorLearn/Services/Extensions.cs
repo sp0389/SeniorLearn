@@ -40,7 +40,7 @@ namespace SeniorLearn.Services
             services.AddScoped<PaymentService>();
             services.AddScoped<LessonService>();
             services.AddScoped<EnrolmentService>();
-            services.AddScoped<ApiService>();
+            services.AddScoped<UtilityService>();
             services.AddScoped<BulletinService>();
 
             return services;
