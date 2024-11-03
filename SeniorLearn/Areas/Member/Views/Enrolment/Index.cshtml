@@ -1,8 +1,11 @@
 ﻿@model IEnumerable<EnrolmentDTO>
-@{
-    ViewData["Title"] = "Available for Enrolment";
-}
-<h1 class="text-center mt-4 mb-3">@ViewData["Title"]</h1>
+
+<div class="px-4 py-5 my-5 text-center">
+    <h1 class="display-5 fw-bold text-body-emphasis">Available for Enrolment</h1>
+    <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">Enroling in the diverse lessons offered at SeniorLearn not only equips you with expert knowledge and practical skills, but also provides a supportive environment where you can explore your passions.</p>
+    </div>
+</div>
 
 @{
     var error = TempData["Error"];

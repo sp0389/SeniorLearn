@@ -1,11 +1,8 @@
 ﻿@model PagedResult<PaymentDTO>
-@{
-    ViewData["Title"] = "Payment History";
-}
-<h1 class="text-center mt-4">@ViewData["Title"]</h1>
 
-@* https://stackoverflow.com/questions/979532/how-to-get-the-current-route-id-within-a-view-from-the-url-asp-net-mvc
- *@
+<div class="px-4 py-5 my-5 text-center">
+    <h1 class="display-5 fw-bold text-body-emphasis">Payment History</h1>
+</div>
 
 @{
     var userId = @Url.ActionContext.RouteData.Values["id"];

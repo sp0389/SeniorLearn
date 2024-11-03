@@ -1,7 +1,62 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿<div class="bg-dark text-secondary px-4 py-5 text-center" style="border-radius: 10px">
+    <div class="py-5">
+      <h1 class="display-5 fw-bold text-white">Welcome to SeniorLearn</h1>
+      <div class="col-lg-6 mx-auto">
+        <p class="fs-5 mb-4"> Since 1984, SeniorLearn has been a pioneer in promoting lifelong learning for seniors. As an organisation committed to enriching lives through education, we offer a diverse range of lessons designed to inspire, engage, and empower. Join us today and discover the joy of learning.
+        </p>
+        @if(!User.Identity!.IsAuthenticated)
+        {
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <a type="button" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold" asp-area="Identity" asp-page="/Account/Login" type="button">Login</a>
+            <a type="button" class="btn btn-outline-light btn-lg px-4" asp-area="Identity" asp-page="/Account/Register" type="button"> Register</a>
+            </div>
+        }
+      </div>
+    </div>
+</div>
 
-<div class="text-center mt-4">
-    <h1>Senior Learn</h1>
+<div class="album py-5 bg-body-tertiary">
+    <div class="container">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            <div class="col">
+                <div class="card shadow-sm">
+                    <img src="~/images/lessons.jpg" alt="Woman teaching a class" />
+                    <div class="card-body">
+                        <p class="card-text">Explore a variety of lessons available for enrolment. Click below to see the full list.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <a class="btn btn-sm btn-outline-secondary" asp-area="Member" asp-controller="Enrolment" asp-action="Index">View Lessons</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card shadow-sm">
+                    <img src="~/images/enrolments.jpg" alt="Class Of Students" />
+                    <div class="card-body">
+                        <p class="card-text">Check your current enrolments in various lessons. Stay updated on your progress!</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <a class="btn btn-sm btn-outline-secondary" asp-area="Member" asp-controller="Enrolment" asp-action="Overview">View Enrolments</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card shadow-sm">
+                    <img src="~/images/calendar.jpg" alt="A calendar"/>
+                    <div class="card-body">
+                        <p class="card-text">View your lesson schedule and upcoming events in your calendar.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <a class="btn btn-sm btn-outline-secondary" asp-area="Member" asp-controller="Calendar" asp-action="Index">My Calendar</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

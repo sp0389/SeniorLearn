@@ -1,10 +1,11 @@
 ﻿@model IEnumerable<LessonDTO>
-@{
-    ViewData["Title"] = "My Lessons";
-}
 
-<h1 class="text-center mt-4 mb-3">@ViewData["Title"]</h1>
-
+<div class="px-4 py-5 my-5 text-center">
+    <h1 class="display-5 fw-bold text-body-emphasis">My Lessons</h1>
+    <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">View your current lessons here – keep track of what you’re teaching and ensure every student stays engaged!</p>
+    </div>
+</div>
 <h2>
     <a href="@Url.Action("Calendar", "Lesson", new { area = "Member" })" class="btn btn-primary">Switch to Calendar</a>
 </h2>

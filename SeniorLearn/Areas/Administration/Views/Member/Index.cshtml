@@ -1,8 +1,12 @@
 ﻿@model PagedResult<MemberDTO>
-@{
-    ViewData["Title"] = "Members";
-}
-<h1 class="text-center mt-4">@ViewData["Title"]</h1>
+    
+<div class="px-4 py-5 my-5 text-center">
+    <h1 class="display-5 fw-bold text-body-emphasis">Members</h1>
+    <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">Update member details and keep track of payments.</p>
+    </div>
+</div>
+
 <div class="mb-3">
     <a class="btn btn-primary" asp-action="Register"> Register Member </a>
 </div>

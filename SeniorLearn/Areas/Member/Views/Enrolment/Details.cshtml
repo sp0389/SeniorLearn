@@ -5,11 +5,15 @@
 
     if (courseName != null)
     {
-        ViewData["Title"] = $"{courseName}";
+        <div class="px-4 py-5 my-5 text-center">
+            <h1 class="display-5 fw-bold text-body-emphasis">@courseName</h1>
+        </div>
     }
     else
     {
-        ViewData["Title"] = $"{lessonName}";
+        <div class="px-4 py-5 my-5 text-center">
+            <h1 class="display-5 fw-bold text-body-emphasis">@lessonName</h1>
+        </div>
     }
 }
 
