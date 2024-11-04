@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace SeniorLearn.Data
 {
@@ -10,9 +11,11 @@ namespace SeniorLearn.Data
 
     public class Bulletin
     {
-        public ObjectId Id { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
         public string Title { get; set; } = default!;
         public string MemberId { get; set; } = default!;
+        public string MemberName { get; set;} = default!;
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public string ContentImageUrl { get; set; } = default!;
@@ -24,6 +27,7 @@ namespace SeniorLearn.Data
 
         public Bulletin()
         {
+            Id = ObjectId.GenerateNewId().ToString();
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
             Likes = 0;
@@ -34,13 +38,16 @@ namespace SeniorLearn.Data
 
     public class BulletinComment
     {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
         public string MemberId { get; set; } = default!;
-        public string ProfileImageUrl { get; set; } = default!;
+        public string MemberName { get; set; } = default!;
         public DateTime CommentedAt { get; set; }
         public string Message { get; set; } = default!;
 
         public BulletinComment()
         {
+            Id = ObjectId.GenerateNewId().ToString();
             CommentedAt = DateTime.UtcNow;
         }
     }

@@ -27,7 +27,7 @@ namespace SeniorLearn.Services
             var bulletins = await _bulletinCollection
                 .Find(filter)
                 .ToListAsync();
-            return bulletins;
+            return bulletins.OrderByDescending(b => b.CreatedAt).ToList();
         }
 
         public async Task<Bulletin> GetBulletinByIdAsync(string id)
@@ -84,9 +84,9 @@ namespace SeniorLearn.Services
 
         public async Task<Bulletin> SaveNewBulletinAsync(Bulletin bulletin, string memberId)
         {
-            bulletin.Id = new ObjectId();
             var member = await _organisationUserService.GetUserByUserNameAsync(memberId);
             bulletin.MemberId = member.Id;
+            bulletin.MemberName = $"{member.FirstName} {member.LastName}";
 
             await _bulletinCollection.InsertOneAsync(bulletin);
             return bulletin;
@@ -105,7 +105,8 @@ namespace SeniorLearn.Services
                 .Set(b => b.UpdatedAt, DateTime.UtcNow)
                 .Set(b => b.Status, bulletin.Status)
                 .Set(b => b.Tags, bulletin.Tags)
-                .Set(b => b.MemberId, existingBulletin.MemberId);
+                .Set(b => b.MemberId, existingBulletin.MemberId)
+                .Set(b => b.MemberName, existingBulletin.MemberName);
 
             await _bulletinCollection.UpdateOneAsync(filter, update);
             return bulletin;
@@ -117,7 +118,9 @@ namespace SeniorLearn.Services
                 ?? throw new Exception("Bulletin with that ID does not exist!");
 
             var member = await _organisationUserService.GetUserByUserNameAsync(memberId);
+            
             bulletinComment.MemberId = member.Id;
+            bulletinComment.MemberName = $"{member.FirstName} {member.LastName}";
 
             existingBulletin.Comments.AddLast(bulletinComment);
 

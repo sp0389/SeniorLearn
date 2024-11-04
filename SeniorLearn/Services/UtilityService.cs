@@ -44,6 +44,7 @@ namespace SeniorLearn.Services
                     new Claim(ClaimTypes.NameIdentifier, user.Id),
                     new Claim(ClaimTypes.Name, user.UserName!),
                     new Claim(ClaimTypes.Email, user.Email!),
+                    new Claim(ClaimTypes.GivenName, user.FirstName),
                     new Claim(JwtRegisteredClaimNames.Sub, _config["Jwt:Subject"]),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
