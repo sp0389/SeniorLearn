@@ -16,14 +16,13 @@ namespace SeniorLearn.Areas.Member.Controllers
         {
             _enrolmentService = enrolmentService;
         }
-
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             var lessons = await _enrolmentService.GetLessonOverviewForEnrolmentAsync();
             return View(lessons);
         }
-
         [HttpGet]
         public async Task<IActionResult> Details(Guid id)
         {

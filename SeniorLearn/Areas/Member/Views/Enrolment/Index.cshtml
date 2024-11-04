@@ -5,8 +5,18 @@
     <div class="col-lg-6 mx-auto">
         <p class="lead mb-4">Enroling in the diverse lessons offered at SeniorLearn not only equips you with expert knowledge and practical skills, but also provides a supportive environment where you can explore your passions.</p>
     </div>
-</div>
 
+</div>
+@if(!User.Identity!.IsAuthenticated)
+{
+    <div class="alert alert-info alert-dismissible fade show" role="info">
+        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+            <use xlink:href="#exclamation-triangle-fill" />
+        </svg>
+        You'll need an account with us to view further information about these lessons.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
 @{
     var error = TempData["Error"];
     var success = TempData["Success"];
