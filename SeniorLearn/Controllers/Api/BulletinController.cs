@@ -73,7 +73,7 @@ namespace SeniorLearn.Controllers.Api
                     ModelState.AddModelError("", ex.Message);
                 }
             }
-            return BadRequest();
+            return BadRequest(ModelState);
         }
 
         [HttpPut("{id}")]
@@ -92,10 +92,10 @@ namespace SeniorLearn.Controllers.Api
                     ModelState.AddModelError("", ex.Message);
                 }
             }
-            return BadRequest();
+            return BadRequest(ModelState);
         }
 
-        [HttpPost("{id}")]
+        [HttpPut("{id}/comment")]
         public async Task<IActionResult> AddCommentToBulletin([FromRoute]string id, [FromBody] BulletinComment bulletinComment)
         {
             if (ModelState.IsValid)
@@ -111,7 +111,7 @@ namespace SeniorLearn.Controllers.Api
                     ModelState.AddModelError("", ex.Message);
                 }
             }
-            return BadRequest();
+            return BadRequest(ModelState);
         }
 
         [HttpDelete("{id}")]
@@ -129,7 +129,7 @@ namespace SeniorLearn.Controllers.Api
                     ModelState.AddModelError("", ex.Message);
                 }
             }
-            return BadRequest();
+            return BadRequest(ModelState);
         }
 
         [HttpPatch("{id}")]
@@ -147,7 +147,7 @@ namespace SeniorLearn.Controllers.Api
                     ModelState.AddModelError("", ex.Message);
                 }
             }
-            return BadRequest();
+            return BadRequest(ModelState);
         }
     }
 }

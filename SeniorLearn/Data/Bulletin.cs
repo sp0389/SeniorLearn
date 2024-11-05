@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using System.ComponentModel.DataAnnotations;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace SeniorLearn.Data
@@ -13,13 +14,16 @@ namespace SeniorLearn.Data
     {
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
-        public string Title { get; set; } = default!;
-        public string MemberId { get; set; } = default!;
-        public string MemberName { get; set;} = default!;
+        [Required]
+        public string? Title { get; set; } = default!;
+        public string? MemberId { get; set; } = default!;
+        public string? MemberName { get; set;} = default!;
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public string ContentImageUrl { get; set; } = default!;
-        public string ContentMessage { get; set; } = default!;
+        [Required]
+        public string? ContentImageUrl { get; set; } = default!;
+        [Required]
+        public string? ContentMessage { get; set; } = default!;
         public List<string> Tags { get; set; } = new();
         public int Likes { get; set; }
         public string Status { get; set; }
@@ -40,10 +44,11 @@ namespace SeniorLearn.Data
     {
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
-        public string MemberId { get; set; } = default!;
-        public string MemberName { get; set; } = default!;
+        public string? MemberId { get; set; } = default!;
+        public string? MemberName { get; set; } = default!;
         public DateTime CommentedAt { get; set; }
-        public string Message { get; set; } = default!;
+        [Required]
+        public string? Message { get; set; } = default!;
 
         public BulletinComment()
         {
