@@ -80,14 +80,16 @@ namespace SeniorLearn.Areas.Member.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var lessons = await _lessonService.GetLessonsForIndexAsync(); 
+            var member = HttpContext.User.Identity!.Name;
+            var lessons = await _lessonService.GetLessonsForIndexAsync(member!); 
             return View(lessons);
         }
 
         [HttpGet]
         public async Task<IActionResult> Calendar()
         {
-            var lessons = await _lessonService.GetLessonsForCalendarAsync();
+            var member = HttpContext.User.Identity!.Name;
+            var lessons = await _lessonService.GetLessonsForCalendarAsync(member);
             return View(lessons); 
         }
 
