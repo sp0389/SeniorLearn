@@ -18,6 +18,7 @@ namespace SeniorLearn.Data
         public string? Title { get; set; } = default!;
         public string? MemberId { get; set; } = default!;
         public string? MemberName { get; set;} = default!;
+        public string? MemberEmail { get; set; } = default!;
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         [Required]

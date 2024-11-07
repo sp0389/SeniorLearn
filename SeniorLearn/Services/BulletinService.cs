@@ -41,15 +41,6 @@ namespace SeniorLearn.Services
 
         public async Task<Bulletin> GetBulletinsBySearchTermAsync(string searchTerm)
         {
-            //This code is a lot better for the functionality of searching for tags later, but I've
-            //included a custom sort ignoring accents/case & a binary search for the assessment requirements below.
-            
-            //var filter = Builders<Bulletin>.Filter.AnyEq(b => b.Tags, searchTerm);
-            //var bulletins = await _bulletinCollection
-            //    .Find(filter)
-            //    .ToListAsync();
-            //return bulletins;
-
             var bulletins = await GetBulletinsAsync();
 
             //https://stackoverflow.com/questions/3309188/how-to-sort-a-listt-by-a-property-in-the-object
@@ -87,6 +78,7 @@ namespace SeniorLearn.Services
             var member = await _organisationUserService.GetUserByUserNameAsync(memberId);
             bulletin.MemberId = member.Id;
             bulletin.MemberName = $"{member.FirstName} {member.LastName}";
+            bulletin.MemberEmail = member.Email;
 
             await _bulletinCollection.InsertOneAsync(bulletin);
             return bulletin;
@@ -106,7 +98,8 @@ namespace SeniorLearn.Services
                 .Set(b => b.Status, bulletin.Status)
                 .Set(b => b.Tags, bulletin.Tags)
                 .Set(b => b.MemberId, existingBulletin.MemberId)
-                .Set(b => b.MemberName, existingBulletin.MemberName);
+                .Set(b => b.MemberName, existingBulletin.MemberName)
+                .Set(b => b.MemberName, existingBulletin.MemberEmail);
 
             await _bulletinCollection.UpdateOneAsync(filter, update);
             return bulletin;
