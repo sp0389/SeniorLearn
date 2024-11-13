@@ -9,6 +9,7 @@ namespace SeniorLearn.Models
         public Member Member { get; set; } = default!;
         public string Title { get; set; } = default!;
         public string Description { get; set; } = default!;
+        public string ImageUrl { get; set; } = default!;
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public Guid GroupId { get; set; }

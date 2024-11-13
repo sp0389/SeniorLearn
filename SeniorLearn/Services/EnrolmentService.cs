@@ -46,9 +46,9 @@ namespace SeniorLearn.Services
             var lessons = await _context.Lessons
                 .Include(l => l.Enrolments)
                 .Where(l => l.GroupId == id
-                            && l.Availability == Availability.Scheduled
-                            && l.StartDate <= l.EndDate
-                            && !l.Enrolments.Any(e => e.MemberId == member.Id))
+                    && l.Availability == Availability.Scheduled
+                    && l.StartDate <= l.EndDate
+                    && !l.Enrolments.Any(e => e.MemberId == member.Id))
                 .ProjectToType<EnrolmentDTO>()
                 .ToListAsync();
 
@@ -67,11 +67,10 @@ namespace SeniorLearn.Services
                 .Where(l => l.Availability == Availability.Scheduled && l.Enrolments.Any(e => e.MemberId == member.Id))
                 .ProjectToType<EnrolmentDTO>()
                 .ToListAsync();
-                
             return enrolments;
         }
 
-        public async Task UnenrolMemberFromLessonAsync(string userId, IList<int> Lessons, int id)
+        public async Task UnenrolMemberFromLessonAsync(string userId, IList<int> Lessons, int id, Guid groupId)
         {
             var member = await _organisationUserService.GetUserByUserNameAsync(userId);
             
@@ -86,7 +85,10 @@ namespace SeniorLearn.Services
             else
             {
                 var lessonEnrolment = await _context.Enrolments
-                    .Where(e => e.MemberId == member.Id && Lessons.Contains(e.LessonId))
+                    .Include(e => e.Lesson)
+                    .Where(e => e.MemberId == member.Id 
+                        && Lessons.Contains(e.LessonId) 
+                        && e.Lesson.GroupId == groupId)
                     .ToListAsync() ?? throw new DomainRuleException("You are not enroled in that lesson.");
 
                 _context.RemoveRange(lessonEnrolment);

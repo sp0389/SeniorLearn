@@ -51,6 +51,15 @@
 
         </div>
     }
+    var image = Model.FirstOrDefault()?.ImageUrl;
+    if (image != null)
+    {
+        <img class="img-fluid mx-auto d-block mb-3" src=@Url.Content(image) style="width: auto; height: auto; border-radius: 10px" />
+    }
+    else
+    {
+        <img src="" style="display:none">
+    }
 }
 <form method="post" asp-action="Enrol" onsubmit="return checkIfChecked();">
     @Html.AntiForgeryToken()

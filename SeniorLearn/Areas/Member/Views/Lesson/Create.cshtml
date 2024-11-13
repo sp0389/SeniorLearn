@@ -14,7 +14,7 @@
     <a href="@Url.Action("Create", "Course")" class="btn btn-primary">Switch to Course</a>
 </h1>
 
-<form asp-action="Create" method="post" class="border p-4 shadow-sm rounded-bg-dark">
+<form asp-action="Create" method="post" class="border p-4 shadow-sm rounded-bg-dark" enctype="multipart/form-data">
     @Html.AntiForgeryToken()
     <div asp-validation-summary="All" class="text-danger"></div>
 
@@ -30,6 +30,14 @@
         <textarea asp-for="Description" class="form-control" placeholder="A description about the lesson" style="height: 100px"></textarea>
         <label asp-for="Description">Description</label>
         <span asp-validation-for="Description" class="text-danger mb-3"></span>
+    </div>
+
+    <div class="row mb-3">
+        <label asp-for="ImageUrl" class="mb-3">Upload an Image</label>
+        @* <input type="file" name="imageFile"/> *@
+        <input asp-for="ImageUrl" type="file" />
+        <span asp-validation-for="ImageUrl" class="text-danger mb-3"></span>
+
     </div>
 
     <!-- Duration -->

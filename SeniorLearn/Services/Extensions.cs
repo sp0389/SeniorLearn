@@ -28,6 +28,9 @@ namespace SeniorLearn.Services
                 .Map(dest => dest.End, src => src.EndDate)
                 .Map(dest => dest.Address, src => src.Address)
                 .Map(dest => dest.Lecturer, src => $"{src.Member.FirstName} {src.Member.LastName}");
+            TypeAdapterConfig<Lesson, EnrolmentDTO>
+                .NewConfig()
+                .Map(dest => dest.ImageUrl, src => src.ImageUrl);
 
             services.AddSingleton(config);
             return services;

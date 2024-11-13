@@ -1,11 +1,11 @@
 ﻿@model IEnumerable<EnrolmentDTO>
 @{
-    var ce = Model.Where(c => c.IsInCourse).ToList();
+    var ce = Model.Where(c => c.IsInCourse).GroupBy(ce => ce.GroupId).ToList();
     var le = Model.Where(l => !l.IsInCourse).ToList();
 }
 
 <div class="px-4 py-5 my-5 text-center">
-    <h1 class="display-5 fw-bold text-body-emphasis">Available for Enrolment</h1>
+    <h1 class="display-5 fw-bold text-body-emphasis">My Enrolments</h1>
     <div class="col-lg-6 mx-auto">
         <p class="lead mb-4">Discover all your enroled classes here – your gateway to learning and staying on track!</p>
     </div>
@@ -112,52 +112,57 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
-
-        <table class="table table-responsive table-bordered table-striped table-hover text-center">
-            <thead>
-                <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Lecturer</th>
-                    <th scope="col">Start</th>
-                    <th scope="col">End</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var m in ce)
-                {
+        @foreach(var c in ce)
+        {
+            <table class="table table-responsive table-bordered table-striped table-hover text-center">
+                <thead>
                     <tr>
-                        <td><strong>@Html.DisplayFor(modelItem => m.Title)</strong></td>
-                        <td>@Html.DisplayFor(modelItem => m.Description) </td>
-                        <td>@m.Member.FirstName @m.Member.LastName</td>
-                        <td>@Html.DisplayFor(modelItem => m.StartDate)</td>
-                        <td>@Html.DisplayFor(modelItem => m.EndDate)</td>
-                        <input type="hidden" name="Lessons" value="@m.Id" />
+                        <th scope="col">Name</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Lecturer</th>
+                        <th scope="col">Start</th>
+                        <th scope="col">End</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-        <button type="button" class="btn btn-primary w-100 mb-3" data-bs-toggle="modal"
-            data-bs-target="#unenrolmentCourseModal">
-            Unenrol
-        </button>
-        <div class="modal fade" id="unenrolmentCourseModal" tabindex="-1" aria-labelledby="unenrolmentCourseModal"
-            aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="unenrolmentCourseModal">Confirm Unenrolment</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        Are you sure you want to unenrol from these lessons?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-                        <button type="submit" class="btn btn-primary">Yes</button>
+                </thead>
+                <tbody>
+                    @foreach (var m in c)
+                    {
+                        <tr>
+                            <td><strong>@Html.DisplayFor(modelItem => m.Title)</strong></td>
+                            <td>@Html.DisplayFor(modelItem => m.Description) </td>
+                            <td>@m.Member.FirstName @m.Member.LastName</td>
+                            <td>@Html.DisplayFor(modelItem => m.StartDate)</td>
+                            <td>@Html.DisplayFor(modelItem => m.EndDate)</td>
+                            <input type="hidden" name="Lessons" value="@m.Id" />
+                            <input type="hidden" name="groupId" value="@m.GroupId" />
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <button type="button" class="btn btn-primary w-100 mb-3" data-bs-toggle="modal"
+                    data-bs-target="#unenrolmentCourseModal">
+                Unenrol
+            </button>
+            <div class="modal fade" id="unenrolmentCourseModal" tabindex="-1" aria-labelledby="unenrolmentCourseModal"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="unenrolmentCourseModal">Confirm Unenrolment</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to unenrol from these lessons?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                            <button type="submit" class="btn btn-primary">Yes</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    }
+        }
+        }
+        
 </form>

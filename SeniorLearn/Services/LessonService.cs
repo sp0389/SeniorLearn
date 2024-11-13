@@ -12,13 +12,16 @@ namespace SeniorLearn.Services
 {
     public class LessonService
     {
+        private readonly IWebHostEnvironment _webHost;
         private readonly ApplicationDbContext _context;
         private readonly OrganisationUserService _organisationUserService;
 
-        public LessonService(ApplicationDbContext context, OrganisationUserService organisationUserService)
+        public LessonService(ApplicationDbContext context, OrganisationUserService organisationUserService,
+            IWebHostEnvironment webHost)
         {
             _context = context;
             _organisationUserService = organisationUserService;
+            _webHost = webHost;
         }
 
         public async Task CreateLessonAsync(CreateLesson model, string userId)
@@ -26,7 +29,20 @@ namespace SeniorLearn.Services
             var member = await _organisationUserService.GetUserByUserNameAsync(userId);
             var timetable = new Timetable();
             var groupId = Guid.NewGuid();
+            var relativeImagePath = "";
+            
+            // save an image
+            if (model.ImageUrl != null)
+            {
+                var imageFolder = Path.Combine(_webHost.WebRootPath, "images");
+                var imageName = Path.GetFileName(model.ImageUrl.FileName);
+                var imageSavePath = Path.Combine(imageFolder, imageName);
+                relativeImagePath = $"~/images/{imageName}";
 
+                using var stream = new FileStream(imageSavePath, FileMode.Create);
+                await model.ImageUrl.CopyToAsync(stream);
+            }
+            
             if (model.IsRecurring && model.SelectedDaysOfWeek.IsNullOrEmpty())
             {
                 if (model.RecurringStartDate > model.EndDate)
@@ -42,6 +58,7 @@ namespace SeniorLearn.Services
                 foreach (var lesson in lessons)
                 {
                     await _context.Lessons.AddAsync(lesson);
+                    lesson.ImageUrl = relativeImagePath;
                 }
             }
             else if (model.IsRecurring)
@@ -54,12 +71,14 @@ namespace SeniorLearn.Services
                 foreach (var lesson in lessons)
                 {
                     await _context.Lessons.AddAsync(lesson);
+                    lesson.ImageUrl = relativeImagePath;
                 }
             }
             else
             {
                 var lesson = timetable.CreateLesson(model.LessonName, model.Description, model.Duration, member, model.Location, model.SingleStartDate, model.DeliveryMode == "OnPremise" ? DeliveryType.OnCampus : DeliveryType.Virtual, model.IsCourse, model.SelectedCourseId, groupId);
                 await _context.Lessons.AddAsync(lesson);
+                lesson.ImageUrl = relativeImagePath;
             }
             await _context.SaveChangesAsync();
         }
@@ -107,12 +126,19 @@ namespace SeniorLearn.Services
             return lessons.GroupBy(l => l.GroupId).Select(l => l.First()).ToList();
         }
 
-        public async Task<IEnumerable<LessonDTO>> GetLessonDetailsAsync(Guid id)
+        public async Task<IEnumerable<LessonDTO>> GetLessonDetailsAsync(Guid id, int skip = 0, int take = int.MaxValue)
         {
             return await _context.Lessons
-                .Where(l => l.GroupId == id)
+                .Where(l => l.GroupId == id).Skip(skip).Take(take)
                 .ProjectToType<LessonDTO>()
                 .ToListAsync();
+        }
+        
+        public async Task<int> GetLessonCountAsync(Guid id)
+        {
+            var lessons = await _context.Lessons.Where(l => l.GroupId == id)
+                .ToListAsync();
+            return lessons.Count;
         }
 
         public async Task UpdateLessonStateAsync(IList<int> Lessons, string lessonState)

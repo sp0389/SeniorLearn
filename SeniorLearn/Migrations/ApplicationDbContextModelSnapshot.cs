@@ -223,6 +223,10 @@ namespace SeniorLearn.Migrations
                     b.Property<Guid>("GroupId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsInCourse")
                         .HasColumnType("bit");
 
@@ -304,28 +308,28 @@ namespace SeniorLearn.Migrations
                         new
                         {
                             Id = "09adf476-7af7-4bd7-89e5-d173778b3ec9",
-                            ConcurrencyStamp = "6e7d649d-4e2e-49f5-bf17-382d8f92e6c3",
+                            ConcurrencyStamp = "424b7abd-4d5f-45c8-9a67-9c7bd9a777c3",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
                             Id = "1455a748-82ad-4e31-bb41-7c72cfc0fbfa",
-                            ConcurrencyStamp = "0d5be49a-5a46-4986-bf89-b5eaf5a55eee",
+                            ConcurrencyStamp = "39a4759e-8194-4583-bfa4-c98fa0cdcc78",
                             Name = "Standard",
                             NormalizedName = "STANDARD"
                         },
                         new
                         {
                             Id = "de1e5fe5-585b-4867-aae8-57776d64f330",
-                            ConcurrencyStamp = "a5dfe6f5-de6c-468a-a096-a9573481f04a",
+                            ConcurrencyStamp = "de2e4d15-d436-4270-afa2-54fe3a688010",
                             Name = "Professional",
                             NormalizedName = "PROFESSIONAL"
                         },
                         new
                         {
                             Id = "2199dac7-bac1-49f0-8820-07b34f79533b",
-                            ConcurrencyStamp = "4e911cd1-cfa2-425e-8182-f0a23b860472",
+                            ConcurrencyStamp = "ae363857-8e3b-40dd-920f-0bd59a3324bb",
                             Name = "Honorary",
                             NormalizedName = "HONORARY"
                         });
@@ -483,23 +487,23 @@ namespace SeniorLearn.Migrations
                             RoleId = "09adf476-7af7-4bd7-89e5-d173778b3ec9",
                             EndDate = new DateTime(9999, 12, 31, 23, 59, 59, 999, DateTimeKind.Unspecified).AddTicks(9999),
                             RoleType = 0,
-                            StartDate = new DateTime(2024, 10, 21, 14, 54, 14, 690, DateTimeKind.Utc).AddTicks(7962)
+                            StartDate = new DateTime(2024, 11, 11, 10, 11, 43, 443, DateTimeKind.Utc).AddTicks(1963)
                         },
                         new
                         {
                             UserId = "c6e5a515-b561-458a-85e6-ab9e7eed58f4",
                             RoleId = "1455a748-82ad-4e31-bb41-7c72cfc0fbfa",
-                            EndDate = new DateTime(2025, 10, 21, 14, 54, 14, 690, DateTimeKind.Utc).AddTicks(7964),
+                            EndDate = new DateTime(2025, 11, 11, 10, 11, 43, 443, DateTimeKind.Utc).AddTicks(1966),
                             RoleType = 1,
-                            StartDate = new DateTime(2024, 10, 21, 14, 54, 14, 690, DateTimeKind.Utc).AddTicks(7964)
+                            StartDate = new DateTime(2024, 11, 11, 10, 11, 43, 443, DateTimeKind.Utc).AddTicks(1965)
                         },
                         new
                         {
                             UserId = "7610170e-d0e7-43b9-a289-02d13056d54e",
                             RoleId = "de1e5fe5-585b-4867-aae8-57776d64f330",
-                            EndDate = new DateTime(2025, 10, 21, 14, 54, 14, 690, DateTimeKind.Utc).AddTicks(7972),
+                            EndDate = new DateTime(2025, 11, 11, 10, 11, 43, 443, DateTimeKind.Utc).AddTicks(1971),
                             RoleType = 2,
-                            StartDate = new DateTime(2024, 10, 21, 14, 54, 14, 690, DateTimeKind.Utc).AddTicks(7972)
+                            StartDate = new DateTime(2024, 11, 11, 10, 11, 43, 443, DateTimeKind.Utc).AddTicks(1971)
                         });
                 });
 
@@ -524,7 +528,7 @@ namespace SeniorLearn.Migrations
                             OrganisationId = 1,
                             PasswordHash = "AQAAAAIAAYagAAAAEHsSevUsbVfCvzTrAPeOAJGAdLJXoClxNuG4OJyPozgYXexeGOqLXgnIxAZgTQTbfA==",
                             PhoneNumberConfirmed = false,
-                            Registered = new DateTime(2024, 10, 21, 14, 54, 14, 690, DateTimeKind.Utc).AddTicks(7914),
+                            Registered = new DateTime(2024, 11, 11, 10, 11, 43, 443, DateTimeKind.Utc).AddTicks(1927),
                             SecurityStamp = "M67EBX32EPBJDLSU75U3EA5SFKIR7MDP",
                             Status = 1,
                             TwoFactorEnabled = false,
@@ -544,7 +548,7 @@ namespace SeniorLearn.Migrations
                             OrganisationId = 1,
                             PasswordHash = "AQAAAAIAAYagAAAAEGuoaNhuyNZDd/SdkB7dMyKO61l9hBzj4h26Bm6gmQpnrpwe+vNFNyBLSPj0JGM13Q==",
                             PhoneNumberConfirmed = false,
-                            Registered = new DateTime(2024, 10, 21, 14, 54, 14, 690, DateTimeKind.Utc).AddTicks(7928),
+                            Registered = new DateTime(2024, 11, 11, 10, 11, 43, 443, DateTimeKind.Utc).AddTicks(1936),
                             SecurityStamp = "ISWZYSPA6TIRY35DE4KKKESEPQZKL6VG",
                             Status = 1,
                             TwoFactorEnabled = false,
@@ -564,7 +568,7 @@ namespace SeniorLearn.Migrations
                             OrganisationId = 1,
                             PasswordHash = "AQAAAAIAAYagAAAAENaAF8X3fgawsa7CT8EKV1Bm+PGcrq9PhRBL+ee6Rb8lCZVRf/6it+zEesnSHS6q1w==",
                             PhoneNumberConfirmed = false,
-                            Registered = new DateTime(2024, 10, 21, 14, 54, 14, 690, DateTimeKind.Utc).AddTicks(7940),
+                            Registered = new DateTime(2024, 11, 11, 10, 11, 43, 443, DateTimeKind.Utc).AddTicks(1943),
                             SecurityStamp = "LZOWMFVS2SAJIT7PFI3CPG4WQDCHQS5R",
                             Status = 1,
                             TwoFactorEnabled = false,

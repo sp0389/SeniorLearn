@@ -1,7 +1,9 @@
+using cloudscribe.Pagination.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SeniorLearn.Controllers;
 using SeniorLearn.Data.Core;
+using SeniorLearn.Models;
 using SeniorLearn.Services;
 
 namespace SeniorLearn.Areas.Member.Controllers
@@ -24,13 +26,14 @@ namespace SeniorLearn.Areas.Member.Controllers
             return View(lessons);
         }
         [HttpGet]
-        public async Task<IActionResult> Details(Guid id)
+        public async Task<IActionResult> Details(Guid id, int pageNumber = 1, int pageSize = 10)
         {
             try
             {
                 var member = HttpContext.User.Identity!.Name;
-                var lessonDetails = await _enrolmentService.GetLessonDetailsForEnrolmentAsync(id, member!);
-                return View(lessonDetails);
+                var enrolmentLessonDetails = await _enrolmentService.GetLessonDetailsForEnrolmentAsync(id, member!);
+                
+                return View(enrolmentLessonDetails);
             }
             catch (DomainRuleException ex)
             {
@@ -49,6 +52,7 @@ namespace SeniorLearn.Areas.Member.Controllers
             var member = HttpContext.User.Identity!.Name;
 
             var enrolments = await _enrolmentService.GetMemberLessonEnrolmentsAsync(member!);
+            
             return View(enrolments);
         }
 
@@ -78,7 +82,7 @@ namespace SeniorLearn.Areas.Member.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public async Task<IActionResult> UnenrolCourseLessons(IList<int> Lessons, int id)
+        public async Task<IActionResult> UnenrolCourseLessons(IList<int> Lessons, int id, Guid groupId)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +90,7 @@ namespace SeniorLearn.Areas.Member.Controllers
 
                 try
                 {
-                    await _enrolmentService.UnenrolMemberFromLessonAsync(member!, Lessons, id);
+                    await _enrolmentService.UnenrolMemberFromLessonAsync(member!, Lessons, id, groupId);
                     TempData["Success"] = "You have been unenroled.";
                 }
                 catch (DomainRuleException ex)
@@ -103,7 +107,7 @@ namespace SeniorLearn.Areas.Member.Controllers
         
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public async Task<IActionResult> UnenrolLessons(IList<int>Lessons, int id)
+        public async Task<IActionResult> UnenrolLessons(IList<int>Lessons, int id, Guid groupId)
         {
             if (ModelState.IsValid)
             {
@@ -111,7 +115,7 @@ namespace SeniorLearn.Areas.Member.Controllers
 
                 try
                 {
-                    await _enrolmentService.UnenrolMemberFromLessonAsync(member!, Lessons, id);
+                    await _enrolmentService.UnenrolMemberFromLessonAsync(member!, Lessons, id, groupId);
                     TempData["Success"] = "You have been unenroled from this lesson";
                 }
                 catch (DomainRuleException ex)

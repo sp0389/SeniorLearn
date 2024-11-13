@@ -4,6 +4,8 @@ using SeniorLearn.Areas.Member.Models.Lesson;
 using SeniorLearn.Data.Core;
 using SeniorLearn.Services;
 using SeniorLearn.Controllers;
+using cloudscribe.Pagination.Models;
+using SeniorLearn.Models;
 
 namespace SeniorLearn.Areas.Member.Controllers
 {
@@ -89,15 +91,24 @@ namespace SeniorLearn.Areas.Member.Controllers
         public async Task<IActionResult> Calendar()
         {
             var member = HttpContext.User.Identity!.Name;
-            var lessons = await _lessonService.GetLessonsForCalendarAsync(member);
+            var lessons = await _lessonService.GetLessonsForCalendarAsync(member!);
             return View(lessons); 
         }
 
         [HttpGet]
-        public async Task<IActionResult> Details(Guid id)
+        public async Task<IActionResult> Details(Guid id, int pageNumber = 1, int pageSize = 10)
         {
-            var lessonDetails = await _lessonService.GetLessonDetailsAsync(id);
-            return View(lessonDetails);
+            var lessonDetails = await _lessonService.GetLessonDetailsAsync(id, (pageSize * pageNumber) - pageSize, pageSize);
+
+            var pagedResult = new PagedResult<LessonDTO>
+            {
+                Data = lessonDetails.ToList(),
+                TotalItems = await _lessonService.GetLessonCountAsync(id),
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+            
+            return View(pagedResult);
         }
         
         [ValidateAntiForgeryToken]

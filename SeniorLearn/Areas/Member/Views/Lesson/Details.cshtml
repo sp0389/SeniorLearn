@@ -1,10 +1,10 @@
-﻿@model IEnumerable<LessonDTO>
+﻿@model PagedResult<LessonDTO>
 
 <div class="px-4 py-5 my-5 text-center">
-    <h1 class="display-5 fw-bold text-body-emphasis">@Model.First().Title</h1>
+    <h1 class="display-5 fw-bold text-body-emphasis">@Model.Data.First().Title</h1>
 </div>
 @{
-    if (Model.First().IsInCourse)
+    if (Model.Data.First().IsInCourse)
     {
         <div class="alert alert-warning alert-dismissible d-flex align-items-center fade show" role="alert">
             <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Alert:">
@@ -26,6 +26,16 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
+
+    var image = Model.Data.FirstOrDefault()?.ImageUrl;
+    if (image != null)
+    {
+        <img class="img-fluid mx-auto d-block mb-3" src=@Url.Content(image) style="width: auto; height: auto; border-radius: 10px" />
+    }
+    else
+    {
+        <img src="" style="display:none">
+    }
 }
 
 <form method="post" asp-action="UpdateLessonState" onsubmit="return checkIfChecked();">
@@ -42,7 +52,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var m in Model)
+            @foreach (var m in Model.Data)
             {
                 <tr>
                     <td>@Html.DisplayFor(modelItem => m.StartDate)</td>
@@ -65,10 +75,14 @@
             }
         </tbody>
     </table>
+
+    <div class="d-flex mt-1">
+        <partial name="_Pager" model='Model.GetPagerModel<LessonDTO>("Lesson", "Details")' />
+    </div>
     
     <label class="mb-3" style="font-weight: bold" for="lessonState"> Update Lesson Status</label>
     <div class="mb-3">
-    @Html.DropDownList("lessonState", Model.First().StateList, "Select a Status", new { @class = "form-control"})
+    @Html.DropDownList("lessonState", Model.Data.First().StateList, "Select a Status", new { @class = "form-control"})
     </div>
 
     <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#lessonModal">

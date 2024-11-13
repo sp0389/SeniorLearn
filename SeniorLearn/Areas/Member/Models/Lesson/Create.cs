@@ -9,6 +9,7 @@ namespace SeniorLearn.Areas.Member.Models.Lesson
         public string LessonName { get; set; } = default!;
         [Required(ErrorMessage = "Description is required.")]
         public string Description { get; set; } = default!;
+        public IFormFile? ImageUrl { get; set; } = default!;
         [Required(ErrorMessage = "Please select a duration.")]
         public int Duration { get; set; }
         public List<SelectListItem> DurationOptions { get; set; } = new List<SelectListItem>();
