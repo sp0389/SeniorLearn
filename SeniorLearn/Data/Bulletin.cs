@@ -21,7 +21,6 @@ namespace SeniorLearn.Data
         public string? MemberEmail { get; set; } = default!;
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        [Required]
         public string? ContentImageUrl { get; set; } = default!;
         [Required]
         public string? ContentMessage { get; set; } = default!;

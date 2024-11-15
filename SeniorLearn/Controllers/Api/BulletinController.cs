@@ -6,7 +6,6 @@ using SeniorLearn.Services;
 
 namespace SeniorLearn.Controllers.Api
 {
-    //Hack: Not sure why Program.cs isn't handling this, so I've manually added it here for now.
     [Authorize(AuthenticationSchemes = "JWT_OR_COOKIE", Roles = "Administrator, Standard, Honorary, Professional")]
     [ApiController, Route("api/[controller]")]
     public class BulletinController : ControllerBase
@@ -15,19 +14,19 @@ namespace SeniorLearn.Controllers.Api
 
         public BulletinController(BulletinService bulletinService)
         {
-             _bulletinService = bulletinService;
+            _bulletinService = bulletinService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllBulletins()
         {
             var result = await _bulletinService.GetBulletinsAsync();
-            
+
             if (result.IsNullOrEmpty())
             {
                 return NotFound();
             }
-            
+
             return Ok(result);
         }
 
@@ -41,7 +40,7 @@ namespace SeniorLearn.Controllers.Api
                 return NotFound();
             }
 
-            return Ok(result);   
+            return Ok(result);
         }
 
         [HttpGet("search")]
@@ -58,14 +57,19 @@ namespace SeniorLearn.Controllers.Api
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateNewBulletin([FromBody] Bulletin bulletin)
+        public async Task<IActionResult> CreateNewBulletin([FromForm] string title, [FromForm] string contentMessage, [FromForm] string? tags, [FromForm] IFormFile? image)
         {
+            var tagList = new List<string>();
             if (ModelState.IsValid)
             {
                 try
                 {
+                    if (tags != null)
+                    {
+                        tagList = tags.Split(',').ToList();
+                    }
                     var member = HttpContext.User.Identity!.Name;
-                    await _bulletinService.SaveNewBulletinAsync(bulletin, member!);
+                    var bulletin = await _bulletinService.SaveNewBulletinAsync(title, contentMessage, tagList, image, member!);
                     return CreatedAtAction(nameof(GetBulletinsById), new { id = bulletin.Id }, bulletin);
                 }
                 catch (Exception ex)
@@ -77,14 +81,20 @@ namespace SeniorLearn.Controllers.Api
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBulletin([FromRoute] string id, [FromBody] Bulletin bulletin)
+        public async Task<IActionResult> UpdateBulletin([FromRoute] string id, [FromForm] string title, [FromForm] string contentMessage,
+            [FromForm] string contentImageUrl, [FromForm] string status, [FromForm] string? tags, [FromForm] IFormFile? image)
         {
+            var tagList = new List<string>();
             if (ModelState.IsValid)
             {
                 try
                 {
+                    if (tags != null)
+                    {
+                        tagList = tags.Split(',').ToList();
+                    }
                     var member = HttpContext.User.Identity!.Name;
-                    var result = await _bulletinService.UpdateExistingBulletinAsync(id, bulletin);
+                    var result = await _bulletinService.UpdateExistingBulletinAsync(id, title, contentMessage, contentImageUrl, status, tagList, image);
                     return Ok(result);
                 }
                 catch (Exception ex)
@@ -95,7 +105,7 @@ namespace SeniorLearn.Controllers.Api
             return BadRequest(ModelState);
         }
 
-        [HttpPut("{id}/comment")]
+        [HttpPut("comment/{id}")]
         public async Task<IActionResult> AddCommentToBulletin([FromRoute]string id, [FromBody] BulletinComment bulletinComment)
         {
             if (ModelState.IsValid)

@@ -10,15 +10,17 @@ namespace SeniorLearn.Services
     {
         private readonly IMongoCollection<Bulletin> _bulletinCollection;
         private readonly OrganisationUserService _organisationUserService;
+        private readonly IWebHostEnvironment _webHost;
 
         public BulletinService(OrganisationUserService organisationUserService, 
-            IOptions<BulletinDatabaseSettings> bulletinDatabaseSettings)
+            IOptions<BulletinDatabaseSettings> bulletinDatabaseSettings, IWebHostEnvironment webHost)
         {
             var mongoClient = new MongoClient(bulletinDatabaseSettings.Value.ConnectionString);
             var mongoDatabase = mongoClient.GetDatabase(bulletinDatabaseSettings.Value.DatabaseName);
             _bulletinCollection = mongoDatabase.GetCollection<Bulletin>(bulletinDatabaseSettings
                 .Value.BulletinCollectionName);
             _organisationUserService = organisationUserService;
+            _webHost = webHost;
         }
 
         public async Task<List<Bulletin>> GetBulletinsAsync()
@@ -73,20 +75,51 @@ namespace SeniorLearn.Services
             return null!;
         }
 
-        public async Task<Bulletin> SaveNewBulletinAsync(Bulletin bulletin, string memberId)
+        public async Task<Bulletin> SaveNewBulletinAsync(string title, string contentMessage, List<string>? tagList, IFormFile? image, string memberId)
         {
+            var bulletin = new Bulletin();
             var member = await _organisationUserService.GetUserByUserNameAsync(memberId);
+
+            if (image != null)
+            {
+                bulletin.ContentImageUrl = await AddImageUrlForBulletin(image);
+            }
+            else
+            {
+                bulletin.ContentImageUrl = $"http://10.0.2.2:5085/images/placeholder.jpg";
+            }
+
+            bulletin.Title = title;
+            bulletin.ContentMessage = contentMessage;
             bulletin.MemberId = member.Id;
             bulletin.MemberName = $"{member.FirstName} {member.LastName}";
             bulletin.MemberEmail = member.Email;
-
+            bulletin.Tags = tagList!;
+            
             await _bulletinCollection.InsertOneAsync(bulletin);
             return bulletin;
         }
 
-        public async Task<Bulletin> UpdateExistingBulletinAsync(string id, Bulletin bulletin)
+        public async Task<Bulletin> UpdateExistingBulletinAsync(string id, string title, string contentMessage, string contentImageUrl, string status, List<string> tagList, IFormFile? image)
         {
             var existingBulletin = await GetBulletinByIdAsync(id);
+
+            if (image != null)
+            {
+                contentImageUrl = await AddImageUrlForBulletin(image);
+            }
+
+            var bulletin = new Bulletin()
+            {
+                Title = title,
+                ContentMessage = contentMessage,
+                ContentImageUrl = contentImageUrl,
+                Status = status,
+                Tags = tagList,
+                MemberId = existingBulletin.MemberId,
+                MemberName = existingBulletin.MemberName,
+                MemberEmail = existingBulletin.MemberEmail,
+            };
 
             var filter = Builders<Bulletin>.Filter.Eq(b => b.Id, existingBulletin.Id);
 
@@ -97,9 +130,9 @@ namespace SeniorLearn.Services
                 .Set(b => b.UpdatedAt, DateTime.UtcNow)
                 .Set(b => b.Status, bulletin.Status)
                 .Set(b => b.Tags, bulletin.Tags)
-                .Set(b => b.MemberId, existingBulletin.MemberId)
-                .Set(b => b.MemberName, existingBulletin.MemberName)
-                .Set(b => b.MemberName, existingBulletin.MemberEmail);
+                .Set(b => b.MemberId, bulletin.MemberId)
+                .Set(b => b.MemberName, bulletin.MemberName)
+                .Set(b => b.MemberEmail, bulletin.MemberEmail);
 
             await _bulletinCollection.UpdateOneAsync(filter, update);
             return bulletin;
@@ -107,11 +140,11 @@ namespace SeniorLearn.Services
 
         public async Task<Bulletin> AddCommentToBulletinAsync(string id, BulletinComment bulletinComment, string memberId)
         {
-            var existingBulletin = await GetBulletinByIdAsync(id)
+            var existingBulletin = await GetBulletinByIdAsync(id) 
                 ?? throw new Exception("Bulletin with that ID does not exist!");
 
             var member = await _organisationUserService.GetUserByUserNameAsync(memberId);
-            
+    
             bulletinComment.MemberId = member.Id;
             bulletinComment.MemberName = $"{member.FirstName} {member.LastName}";
 
@@ -144,6 +177,21 @@ namespace SeniorLearn.Services
             await _bulletinCollection.UpdateOneAsync(filter, update);
 
             return existingBulletin;
+        }
+
+        private async Task<string> AddImageUrlForBulletin(IFormFile image)
+        {
+            var imageFolder = Path.Combine(_webHost.WebRootPath, "images");
+            var imageName = Path.GetFileName(image.FileName);
+            var imageSavePath = Path.Combine(imageFolder, imageName);
+            
+            var relativePath = $"http://10.0.2.2:5085/images/{imageName}";
+
+            using (var stream = new FileStream(imageSavePath, FileMode.Create))
+            {
+                await image.CopyToAsync(stream);
+            }
+            return relativePath;
         }
     }
 }
