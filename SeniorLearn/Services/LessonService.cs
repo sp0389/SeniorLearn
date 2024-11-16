@@ -31,16 +31,9 @@ namespace SeniorLearn.Services
             var groupId = Guid.NewGuid();
             var relativeImagePath = "";
             
-            // save an image
             if (model.ImageUrl != null)
             {
-                var imageFolder = Path.Combine(_webHost.WebRootPath, "images");
-                var imageName = Path.GetFileName(model.ImageUrl.FileName);
-                var imageSavePath = Path.Combine(imageFolder, imageName);
-                relativeImagePath = $"~/images/{imageName}";
-
-                using var stream = new FileStream(imageSavePath, FileMode.Create);
-                await model.ImageUrl.CopyToAsync(stream);
+                relativeImagePath = await CreateImageUrlForLessonAsync(model.ImageUrl);
             }
             
             if (model.IsRecurring && model.SelectedDaysOfWeek.IsNullOrEmpty())
@@ -188,6 +181,20 @@ namespace SeniorLearn.Services
             };
 
             model.Courses = await GetAllCourses();
+        }
+
+        private async Task<string> CreateImageUrlForLessonAsync(IFormFile imageUrl)
+        {
+            var imageFolder = Path.Combine(_webHost.WebRootPath, "images");
+            var imageName = Path.GetFileName(imageUrl.FileName);
+            var imageSavePath = Path.Combine(imageFolder, imageName);
+            var relativeImagePath = $"~/images/{imageName}";
+
+            using (var stream = new FileStream(imageSavePath, FileMode.Create))
+            {
+                await imageUrl.CopyToAsync(stream);
+            }
+            return relativeImagePath;
         }
     }
 }
