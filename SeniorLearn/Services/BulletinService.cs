@@ -179,6 +179,22 @@ namespace SeniorLearn.Services
             return existingBulletin;
         }
 
+        public async Task<Bulletin> DecreaseBulletinLikesAsync(string id)
+        {
+            var existingBulletin = await GetBulletinByIdAsync(id);
+            if (existingBulletin.Likes > 0) 
+            {
+                existingBulletin.Likes--;
+
+                var filter = Builders<Bulletin>.Filter.Eq(b => b.Id, existingBulletin.Id);
+                var update = Builders<Bulletin>.Update.Set(b => b.Likes, existingBulletin.Likes);
+
+                await _bulletinCollection.UpdateOneAsync(filter, update);
+            }
+
+            return existingBulletin;
+        }
+
         private async Task<string> AddImageUrlForBulletin(IFormFile image)
         {
             var imageFolder = Path.Combine(_webHost.WebRootPath, "images");

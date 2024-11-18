@@ -159,5 +159,20 @@ namespace SeniorLearn.Controllers.Api
             }
             return BadRequest(ModelState);
         }
+
+        [HttpPatch("{id}/unlike")]
+        public async Task<IActionResult> UnlikeBulletin(string id)
+        {
+            try
+            {
+                var bulletin = await _bulletinService.DecreaseBulletinLikesAsync(id);
+                return Ok(bulletin);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
     }
 }
