@@ -66,7 +66,8 @@ namespace SeniorLearn.Controllers.Api
                 {
                     if (tags != null)
                     {
-                        tagList = tags.Split(',').ToList();
+                        var cleanedTags = tags.Trim().Replace(" ", "");
+                        tagList = cleanedTags.Split(',').ToList();
                     }
                     var member = HttpContext.User.Identity!.Name;
                     var bulletin = await _bulletinService.SaveNewBulletinAsync(title, contentMessage, tagList, image, member!);

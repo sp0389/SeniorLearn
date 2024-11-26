@@ -82,7 +82,7 @@ namespace SeniorLearn.Services
 
             if (image != null)
             {
-                bulletin.ContentImageUrl = await AddImageUrlForBulletin(image);
+                bulletin.ContentImageUrl = await AddImageUrlForBulletinAsync(image);
             }
             else
             {
@@ -106,7 +106,7 @@ namespace SeniorLearn.Services
 
             if (image != null)
             {
-                contentImageUrl = await AddImageUrlForBulletin(image);
+                contentImageUrl = await AddImageUrlForBulletinAsync(image);
             }
 
             var bulletin = new Bulletin()
@@ -163,7 +163,13 @@ namespace SeniorLearn.Services
                 ?? throw new Exception("Bulletin with that ID does not exist!");
 
             var filter = Builders<Bulletin>.Filter.Eq(b => b.Id, existingBulletin.Id);
-            await _bulletinCollection.DeleteOneAsync(filter);
+            
+            existingBulletin.Status = "Inactive";
+
+            var update = Builders<Bulletin>.Update
+                .Set(b => b.Status, existingBulletin.Status);
+
+            await _bulletinCollection.UpdateOneAsync(filter, update);
         }
 
         public async Task<Bulletin> UpdateBulletinLikesAsync(string id)
@@ -195,7 +201,7 @@ namespace SeniorLearn.Services
             return existingBulletin;
         }
 
-        private async Task<string> AddImageUrlForBulletin(IFormFile image)
+        private async Task<string> AddImageUrlForBulletinAsync(IFormFile image)
         {
             var imageFolder = Path.Combine(_webHost.WebRootPath, "images");
             var imageName = Path.GetFileName(image.FileName);
