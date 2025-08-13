@@ -22,7 +22,7 @@ The platform is designed to be intutive and easy to use.
 git clone https://github.com/sp0389/SeniorLearn.git
 ```
 ```
-cd senior-learn
+cd SeniorLearn
 ```
 3. Run database migrations:
 ```
@@ -46,9 +46,6 @@ Deploy to Azure, IIS, or containerize with Docker.
 ## Contributing
 
 1. Fork the repository.
-
 2. Create a feature branch.
-
 3. Commit changes.
-
 4. Open a Pull Request.
