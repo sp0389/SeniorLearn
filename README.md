@@ -10,6 +10,15 @@ The platform is designed to be intutive and easy to use.
 - Professional members have a 3‑month trial; they remain professional while teaching. Professional members can also enrol in courses and lessons, but not their own.
 - Honorary members have lifelong membership; they hold the same authorisation as Professional members allowing them to create courses and lessons.
 
+## Technology Stack Used
+- ASP.NET Core MVC
+- Entity Framework Core
+- Identity Framework
+- JWT Authentication
+- Microsoft SQL Server
+- MongoDB
+- LINQ
+
 ## Requirements
 - .NET 8 SDK
 - SQL Server
