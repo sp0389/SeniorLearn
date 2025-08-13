@@ -21,6 +21,7 @@ The platform is designed to be intutive and easy to use.
 ```
 git clone https://github.com/sp0389/SeniorLearn.git
 ```
+2.
 ```
 cd SeniorLearn
 ```
