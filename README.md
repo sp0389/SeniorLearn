@@ -1,6 +1,6 @@
 # SeniorLearn
 
-Senior Learn is an education platform designed to replace paper and Excel-based record keeping with a role-aware system for managing courses, lessons, enrolments, and subscriptions.
+SeniorLearn is an education platform designed to replace paper and Excel-based record keeping with a role-aware system for managing courses, lessons, enrolments, and subscriptions.
 The platform is designed to be intutive and easy to use.
 
 ## Overview
